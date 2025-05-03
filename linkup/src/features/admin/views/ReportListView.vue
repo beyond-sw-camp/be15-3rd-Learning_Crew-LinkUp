@@ -161,60 +161,69 @@ const formatDate = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm')
         @update:modelValue="modalOpen = false"
     >
       <template #default>
-        <!-- 신고자 정보 -->
-        <div class="modal-section">
-          <div class="section-title">신고자 / 피신고자</div>
-          <div class="info-grid">
+        <!-- 신고자 / 피신고자 정보 -->
+        <section class="modal-section" aria-labelledby="reporter-section-title">
+          <header>
+            <h3 class="section-title" id="reporter-section-title">신고자 / 피신고자</h3>
+          </header>
+          <dl class="info-grid">
             <div class="info-item">
-              <span class="label">신고자</span>
-              <span class="value">{{ selectedReport?.reporterMemberId }} / {{ selectedReport?.reporterName }}</span>
+              <dt class="label">신고자</dt>
+              <dd class="value">{{ selectedReport?.reporterMemberId }} / {{ selectedReport?.reporterName }}</dd>
             </div>
             <div class="info-item">
-              <span class="label">피신고자</span>
-              <span class="value">{{ selectedReport?.targetMemberId }} / {{ selectedReport?.targetName }}</span>
+              <dt class="label">피신고자</dt>
+              <dd class="value">{{ selectedReport?.targetMemberId }} / {{ selectedReport?.targetName }}</dd>
             </div>
-          </div>
-        </div>
+          </dl>
+        </section>
 
         <!-- 신고 정보 -->
-        <div class="modal-section">
-          <div class="section-title">신고 정보</div>
-          <div class="info-grid">
+        <section class="modal-section" aria-labelledby="info-section-title">
+          <header>
+            <h3 class="section-title" id="info-section-title">신고 정보</h3>
+          </header>
+          <dl class="info-grid">
             <div class="info-item">
-              <span class="label">신고 유형</span>
-              <span class="value">{{ selectedReport?.reportType }}</span>
+              <dt class="label">신고 유형</dt>
+              <dd class="value">{{ selectedReport?.reportType }}</dd>
             </div>
             <div class="info-item">
-              <span class="label">상태</span>
-              <span class="value">{{ selectedReport?.status }}</span>
+              <dt class="label">상태</dt>
+              <dd class="value">{{ selectedReport?.status }}</dd>
             </div>
             <div class="info-item">
-              <span class="label">신고 일시</span>
-              <span class="value">{{ formatDate(selectedReport?.createdAt) }}</span>
+              <dt class="label">신고 일시</dt>
+              <dd class="value">{{ formatDate(selectedReport?.createdAt) }}</dd>
             </div>
             <div class="info-item" v-if="selectedReport?.postId">
-              <span class="label">관련 게시글 ID</span>
-              <span class="value">{{ selectedReport?.postId }}</span>
+              <dt class="label">관련 게시글 ID</dt>
+              <dd class="value">{{ selectedReport?.postId }}</dd>
             </div>
             <div class="info-item" v-if="selectedReport?.commentId">
-              <span class="label">관련 댓글 ID</span>
-              <span class="value">{{ selectedReport?.commentId }}</span>
+              <dt class="label">관련 댓글 ID</dt>
+              <dd class="value">{{ selectedReport?.commentId }}</dd>
             </div>
-          </div>
-        </div>
+          </dl>
+        </section>
 
         <!-- 신고 사유 -->
-        <div class="modal-section">
-          <div class="section-title">신고 사유</div>
-          <div class="reason-box">{{ selectedReport?.reason }}</div>
-        </div>
+        <section class="modal-section" aria-labelledby="reason-section-title">
+          <header>
+            <h3 class="section-title" id="reason-section-title">신고 사유</h3>
+          </header>
+          <article class="reason-box">
+            {{ selectedReport?.reason }}
+          </article>
+        </section>
       </template>
 
       <template #footer>
-        <!-- 하단 버튼 -->
-        <AdminButton type="reject" @click="handleSanction('REJECTED')">제재 처리</AdminButton>
-        <AdminButton type="approve" @click="handleSanction('APPROVED')">제재 처리</AdminButton>
-        <AdminButton type="secondary" @click="modalOpen = false">닫기</AdminButton>
+        <nav class="modal-footer" aria-label="제재 처리 버튼 영역">
+          <AdminButton type="reject" @click="handleSanction('REJECTED')">제재 처리</AdminButton>
+          <AdminButton type="approve" @click="handleSanction('APPROVED')">제재 처리</AdminButton>
+          <AdminButton type="secondary" @click="modalOpen = false">닫기</AdminButton>
+        </nav>
       </template>
     </DetailViewer>
 
