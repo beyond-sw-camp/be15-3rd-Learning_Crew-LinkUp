@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import AdminHeader from '@/components/common/AdminHeader.vue'
-import AdminSidebar from '@/components/common/AdminSidebar.vue'
+import AdminHeader from '@/features/admin/components/AdminHeader.vue'
+import AdminSidebar from '@/features/admin/components/AdminSidebar.vue'
 
 const route = useRoute()
 
@@ -51,6 +51,13 @@ const sidebarItems = computed(() => {
   }
   return []
 })
+
+// 현재 라우트에 맞는 label을 title로 사용
+const pageTitle = computed(() => {
+  const matched = sidebarItems.value.find(item => route.path === item.path)
+  return matched?.label || ''
+})
+
 </script>
 
 
@@ -60,7 +67,7 @@ const sidebarItems = computed(() => {
     <div class="admin-container">
       <AdminSidebar :menu-items="sidebarItems" />
       <main class="admin-main">
-        <RouterView />
+        <RouterView :page-title="pageTitle" />
       </main>
     </div>
   </div>
