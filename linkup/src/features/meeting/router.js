@@ -8,9 +8,14 @@ export const meetingRoutes = [
       component: () => import('@/features/meeting/views/Meetings.vue')
     },
       {
-        path: ':id',
+        path: ':meetingId',
         name: 'MeetingDetails',
         component: () => import('@/features/meeting/views/MeetingDetails.vue')
+      },
+      {
+        path: ':meetingId/participation',
+        name: 'CreateParticipation',
+        component: () => import('@/features/meeting/views/CreateParticipation.vue')
       },
       {
         path: ':meetingId/review',

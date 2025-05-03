@@ -21,7 +21,7 @@ defineProps({
 });
 
 function formatGender(gender) {
-  return gender === 'M' ? '남성' : gender === 'F' ? '여성' : '기타';
+  return gender === 'M' ? '남자' : gender === 'F' ? '여자' : '기타';
 }
 </script>
 
