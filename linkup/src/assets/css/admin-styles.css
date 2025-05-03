@@ -138,6 +138,12 @@ a {
     gap: 15px;
 }
 
+.filter-wrapper {
+    display: flex;
+    margin-bottom: 24px;
+    justify-content: space-between;
+}
+
 .filter-label {
     display: flex;
     align-items: center;

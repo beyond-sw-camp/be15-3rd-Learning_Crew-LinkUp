@@ -1,7 +1,7 @@
 import api from './axios.js'
 
 /* 1. 관리자 - 회원 목록 조회
- * @param {Object} params - { authority: string, status: string, page: number } */
+     * @param {Object} params - { authority: string, status: string, page: number } */
 export function fetchUserList(params) {
     return api.get('/admin/users', { params })
 }
@@ -27,11 +27,22 @@ export function updateUserAuthorityStatus(id, decision, reason = '') {
 }
 
 /* 3. 게시글 목록 조회 API
- * @param {Object} params - 필터 및 페이징 정보
- * @param {string} params.writerId - 작성자 ID (optional)
- * @param {string} params.isDeleted - 삭제 여부 ('Y' | 'N') (optional)
- * @param {number} params.page - 페이지 번호
- */
+     * @param {Object} params - 필터 및 페이징 정보
+     * @param {string} params.writerId - 작성자 ID (optional)
+     * @param {string} params.isDeleted - 삭제 여부 ('Y' | 'N') (optional)
+     * @param {number} params.page - 페이지 번호
+     */
 export function fetchPostList(params) {
     return api.get('/api/v1/common-service/posts/list', { params })
+}
+
+/* 4. 댓글 내역 조회 API
+    * @param {Object} params - 조회 조건 객체
+    * @param {string} [params.userId] - 작성자 ID (선택)
+    * @param {string} [params.isDeleted] - 삭제 여부 ('Y' | 'N') (선택)
+    * @param {number} params.page - 페이지 번호 (필수)
+    * @returns {Promise} Axios GET 요청 결과 반환
+    */
+export function fetchCommentList(params) {
+    return api.get('/api/v1/common-service/comments', { params })
 }
