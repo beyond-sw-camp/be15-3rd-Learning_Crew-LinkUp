@@ -3,6 +3,11 @@ export const adminRoutes = [
         path: '/admin',
         component: () => import('@/components/layout/AdminLayout.vue'),
         children: [
+            // 회원 관리
+            {
+                path: '/admin/users',
+                redirect: '/admin/usersmembers'
+            },
             {
                 path: 'users/members',
                 name: 'UserMemberList',
@@ -22,17 +27,28 @@ export const adminRoutes = [
                 path: 'users/comments',
                 name: 'UserCommentList',
                 component: () => import('@/features/admin/views/UserCommentListView.vue')
-            }
-            /*,
+            },
+
+            // 포인트 관리
+            {
+                path: '/admin/points',
+                redirect: '/admin/points/points'
+            },
             {
                 path: 'points/points',
                 name: 'PointHistoryList',
                 component: () => import('@/features/admin/views/PointHistoryListView.vue')
-            },
+            }/*,
             {
                 path: 'points/accounts',
                 name: 'PointAccountList',
                 component: () => import('@/features/admin/views/PointAccountListView.vue')
+            },
+
+            // 장소 관리
+            {
+                path: '/admin/places',
+                redirect: '/admin/places/list'
             },
             {
                 path: 'places/list',
@@ -44,6 +60,12 @@ export const adminRoutes = [
                 name: 'PlaceReviewList',
                 component: () => import('@/features/admin/views/PlaceReviewListView.vue')
             },
+
+            // 모임 관리
+            {
+                path: '/admin/meetings',
+                redirect: '/admin/meetings/list'
+            },
             {
                 path: 'meetings/list',
                 name: 'MeetingList',
@@ -53,6 +75,12 @@ export const adminRoutes = [
                 path: 'meetings/reviews',
                 name: 'MeetingReviewList',
                 component: () => import('@/features/admin/views/MeetingReviewListView.vue')
+            },
+
+            // 신고 관리
+            {
+                path: '/admin/reports',
+                redirect: '/admin/reports/list'
             },
             {
                 path: 'reports/list',
@@ -73,6 +101,12 @@ export const adminRoutes = [
                 path: 'reports/target-contents',
                 name: 'ReportTargetContentList',
                 component: () => import('@/features/admin/views/ReportTargetContentListView.vue')
+            },
+
+            // 제재 관리
+            {
+                path: '/admin/penalties',
+                redirect: '/admin/penalties/list'
             },
             {
                 path: 'penalties/list',

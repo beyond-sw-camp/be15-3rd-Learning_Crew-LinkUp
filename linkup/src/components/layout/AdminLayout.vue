@@ -18,35 +18,35 @@ const sidebarItems = computed(() => {
   }
   if (route.path.startsWith('/admin/point')) {
     return [
-      { label: '포인트 내역 조회', path: '/admin/point/points' },
-      { label: '계좌 목록 조회', path: '/admin/point/accounts' }
+      { label: '포인트 내역 조회', path: '/admin/points/points' },
+      { label: '계좌 목록 조회', path: '/admin/points/accounts' }
     ]
   }
   if (route.path.startsWith('/admin/place')) {
     return [
-      { label: '장소 목록 조회', path: '/admin/place/list' },
-      { label: '장소 후기 조회', path: '/admin/place/reviews' }
+      { label: '장소 목록 조회', path: '/admin/places/list' },
+      { label: '장소 후기 조회', path: '/admin/places/reviews' }
     ]
   }
   if (route.path.startsWith('/admin/meeting')) {
     return [
-      { label: '모임 목록 조회', path: '/admin/meeting/list' },
-      { label: '참가자 평가 내역', path: '/admin/meeting/reviews' }
+      { label: '모임 목록 조회', path: '/admin/meetings/list' },
+      { label: '참가자 평가 내역', path: '/admin/meetings/reviews' }
     ]
   }
   if (route.path.startsWith('/admin/report')) {
     return [
-      { label: '신고 목록 조회', path: '/admin/report/list' },
-      { label: '신고자 목록 조회', path: '/admin/report/reporters' },
-      { label: '피신고자 목록 조회', path: '/admin/report/targets' },
-      { label: '신고 대상별 내역', path: '/admin/report/target-contents' }
+      { label: '신고 목록 조회', path: '/admin/reports/list' },
+      { label: '신고자 목록 조회', path: '/admin/reports/reporters' },
+      { label: '피신고자 목록 조회', path: '/admin/reports/targets' },
+      { label: '신고 대상별 내역', path: '/admin/reports/target-contents' }
     ]
   }
   if (route.path.startsWith('/admin/penalty')) {
     return [
-      { label: '제재 내역 조회', path: '/admin/penalty/list' },
-      { label: '이의 제기 내역 조회', path: '/admin/penalty/objections' },
-      { label: '블랙리스트 조회', path: '/admin/penalty/blacklist' }
+      { label: '제재 내역 조회', path: '/admin/penalties/list' },
+      { label: '이의 제기 내역 조회', path: '/admin/penalties/objections' },
+      { label: '블랙리스트 조회', path: '/admin/penalties/blacklist' }
     ]
   }
   return []
