@@ -15,30 +15,6 @@ const cards = ref([
     likeCount: 32,
     price: '20,000원',
   },
-  {
-    imageUrl: 'https://media.istockphoto.com/id/2002620668/ko/사진.jpg',
-    date: '📅 2025.04.23 (화)',
-    title: '러닝한번 하시죠~~!!',
-    location: '📍여의도 이랜드 크루즈 근처',
-    likeCount: 82,
-    price: '5,000원',
-  },
-  {
-    imageUrl: 'https://media.istockphoto.com/id/2002620668/ko/사진.jpg',
-    date: '📅 2025.04.23 (화)',
-    title: '러닝한번 하시죠~~!!',
-    location: '📍여의도 이랜드 크루즈 근처',
-    likeCount: 82,
-    price: '5,000원',
-  },
-  {
-    imageUrl: 'https://media.istockphoto.com/id/2002620668/ko/사진.jpg',
-    date: '📅 2025.04.23 (화)',
-    title: '러닝한번 하시죠~~!!',
-    location: '📍여의도 이랜드 크루즈 근처',
-    likeCount: 82,
-    price: '5,000원',
-  },
 ]);
 
 const filteredCards = computed(() => {
