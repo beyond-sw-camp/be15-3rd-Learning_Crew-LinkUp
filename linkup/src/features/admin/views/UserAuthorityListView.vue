@@ -6,6 +6,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
 import AdminModal from '@/features/admin/components/AdminModal.vue'
 import { updateUserAuthorityStatus, fetchUserAuthorityRequests } from '@/api/admin.js'
+import '@/assets/css/admin-styles.css'
 
 const props = defineProps({ pageTitle: String })
 
@@ -102,7 +103,7 @@ onMounted(fetchData)
   <div v-else-if="error">{{ error }}</div>
 
   <!-- 데이터 없음 -->
-  <div v-else-if="users.length === 0">불러올 데이터가 없습니다.</div>
+  <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
   <!-- 정상 테이블 렌더링 -->
   <div v-else>

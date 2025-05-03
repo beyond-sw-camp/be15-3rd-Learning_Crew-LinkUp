@@ -13,80 +13,81 @@ export const adminRoutes = [
                 name: 'UserAuthorityList',
                 component: () => import('@/features/admin/views/UserAuthorityListView.vue')
             },
-            /*{
+            {
                 path: 'users/posts',
                 name: 'UserPostList',
-                component: () => import('@/features/admin/views/UserPostList.vue')
-            },
+                component: () => import('@/features/admin/views/UserPostListView.vue')
+            }
+            /*,
             {
                 path: 'users/comments',
                 name: 'UserCommentList',
-                component: () => import('@/features/admin/views/UserCommentList.vue')
+                component: () => import('@/features/admin/views/UserCommentListView.vue')
             },
             {
                 path: 'point/points',
                 name: 'PointHistoryList',
-                component: () => import('@/features/admin/views/PointHistoryList.vue')
+                component: () => import('@/features/admin/views/PointHistoryListView.vue')
             },
             {
                 path: 'point/accounts',
                 name: 'PointAccountList',
-                component: () => import('@/features/admin/views/PointAccountList.vue')
+                component: () => import('@/features/admin/views/PointAccountListView.vue')
             },
             {
                 path: 'place/list',
                 name: 'PlaceList',
-                component: () => import('@/features/admin/views/PlaceList.vue')
+                component: () => import('@/features/admin/views/PlaceListView.vue')
             },
             {
                 path: 'place/reviews',
                 name: 'PlaceReviewList',
-                component: () => import('@/features/admin/views/PlaceReviewList.vue')
+                component: () => import('@/features/admin/views/PlaceReviewListView.vue')
             },
             {
                 path: 'meeting/list',
                 name: 'MeetingList',
-                component: () => import('@/features/admin/views/MeetingList.vue')
+                component: () => import('@/features/admin/views/MeetingListView.vue')
             },
             {
                 path: 'meeting/reviews',
                 name: 'MeetingReviewList',
-                component: () => import('@/features/admin/views/MeetingReviewList.vue')
+                component: () => import('@/features/admin/views/MeetingReviewListView.vue')
             },
             {
                 path: 'report/list',
                 name: 'ReportList',
-                component: () => import('@/features/admin/views/ReportList.vue')
+                component: () => import('@/features/admin/views/ReportListView.vue')
             },
             {
                 path: 'report/reporters',
                 name: 'ReportReporterList',
-                component: () => import('@/features/admin/views/ReportReporterList.vue')
+                component: () => import('@/features/admin/views/ReportReporterListView.vue')
             },
             {
                 path: 'report/targets',
                 name: 'ReportTargetList',
-                component: () => import('@/features/admin/views/ReportTargetList.vue')
+                component: () => import('@/features/admin/views/ReportTargetListView.vue')
             },
             {
                 path: 'report/target-contents',
                 name: 'ReportTargetContentList',
-                component: () => import('@/features/admin/views/ReportTargetContentList.vue')
+                component: () => import('@/features/admin/views/ReportTargetContentListView.vue')
             },
             {
                 path: 'penalty/list',
                 name: 'PenaltyList',
-                component: () => import('@/features/admin/views/PenaltyList.vue')
+                component: () => import('@/features/admin/views/PenaltyListView.vue')
             },
             {
                 path: 'penalty/objections',
                 name: 'ObjectionList',
-                component: () => import('@/features/admin/views/ObjectionList.vue')
+                component: () => import('@/features/admin/views/ObjectionListView.vue')
             },
             {
                 path: 'penalty/blacklist',
                 name: 'BlacklistList',
-                component: () => import('@/features/admin/views/BlacklistList.vue')
+                component: () => import('@/features/admin/views/BlacklistListView.vue')
             }*/
         ]
     }

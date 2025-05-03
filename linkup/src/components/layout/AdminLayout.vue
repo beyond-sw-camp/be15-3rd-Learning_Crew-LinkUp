@@ -8,7 +8,7 @@ const route = useRoute()
 
 // 도메인별 사이드바 메뉴 구성
 const sidebarItems = computed(() => {
-  if (route.path.startsWith('/admin/user')) {
+  if (route.path.startsWith('/admin/users')) {
     return [
       { label: '회원 목록 조회', path: '/admin/users/members' },
       { label: '권한 요청 목록', path: '/admin/users/authorities' },

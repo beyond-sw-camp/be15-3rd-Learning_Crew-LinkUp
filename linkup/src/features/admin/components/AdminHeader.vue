@@ -1,5 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
+import '@/assets/css/admin-styles.css'
 
 const route = useRoute()
 
@@ -35,29 +36,5 @@ const isActive = (path) => route.path.startsWith(path)
 
 
 <style scoped>
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background-color: #f5f3fa;
-  border-bottom: 1px solid #e3e1ed;
-}
 
-.header-left {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.admin-nav a {
-  margin-left: 24px;
-  font-weight: 500;
-  color: #555;
-  padding-bottom: 4px;
-}
-
-.admin-nav a.active {
-  color: #7d6fb3;
-  border-bottom: 2px solid #beb2dd;
-}
 </style>

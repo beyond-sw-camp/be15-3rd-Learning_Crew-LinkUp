@@ -4,6 +4,7 @@ import AdminFilter from '@/features/admin/components/AdminFilter.vue'
 import AdminTable from '@/features/admin/components/AdminTable.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import { fetchUserList } from '@/api/admin.js'
+import '@/assets/css/admin-styles.css'
 
 const users = ref([])
 const totalPages = ref(1)

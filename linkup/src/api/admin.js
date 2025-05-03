@@ -6,7 +6,7 @@ export function fetchUserList(params) {
     return api.get('/admin/users', { params })
 }
 
-/*2. 관리자 - 사업자 권한 요청 목록 조회 */
+/* 2. 관리자 - 사업자 권한 요청 목록 조회 */
 export function fetchUserAuthorityRequests(params) {
     return api.get('/api/v1/common-service/admin/businesses/pending', { params })
 }
@@ -26,12 +26,12 @@ export function updateUserAuthorityStatus(id, decision, reason = '') {
     }
 }
 
-// 예: 게시글 내역 조회
-// export function fetchUserPosts(params) {
-//   return api.get('/admin/posts', { params })
-// }
-
-// 예: 제재 목록 조회
-// export function fetchPenalties(params) {
-//   return api.get('/admin/penalties', { params })
-// }
+/* 3. 게시글 목록 조회 API
+ * @param {Object} params - 필터 및 페이징 정보
+ * @param {string} params.writerId - 작성자 ID (optional)
+ * @param {string} params.isDeleted - 삭제 여부 ('Y' | 'N') (optional)
+ * @param {number} params.page - 페이지 번호
+ */
+export function fetchPostList(params) {
+    return api.get('/api/v1/common-service/posts/list', { params })
+}

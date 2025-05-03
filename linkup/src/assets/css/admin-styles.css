@@ -1,0 +1,506 @@
+/* ---------------- 기본 설정 ---------------- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ---------------- 헤더 ---------------- */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #f5f3fa;
+    border-bottom: 1px solid #e3e1ed;
+}
+
+.header-left {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.admin-nav a {
+    margin-left: 24px;
+    font-weight: 500;
+    color: #555;
+    padding-bottom: 4px;
+}
+
+.admin-nav a.active {
+    color: #7d6fb3;
+    border-bottom: 2px solid #beb2dd;
+}
+
+/* ---------------- 전체 레이아웃 ---------------- */
+.admin-container {
+    display: flex;
+    height: calc(100vh - 68px);
+}
+
+.admin-sidebar {
+    width: 220px;
+    padding: 32px 20px;
+    background-color: #f7f6fc;
+    border-right: 1px solid #e3e1ed;
+}
+
+.admin-sidebar ul {
+    list-style: none;
+}
+
+.admin-sidebar li {
+    margin-bottom: 16px;
+}
+
+.admin-sidebar a {
+    display: block;
+    font-weight: 500;
+    color: #555;
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
+.admin-sidebar a.active {
+    background-color: #e8e4f7;
+}
+
+/* ---------------- 메인 ---------------- */
+.admin-main {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    background-color: #f9f8fb;
+    padding: 20px 16px;
+    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-footer {
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+}
+
+.return-link {
+    color: #555;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.return-link:hover {
+    color: #333;
+}
+
+
+/* ---------------- 필터 ---------------- */
+.filter-box {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    gap: 6px;
+}
+
+.select-box {
+    margin-left: 12px;
+    padding: 6px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #333;
+}
+
+/* ---------------- 버튼 ---------------- */
+.btn {
+    padding: 6px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #b7a6e4;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #a494d4;
+}
+
+.btn-secondary {
+    background-color: #f1f1f1;
+    color: #222;
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-approve {
+    background-color: #5790FF;
+    color: #fff;
+}
+
+.btn-approve:hover {
+    background-color: #88A0FF;
+}
+
+.btn-reject {
+    background-color: #FE8A91;
+    color: #fff;
+}
+
+.btn-reject:hover {
+    background-color: #E75A61;
+}
+
+/* ---------------- ID 입력칸 ---------------- */
+.id-input {
+    width: 50px;
+}
+
+/* ---------------- 테이블 ---------------- */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 32px;
+}
+
+.table th,
+.table td {
+    padding: 14px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #f5f3fa;
+    border-bottom: 1px solid #e3e1ed;
+    font-weight: 500;
+    color: #444;
+}
+
+.table tbody td {
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* 테이블 특정 컬럼 넓이 */
+.user-authority-reason {
+    width: 42%;
+}
+
+.user-comment-content {
+    width: 30%;
+}
+
+.place-address {
+    width: 32%;
+}
+
+/* ---------------- 페이지네이션 ---------------- */
+.pagination {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.page-btn,
+.page-nav {
+    border: none;
+    background-color: #fff;
+    color: #333;
+    padding: 8px 14px;
+    margin: 0 3px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.page-btn:hover,
+.page-nav:hover {
+    background-color: #dcd5f2;
+}
+
+.page-btn.active {
+    background-color: #b7a6e4;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* ---------------- 모달 ---------------- */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    border: 1px solid #e3e6ef;
+    width: 700px;
+    max-width: 90%;
+}
+
+.modal-content img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.modal-body {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.modal-left,
+.modal-right {
+    flex: 1;
+    display: flex;
+}
+
+.modal-left {
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-left img {
+    width: 240px;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.modal-right {
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 10px;
+}
+
+.modal-label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 12px;
+}
+
+.modal-select,
+.modal-input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.modal-footer,
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* ---------------- 신고 상세 모달 ---------------- */
+.modal-report,
+.penalty-detail-section {
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    width: 700px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.modal-report-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.sub-text {
+    font-size: 14px;
+    color: #777;
+    margin-top: 10px;
+}
+
+.modal-report-section {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+    gap: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-report-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #7d6fb3;
+    margin: 20px 0 12px;
+    padding-left: 10px;
+    border-left: 4px solid #7d6fb3;
+}
+
+/* 신고 상세 info grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 32px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-item .label {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 4px;
+}
+
+.info-item .value {
+    font-size: 15px;
+    font-weight: 500;
+    color: #222;
+}
+
+.reason-box {
+    background: #f9f9fb;
+    border: 1px solid #e0e0e0;
+    padding: 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1a1a1a;
+    line-height: 1.6;
+}
+
+/* ---------------- 신고 상세 테이블 페이지 ---------------- */
+.report-detail-container {
+    max-width: 960px;
+    min-width: 850px;
+    margin: 60px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.report-detail-container h2 {
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: #333;
+}
+
+.report-detail-grid {
+    display: flex;
+    gap: 40px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.report-detail-grid div {
+    line-height: 1.5;
+}
+
+
+
+/* 날짜 스타일 */
+.date-input-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.date-input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    color: #666;
+    width: 150px;
+    height: 40px;
+}
+
+/* input 안에 기본적으로 연-월-일 가짜 플레이스홀더처럼 보여주기 */
+.date-input:invalid::before {
+    content: "연도 - 월 - 일";
+    color: #bbb;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* 사용자가 선택하면 가짜 플레이스홀더 숨기기 */
+.date-input:focus:invalid::before {
+    content: "";
+}
