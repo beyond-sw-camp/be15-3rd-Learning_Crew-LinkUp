@@ -22,7 +22,7 @@ const loading = ref(false)
 const error = ref(null)
 
 /*
-  ✅ 더미 데이터 (임시 출력용)
+   더미 데이터 (임시 출력용)
 */
 const dummyData = [
   {
@@ -67,7 +67,7 @@ const fetchData = async () => {
     // requests.value = data.data
     // totalPages.value = data.totalPages || 1
 
-    // ✅ 더미 데이터 사용
+    //  더미 데이터 사용
     const filtered = dummyData.filter(item => {
       const matchStatus = !filters.value.status || item.status === filters.value.status
       const matchUser = !filters.value.userId || item.ownerId.includes(filters.value.userId)

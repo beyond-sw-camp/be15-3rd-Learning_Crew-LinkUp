@@ -3,14 +3,14 @@ import { ref, onMounted } from 'vue'
 import AdminFilter from '@/features/admin/components/AdminFilter.vue'
 import AdminTable from '@/features/admin/components/AdminTable.vue'
 import Pagination from '@/features/admin/components/Pagination.vue'
-import ReportDetail from '@/features/admin/components/ReportDetail.vue'
+import DetailViewer from '@/features/admin/components/DetailViewer.vue'
 import { format } from 'date-fns'
+import AdminButton from "@/features/admin/components/AdminButton.vue";
 
 // API 주석처리: 실제 API 연동 시 아래 주석 해제
 // import { fetchReportList, fetchReportTypes } from '@/api/admin.js'
 
 // 더미 데이터 (실제 API 연동 전 임시)
-// ⬇️ 이 부분이 더미 데이터입니다.
 const reports = ref([
   {
     reportId: 11,
@@ -26,7 +26,19 @@ const reports = ref([
     createdAt: '2025-04-09T10:50:00'
   }
 ])
-const reportTypes = ref([{ reportTypeId: 6, reportType: '폭력적 또는 혐오스러운 콘텐츠' }])
+
+const reportTypes = ref([
+  { reportTypeId: 1, reportType: '유해하거나 위험한 행위' },
+  { reportTypeId: 2, reportType: '아동 학대' },
+  { reportTypeId: 3, reportType: '테러 조장' },
+  { reportTypeId: 4, reportType: '괴롭힘 또는 폭력' },
+  { reportTypeId: 5, reportType: '성적인 콘텐츠' },
+  { reportTypeId: 6, reportType: '폭력적 또는 혐오스러운 콘텐츠' },
+  { reportTypeId: 7, reportType: '증오 또는 악의적인 콘텐츠' },
+  { reportTypeId: 8, reportType: '법적 문제' },
+  { reportTypeId: 9, reportType: '잘못된 정보' },
+  { reportTypeId: 10, reportType: '스팸 또는 혼동 유발 콘텐츠' }
+])
 
 const filters = ref({ status: '', reportTypeId: '' })
 const page = ref(1)
@@ -66,6 +78,12 @@ const openModal = (report) => {
   modalOpen.value = true
 }
 
+const handleSanction = (action) => {
+  console.log('처리 유형:', action, selectedReport.value)
+  modalOpen.value = false // 처리 후 모달 닫기
+}
+
+
 onMounted(() => {
   fetchData()
   // 실제 신고 유형 목록 API 호출 시 사용
@@ -75,21 +93,23 @@ onMounted(() => {
 
 const formatDate = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm')
 </script>
+
+
 <template>
-  <main class="admin-main">
+  <main>
     <AdminFilter @search="onSearch" title="신고 목록 조회">
       <label class="filter-label">
         상태:
         <select v-model="filters.status" class="select-box">
           <option value="">전체</option>
           <option value="처리중">처리중</option>
-          <option value="완료">완료</option>
+          <option value="처리완료">완료</option>
           <option value="기각">기각</option>
         </select>
       </label>
       <label class="filter-label">
         신고 유형:
-        <select v-model="filters.reportTypeId" class="select-box">
+        <select v-model.number="filters.reportTypeId" class="select-box">
           <option value="">전체</option>
           <option v-for="type in reportTypes" :key="type.reportTypeId" :value="type.reportTypeId">
             {{ type.reportType }}
@@ -134,7 +154,74 @@ const formatDate = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm')
       <Pagination :current-page="page" :total-pages="totalPages" @update:page="changePage" />
     </section>
 
-    <ReportDetail :model-value="modalOpen" :report="selectedReport" @update:modelValue="modalOpen = false" />
+    <DetailViewer
+        :model-value="modalOpen"
+        title="신고 상세 정보"
+        description="신고 대상과 사유를 확인하고 후속 조치를 진행할 수 있습니다."
+        @update:modelValue="modalOpen = false"
+    >
+      <template #default>
+        <!-- 신고자 정보 -->
+        <div class="modal-section">
+          <div class="section-title">신고자 / 피신고자</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">신고자</span>
+              <span class="value">{{ selectedReport?.reporterMemberId }} / {{ selectedReport?.reporterName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">피신고자</span>
+              <span class="value">{{ selectedReport?.targetMemberId }} / {{ selectedReport?.targetName }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 신고 정보 -->
+        <div class="modal-section">
+          <div class="section-title">신고 정보</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">신고 유형</span>
+              <span class="value">{{ selectedReport?.reportType }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">상태</span>
+              <span class="value">{{ selectedReport?.status }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">신고 일시</span>
+              <span class="value">{{ formatDate(selectedReport?.createdAt) }}</span>
+            </div>
+            <div class="info-item" v-if="selectedReport?.postId">
+              <span class="label">관련 게시글 ID</span>
+              <span class="value">{{ selectedReport?.postId }}</span>
+            </div>
+            <div class="info-item" v-if="selectedReport?.commentId">
+              <span class="label">관련 댓글 ID</span>
+              <span class="value">{{ selectedReport?.commentId }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 신고 사유 -->
+        <div class="modal-section">
+          <div class="section-title">신고 사유</div>
+          <div class="reason-box">{{ selectedReport?.reason }}</div>
+        </div>
+      </template>
+
+      <template #footer>
+        <!-- 하단 버튼 -->
+        <AdminButton type="reject" @click="handleSanction('REJECTED')">제재 처리</AdminButton>
+        <AdminButton type="approve" @click="handleSanction('APPROVED')">제재 처리</AdminButton>
+        <AdminButton type="secondary" @click="modalOpen = false">닫기</AdminButton>
+      </template>
+    </DetailViewer>
+
   </main>
 </template>
 
+
+<style scoped>
+/* 뷰 페이지 전용 스타일이 필요한 경우 여기에 작성 */
+</style>

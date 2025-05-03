@@ -91,7 +91,7 @@ onMounted(fetchData)
 
 
 <template>
-  <main class="admin-main">
+  <main>
     <AdminFilter @search="onSearch" :title="pageTitle">
       <label class="filter-label">
         작성자 ID:

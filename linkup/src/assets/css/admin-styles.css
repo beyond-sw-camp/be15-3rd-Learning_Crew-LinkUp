@@ -382,7 +382,8 @@ a {
     text-overflow: ellipsis;
 }
 
-/* ---------------- 신고 상세 ---------------- */
+
+/* 신고 상세 모달 공통 레이아웃 */
 .modal-report,
 .penalty-detail-section {
     background: #fff;
@@ -395,6 +396,7 @@ a {
     gap: 28px;
 }
 
+/* 제목 텍스트 */
 .modal-report-title {
     font-size: 22px;
     font-weight: 700;
@@ -407,7 +409,8 @@ a {
     margin-top: 10px;
 }
 
-.modal-report-section {
+/* 모달 섹션 */
+.modal-section {
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
@@ -415,10 +418,11 @@ a {
     border-bottom: 1px solid #f0f0f0;
 }
 
-.modal-report-section:last-child {
+.modal-section:last-child {
     border-bottom: none;
 }
 
+/* 구역 제목 */
 .section-title {
     font-size: 18px;
     font-weight: 600;
@@ -428,6 +432,7 @@ a {
     border-left: 4px solid #7d6fb3;
 }
 
+/*  기존 grid → 수직 정렬용 flex로 수정 */
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -451,6 +456,7 @@ a {
     color: #222;
 }
 
+/* 신고 사유 */
 .reason-box {
     background: #f9f9fb;
     border: 1px solid #e0e0e0;
@@ -461,33 +467,13 @@ a {
     line-height: 1.6;
 }
 
-.report-detail-container {
-    max-width: 960px;
-    min-width: 850px;
-    margin: 60px auto;
-    padding: 40px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-}
-
-.report-detail-container h2 {
-    font-size: 22px;
-    margin-bottom: 24px;
-    color: #333;
-}
-
-.report-detail-grid {
+/* 버튼 하단 정렬 */
+.modal-buttons {
     display: flex;
-    gap: 40px;
-    font-size: 15px;
-    margin-bottom: 20px;
-    color: #555;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
-.report-detail-grid div {
-    line-height: 1.5;
-}
 
 /* ---------------- 날짜 입력 ---------------- */
 .date-input-wrapper {
