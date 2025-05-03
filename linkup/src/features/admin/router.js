@@ -6,7 +6,7 @@ export const adminRoutes = [
             // 회원 관리
             {
                 path: '/admin/users',
-                redirect: '/admin/usersmembers'
+                redirect: '/admin/users/members'
             },
             {
                 path: 'users/members',
