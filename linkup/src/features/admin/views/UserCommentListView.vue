@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import AdminFilter from '@/features/admin/components/AdminFilter.vue'
 import AdminTable from '@/features/admin/components/AdminTable.vue'
-import Pagination from '@/components/common/Pagination.vue'
+import Pagination from '@/features/admin/components/Pagination.vue'
 import { fetchCommentList } from '@/api/admin.js'
 import '@/assets/css/admin-styles.css'
 

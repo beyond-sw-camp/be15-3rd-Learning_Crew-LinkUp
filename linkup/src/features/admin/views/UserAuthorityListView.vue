@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import AdminFilter from '@/features/admin/components/AdminFilter.vue'
 import AdminTable from '@/features/admin/components/AdminTable.vue'
-import Pagination from '@/components/common/Pagination.vue'
+import Pagination from '@/features/admin/components/Pagination.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
 import AdminModal from '@/features/admin/components/AdminModal.vue'
 import { updateUserAuthorityStatus, fetchUserAuthorityRequests } from '@/api/admin.js'
