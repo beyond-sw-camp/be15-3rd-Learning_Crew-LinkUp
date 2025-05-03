@@ -5,7 +5,6 @@ const props = defineProps({
   items: {
     type: Array,
     required: true,
-    // [{ icon: '🌟', label: '숙소' }]
   },
 });
 </script>
@@ -16,7 +15,7 @@ const props = defineProps({
       <ul class="search-items">
         <li v-for="(item, index) in items" :key="index">
           <button class="search-item" type="button">
-            <span class="icon" aria-hidden="true">{{ item.icon }}</span>
+            <img :src="item.icon" alt="카테고리 아이콘" class="icon shrink-0" aria-hidden="true" />
             <span class="label">{{ item.label }}</span>
           </button>
         </li>
@@ -28,7 +27,7 @@ const props = defineProps({
 
 <style scoped>
 .search-bar-wrapper {
-  @apply absolute top-0 left-0 w-full z-20 bg-background-surface shadow-md px-4 py-2;
+  @apply absolute top-0 left-0 w-full z-20 bg-background-surface shadow-md px-6 py-2;
 }
 
 .search-bar-content {
@@ -47,11 +46,13 @@ const props = defineProps({
 }
 
 .search-item {
-  @apply flex flex-col items-center text-center text-text-subtle text-sm whitespace-nowrap;
+  @apply shrink-0 flex flex-col items-center text-center text-text-subtle text-sm whitespace-nowrap cursor-pointer;
+  @apply hover:text-primary-default  transition-colors ease-in-out;
 }
 
 .icon {
-  @apply text-2xl mb-1;
+  @apply mb-3 w-[32px] h-[32px] shrink-0;
+  max-width: none; /* 추가!! */
 }
 
 .label {

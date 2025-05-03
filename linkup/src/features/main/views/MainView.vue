@@ -3,6 +3,10 @@ import { ref, computed } from 'vue';
 import SidebarMainLayout from '@/components/layout/SidebarMainLayout.vue';
 import SearchBar from '@/features/main/components/SearchBar.vue';
 import CardList from '@/components/common/CardList.vue';
+const sportsIcons = import.meta.glob('@/assets/icons/sports/*.svg', {
+  eager: true,
+  import: 'default',
+});
 
 const searchText = ref('');
 const cards = ref([
@@ -25,14 +29,15 @@ const filteredCards = computed(() => {
 });
 
 const searchItems = [
-  { icon: '👾', label: '이상천외한 숙소' },
-  { icon: '⭐', label: '컬쳐 아이콘' },
-  { icon: '🌲', label: '국립공원' },
-  { icon: '🏰', label: '캐슬' },
-  { icon: '🏌️‍♂️', label: '골프장' },
-  { icon: '🏛️', label: '유르트' },
-  { icon: '🏡', label: '한적한 시골' },
-  { icon: '🖼️', label: '최고의 전망' },
+  { icon: sportsIcons['/src/assets/icons/sports/whole.svg'], label: '전체' },
+  { icon: sportsIcons['/src/assets/icons/sports/football.svg'], label: '축구' },
+  { icon: sportsIcons['/src/assets/icons/sports/basketball.svg'], label: '농구' },
+  { icon: sportsIcons['/src/assets/icons/sports/badminton.svg'], label: '배드민턴' },
+  { icon: sportsIcons['/src/assets/icons/sports/golf.svg'], label: '골프' },
+  { icon: sportsIcons['/src/assets/icons/sports/bowling.svg'], label: '볼링' },
+  { icon: sportsIcons['/src/assets/icons/sports/tableTennis.svg'], label: '탁구' },
+  { icon: sportsIcons['/src/assets/icons/sports/tennis.svg'], label: '테니스' },
+  { icon: sportsIcons['/src/assets/icons/sports/etc.svg'], label: '기타' },
 ];
 </script>
 
