@@ -103,7 +103,6 @@
       }
     }
   },
-  "typhography": {
     "typography": {
       "display": {
         "fontSize": {
@@ -281,8 +280,7 @@
           "$type": "textTransform"
         }
       }
-    }
-  },
+    },
   "design_system": {
     "spacing": {
       "4": {
