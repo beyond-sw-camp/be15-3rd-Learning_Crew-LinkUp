@@ -79,7 +79,7 @@ export const adminRoutes = [
 
 
             // 신고 관리
-            /*{
+            {
                 path: '/admin/reports',
                 redirect: '/admin/reports/list'
             },
@@ -88,7 +88,7 @@ export const adminRoutes = [
                 name: 'ReportList',
                 component: () => import('@/features/admin/views/ReportListView.vue')
             },
-            {
+            /*{
                 path: 'reports/reporters',
                 name: 'ReportReporterList',
                 component: () => import('@/features/admin/views/ReportReporterListView.vue')

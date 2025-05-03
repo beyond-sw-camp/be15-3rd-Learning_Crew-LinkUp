@@ -140,3 +140,17 @@ export const fetchPlaceList = (params) => {
 export function fetchPlaceReviewList(params) {
     return api.get('/admin/place-reviews', { params })
 }
+
+// 신고 목록 조회 API
+    // 관리자 페이지에서 신고 내역을 필터링 조건에 따라 조회합니다.
+    // 필터 조건: 상태, 신고 유형, 페이지네이션
+    // 반환 데이터: 신고 ID, 신고자/피신고자 정보, 신고 유형, 상태, 일시 등
+export async function fetchReportList({ status = '', reportTypeId = '', page = 1 }) {
+    return await api.get('/admin/reports', {
+        params: {
+            status,         // 예: '처리중', '완료', '기각'
+            reportTypeId,   // 예: 1, 2, 3 등 (신고 유형 ID)
+            page            // 현재 페이지 번호
+        }
+    })
+}
