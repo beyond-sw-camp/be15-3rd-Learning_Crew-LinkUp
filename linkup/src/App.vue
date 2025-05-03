@@ -1,27 +1,19 @@
 <script setup>
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
-import Header from '@/components/layout/Header.vue'
-import Footer from '@/components/layout/Footer.vue'
-import '@/assets/css/init-styles.css'
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+import Header from '@/components/layout/Header.vue';
 
 // 현재 경로
-const route = useRoute()
+const route = useRoute();
 
-// /admin으로 시작하면 관리자 페이지임
-const isAdminRoute = computed(() => route.path.startsWith('/admin'))
+// /admin 경로 기반 필터링
+const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 </script>
 
 <template>
-  <div class="app-wrapper">
-    <Header />
-    <main class="app-main">
-      <router-view />
-    </main>
-    <Footer />
-  </div>
+  <!-- 일반 사용자 헤더만 조건부 출력 -->
+  <Header v-if="!isAdminRoute" />
+
+  <!-- 공통 라우터 뷰 (AdminLayout 포함됨) -->
+  <RouterView />
 </template>
-
-<style>
-
-</style>
