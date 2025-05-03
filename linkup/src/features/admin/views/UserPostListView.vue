@@ -9,7 +9,7 @@ import '@/assets/css/admin-styles.css'
 const props = defineProps({ pageTitle: String })
 
 const filters = ref({ writerId: '', isDeleted: '' })
-const posts = ref([])
+const requests = ref([])
 const page = ref(1)
 const totalPages = ref(1)
 const loading = ref(false)
@@ -24,11 +24,11 @@ const fetchData = async () => {
       isDeleted: filters.value.isDeleted,
       page: page.value
     })
-    posts.value = data.data
+    requests.value = data.data
     totalPages.value = data.totalPages || 1
   } catch (e) {
     error.value = '데이터를 불러오는 데 실패했습니다.'
-    posts.value = []
+    requests.value = []
   } finally {
     loading.value = false
   }
@@ -63,16 +63,10 @@ onMounted(fetchData)
     </label>
   </AdminFilter>
 
-  <!-- 로딩 중 -->
   <div v-if="loading">로딩 중...</div>
-
-  <!-- 에러 발생 -->
   <div v-else-if="error">{{ error }}</div>
+  <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
-  <!-- 데이터 없음 -->
-  <div v-else-if="posts.length === 0">불러올 데이터가 없습니다.</div>
-
-  <!-- 정상 테이블 렌더링 -->
   <div v-else>
     <AdminTable>
       <template #thead>
@@ -88,14 +82,14 @@ onMounted(fetchData)
         </tr>
       </template>
       <template #tbody>
-        <tr v-for="post in posts" :key="post.postId">
-          <td>{{ post.postId }}</td>
-          <td>{{ post.writerId }}</td>
-          <td>{{ post.writerName }}</td>
-          <td>{{ post.title }}</td>
-          <td>{{ post.createdAt }}</td>
-          <td>{{ post.deletedAt || '-' }}</td>
-          <td>{{ post.isDeleted === 'Y' ? '비공개' : '공개' }}</td>
+        <tr v-for="req in requests" :key="req.postId">
+          <td>{{ req.postId }}</td>
+          <td>{{ req.writerId }}</td>
+          <td>{{ req.writerName }}</td>
+          <td>{{ req.title }}</td>
+          <td>{{ req.createdAt }}</td>
+          <td>{{ req.deletedAt || '-' }}</td>
+          <td>{{ req.isDeleted === 'Y' ? '비공개' : '공개' }}</td>
           <td><a href="#">보기</a></td>
         </tr>
       </template>
@@ -106,5 +100,4 @@ onMounted(fetchData)
 </template>
 
 <style scoped>
-
 </style>

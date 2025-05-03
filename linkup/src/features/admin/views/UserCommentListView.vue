@@ -9,7 +9,7 @@ import '@/assets/css/admin-styles.css'
 const props = defineProps({ pageTitle: String })
 
 const filters = ref({ userId: '', isDeleted: '' })
-const comments = ref([])
+const requests = ref([])
 const page = ref(1)
 const totalPages = ref(1)
 const loading = ref(false)
@@ -24,11 +24,11 @@ const fetchData = async () => {
       isDeleted: filters.value.isDeleted,
       page: page.value
     })
-    comments.value = data.data
+    requests.value = data.data
     totalPages.value = data.totalPages || 1
   } catch (e) {
     error.value = '데이터를 불러오는 데 실패했습니다.'
-    comments.value = []
+    requests.value = []
   } finally {
     loading.value = false
   }
@@ -63,16 +63,10 @@ onMounted(fetchData)
     </label>
   </AdminFilter>
 
-  <!-- 로딩 중 -->
   <div v-if="loading">로딩 중...</div>
-
-  <!-- 에러 발생 -->
   <div v-else-if="error">{{ error }}</div>
+  <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
-  <!-- 데이터 없음 -->
-  <div v-else-if="comments.length === 0">불러올 데이터가 없습니다.</div>
-
-  <!-- 정상 테이블 렌더링 -->
   <div v-else>
     <AdminTable>
       <template #thead>
@@ -88,15 +82,15 @@ onMounted(fetchData)
         </tr>
       </template>
       <template #tbody>
-        <tr v-for="comment in comments" :key="comment.commentId">
-          <td>{{ comment.commentId }}</td>
-          <td>{{ comment.postId }}</td>
-          <td>{{ comment.userId }}</td>
-          <td>{{ comment.userName }}</td>
-          <td>{{ comment.content }}</td>
-          <td>{{ comment.createdAt }}</td>
-          <td>{{ comment.deletedAt || '-' }}</td>
-          <td>{{ comment.isDeleted === 'Y' ? '비공개' : '공개' }}</td>
+        <tr v-for="req in requests" :key="req.commentId">
+          <td>{{ req.commentId }}</td>
+          <td>{{ req.postId }}</td>
+          <td>{{ req.userId }}</td>
+          <td>{{ req.userName }}</td>
+          <td>{{ req.content }}</td>
+          <td>{{ req.createdAt }}</td>
+          <td>{{ req.deletedAt || '-' }}</td>
+          <td>{{ req.isDeleted === 'Y' ? '비공개' : '공개' }}</td>
         </tr>
       </template>
     </AdminTable>

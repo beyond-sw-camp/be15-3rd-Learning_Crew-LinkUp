@@ -6,7 +6,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import { fetchUserList } from '@/api/admin.js'
 import '@/assets/css/admin-styles.css'
 
-const users = ref([])
+const requests = ref([])
 const totalPages = ref(1)
 const page = ref(1)
 const loading = ref(false)
@@ -15,11 +15,11 @@ const error = ref(null)
 defineProps({ pageTitle: String })
 
 const filters = ref({
-  authority: '',
-  status: ''
+  authority: '',  // USER, BUSINESS, ADMIN
+  status: ''      // ACCEPTED, DELETED 등
 })
 
-const fetchUsers = async () => {
+const fetchData = async () => {
   loading.value = true
   error.value = null
   try {
@@ -28,11 +28,11 @@ const fetchUsers = async () => {
       status: filters.value.status,
       page: page.value
     })
-    users.value = data.data
+    requests.value = data.data
     totalPages.value = data.totalPages
   } catch (e) {
     error.value = '회원 정보를 불러오는 데 실패했습니다.'
-    users.value = []
+    requests.value = []
   } finally {
     loading.value = false
   }
@@ -40,17 +40,16 @@ const fetchUsers = async () => {
 
 const onSearch = () => {
   page.value = 1
-  fetchUsers()
+  fetchData()
 }
 
 const changePage = (newPage) => {
   page.value = newPage
-  fetchUsers()
+  fetchData()
 }
 
-onMounted(fetchUsers)
+onMounted(fetchData)
 </script>
-
 
 <template>
   <div>
@@ -59,8 +58,9 @@ onMounted(fetchUsers)
         권한:
         <select v-model="filters.authority" class="select-box">
           <option value="">전체</option>
-          <option value="MEMBER">회원</option>
+          <option value="USER">회원</option>
           <option value="BUSINESS">사업자</option>
+          <option value="ADMIN">관리자</option>
         </select>
       </label>
 
@@ -68,25 +68,17 @@ onMounted(fetchUsers)
         상태:
         <select v-model="filters.status" class="select-box">
           <option value="">전체</option>
-          <option value="ACTIVE">활성화</option>
-          <option value="INACTIVE">비활성화</option>
+          <option value="ACCEPTED">활성화</option>
+          <option value="DELETED">비활성화</option>
         </select>
       </label>
     </AdminFilter>
 
-
-    <!-- 로딩 중 -->
     <div v-if="loading">로딩 중...</div>
-
-    <!-- 에러 발생 -->
     <div v-else-if="error">{{ error }}</div>
+    <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
-    <!-- 데이터 없음 -->
-    <div v-else-if="users.length === 0">불러올 데이터가 없습니다.</div>
-
-    <!-- 정상 테이블 렌더링 -->
     <div v-else>
-
       <AdminTable>
         <template #thead>
           <tr>
@@ -101,15 +93,18 @@ onMounted(fetchUsers)
           </tr>
         </template>
         <template #tbody>
-          <tr v-for="user in users" :key="user.userId">
-            <td>{{ user.userId }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.nickname }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.authority }}</td>
-            <td>{{ user.point }}</td>
-            <td>{{ user.phone }}</td>
-            <td>{{ user.status === 'ACTIVE' ? '활성화' : '비활성화' }}</td>
+          <tr v-for="req in requests" :key="req.userId">
+            <td>{{ req.userId }}</td>
+            <td>{{ req.userName }}</td>
+            <td>{{ req.nickname || '-' }}</td>
+            <td>{{ req.email }}</td>
+            <td>{{ req.authority }}</td>
+            <td>{{ req.pointBalance.toLocaleString() }}P</td>
+            <td>{{ req.contactNumber }}</td>
+            <td>
+              {{ req.status === 'ACCEPTED' ? '활성화' :
+                req.status === 'DELETED' ? '비활성화' : req.status }}
+            </td>
           </tr>
         </template>
       </AdminTable>
@@ -121,6 +116,4 @@ onMounted(fetchUsers)
       />
     </div>
   </div>
-
 </template>
-

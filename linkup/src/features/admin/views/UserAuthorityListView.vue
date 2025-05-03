@@ -56,14 +56,18 @@ const handleDecision = async () => {
     alert('처리 상태를 선택해주세요.')
     return
   }
-  if (decision.value === '거절' && !rejectReason.value.trim()) {
+  if (decision.value === 'REJECTED' && !rejectReason.value.trim()) {
     alert('거절 사유를 입력해주세요.')
     return
   }
 
   try {
-    await updateUserAuthorityStatus(selectedRequest.value.id, decision.value, rejectReason.value)
-    alert(`사용자 ${selectedRequest.value.id} ${decision.value} 처리되었습니다.`)
+    await updateUserAuthorityStatus(
+        selectedRequest.value.ownerId,
+        decision.value,
+        rejectReason.value
+    )
+    alert(`사용자 ${selectedRequest.value.ownerId} ${decision.value === 'ACCEPTED' ? '승인' : '거절'} 처리되었습니다.`)
     closeModal()
     fetchData()
   } catch (e) {
@@ -85,47 +89,51 @@ onMounted(fetchData)
       상태:
       <select v-model="filters.status" class="select-box">
         <option value="">전체</option>
-        <option value="대기">대기</option>
-        <option value="승인">승인</option>
-        <option value="거절">거절</option>
+        <option value="PENDING">대기</option>
+        <option value="ACCEPTED">승인</option>
+        <option value="REJECTED">거절</option>
       </select>
     </label>
     <label class="filter-label">
       사용자 ID:
-      <input type="text" v-model="filters.userId" class="select-box id-input" placeholder="id" />
+      <input type="text" v-model="filters.userId" class="select-box id-input" placeholder="ID" />
     </label>
   </AdminFilter>
 
-  <!-- 로딩 중 -->
   <div v-if="loading">로딩 중...</div>
-
-  <!-- 에러 발생 -->
   <div v-else-if="error">{{ error }}</div>
-
-  <!-- 데이터 없음 -->
   <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
-  <!-- 정상 테이블 렌더링 -->
   <div v-else>
     <AdminTable>
       <template #thead>
         <tr>
           <th>사업자 ID</th>
-          <th>사업자 이름</th>
+          <th>이름</th>
           <th>상태</th>
           <th>사업자 등록증</th>
-          <th>처리 날짜</th>
+          <th>승인일자</th>
           <th>거절 사유</th>
         </tr>
       </template>
       <template #tbody>
-        <tr v-for="req in requests" :key="req.id">
-          <td>{{ req.id }}</td>
-          <td>{{ req.name }}</td>
-          <td>{{ req.status }}</td>
+        <tr v-for="req in requests" :key="req.ownerId">
+          <td>{{ req.ownerId }}</td>
+          <td>{{ req.userName }}</td>
+          <td>
+            {{
+              req.status === 'PENDING'
+                  ? '대기'
+                  : req.status === 'ACCEPTED'
+                      ? '승인'
+                      : req.status === 'REJECTED'
+                          ? '거절'
+                          : req.status
+            }}
+          </td>
           <td><a href="#" @click.prevent="openModal(req)">보기</a></td>
-          <td>{{ req.date }}</td>
-          <td>{{ req.reason }}</td>
+          <td>{{ req.authorizedAt || '-' }}</td>
+          <td>{{ req.rejectionReason || '-' }}</td>
         </tr>
       </template>
     </AdminTable>
@@ -140,23 +148,27 @@ onMounted(fetchData)
 
     <div class="modal-body">
       <div class="modal-left">
-        <img src="https://kctap.or.kr/images/popup/sample04_img01.gif" alt="사업자 등록증" class="modal-image" />
+        <img
+            :src="selectedRequest?.business_registration_document_url || '/default-image.png'"
+            alt="사업자 등록증"
+            class="modal-image"
+        />
       </div>
       <div class="modal-right">
-        <p><strong>사업자 ID:</strong> {{ selectedRequest.id }}</p>
-        <p><strong>사업자 이름:</strong> {{ selectedRequest.name }}</p>
-        <p><strong>이메일:</strong> {{ selectedRequest.email || '-' }}</p>
+        <p><strong>사업자 ID:</strong> {{ selectedRequest?.ownerId }}</p>
+        <p><strong>이름:</strong> {{ selectedRequest?.userName }}</p>
+        <p><strong>이메일:</strong> {{ selectedRequest?.email || '-' }}</p>
 
         <label class="modal-label">처리 상태:</label>
         <select v-model="decision" class="modal-select">
           <option value="">선택</option>
-          <option value="승인">승인</option>
-          <option value="거절">거절</option>
+          <option value="ACCEPTED">승인</option>
+          <option value="REJECTED">거절</option>
         </select>
 
-        <label class="modal-label" v-if="decision === '거절'">거절 사유:</label>
+        <label class="modal-label" v-if="decision === 'REJECTED'">거절 사유:</label>
         <input
-            v-if="decision === '거절'"
+            v-if="decision === 'REJECTED'"
             v-model="rejectReason"
             class="modal-input"
             placeholder="거절 사유 입력"
@@ -170,7 +182,3 @@ onMounted(fetchData)
     </template>
   </AdminModal>
 </template>
-
-<style scoped>
-
-</style>
