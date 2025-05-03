@@ -1,29 +1,31 @@
 <script setup>
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+import '@/assets/css/init-styles.css'
+
+const route = useRoute()
+
+// /admin 경로 여부 확인
+const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <RouterLink to="/" class="navbar-brand">My App</RouterLink>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <RouterLink to="/" class="nav-link">Main</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink to="/products" class="nav-link">Products</RouterLink>
-          </li>
-        </ul>
+  <!-- 일반 사용자 헤더만 출력 -->
+  <header v-if="!isAdminRoute">
+    <div class="main-header">
+      <div class="logo">
+        <img src="@/assets/icons/logo.svg" alt="로고" />
       </div>
+      <nav class="nav-menu">
+        <a href="#">커뮤니티</a>
+        <a href="#">모임</a>
+        <a href="#">장소</a>
+        <a href="#">사용자</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 </template>
 
 <style scoped>
-.navbar {
-  margin-bottom: 20px;
-}
+
 </style>
