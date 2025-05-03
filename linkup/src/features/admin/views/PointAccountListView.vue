@@ -51,66 +51,74 @@ onMounted(fetchData)
 </script>
 
 <template>
-  <AdminFilter @search="onSearch" :title="pageTitle">
-    <label class="filter-label">
-      권한:
-      <select v-model="filters.authority" class="select-box">
-        <option value="">전체</option>
-        <option value="MEMBER">회원</option>
-        <option value="OWNER">사업자</option>
-      </select>
-    </label>
-    <label class="filter-label">
-      상태:
-      <select v-model="filters.status" class="select-box">
-        <option value="">전체</option>
-        <option value="PENDING">대기</option>
-        <option value="APPROVED">승인</option>
-        <option value="REJECTED">거절</option>
-      </select>
-    </label>
-  </AdminFilter>
+  <main>
+    <section aria-label="계좌 필터">
+      <AdminFilter @search="onSearch" :title="pageTitle">
+        <label class="filter-label">
+          권한:
+          <select v-model="filters.authority" class="select-box">
+            <option value="">전체</option>
+            <option value="MEMBER">회원</option>
+            <option value="OWNER">사업자</option>
+          </select>
+        </label>
+        <label class="filter-label">
+          상태:
+          <select v-model="filters.status" class="select-box">
+            <option value="">전체</option>
+            <option value="PENDING">대기</option>
+            <option value="APPROVED">승인</option>
+            <option value="REJECTED">거절</option>
+          </select>
+        </label>
+      </AdminFilter>
+    </section>
 
-  <div v-if="loading">로딩 중...</div>
-  <div v-else-if="error">{{ error }}</div>
-  <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
+    <section aria-label="계좌 목록 테이블">
+      <div v-if="loading">로딩 중...</div>
+      <div v-else-if="error">{{ error }}</div>
+      <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
-  <div v-else>
-    <AdminTable>
-      <template #thead>
-        <tr>
-          <th>계좌 ID</th>
-          <th>사용자 ID</th>
-          <th>권한</th>
-          <th>상태</th>
-          <th>은행명</th>
-          <th>계좌번호</th>
-          <th>예금주명</th>
-          <th>등록일</th>
-        </tr>
-      </template>
-      <template #tbody>
-        <tr v-for="req in requests" :key="req.accountId">
-          <td>{{ req.accountId }}</td>
-          <td>{{ req.userId }}</td>
-          <td>{{ req.authority }}</td>
-          <td>
-            {{ req.status === 'PENDING' ? '대기' :
-              req.status === 'APPROVED' ? '승인' :
-                  req.status === 'REJECTED' ? '거절' : req.status }}
-          </td>
-          <td>{{ req.bankName }}</td>
-          <td>{{ req.accountNumber }}</td>
-          <td>{{ req.holderName }}</td>
-          <td>{{ req.createdAt }}</td>
-        </tr>
-      </template>
-    </AdminTable>
+      <article v-else>
+        <AdminTable>
+          <template #thead>
+            <tr>
+              <th>계좌 ID</th>
+              <th>사용자 ID</th>
+              <th>권한</th>
+              <th>상태</th>
+              <th>은행명</th>
+              <th>계좌번호</th>
+              <th>예금주명</th>
+              <th>등록일</th>
+            </tr>
+          </template>
+          <template #tbody>
+            <tr v-for="req in requests" :key="req.accountId">
+              <td>{{ req.accountId }}</td>
+              <td>{{ req.userId }}</td>
+              <td>{{ req.authority }}</td>
+              <td>
+                {{ req.status === 'PENDING' ? '대기' :
+                  req.status === 'APPROVED' ? '승인' :
+                      req.status === 'REJECTED' ? '거절' : req.status }}
+              </td>
+              <td>{{ req.bankName }}</td>
+              <td>{{ req.accountNumber }}</td>
+              <td>{{ req.holderName }}</td>
+              <td>{{ req.createdAt }}</td>
+            </tr>
+          </template>
+        </AdminTable>
 
-    <Pagination
-        :current-page="page"
-        :total-pages="totalPages"
-        @update:page="changePage"
-    />
-  </div>
+        <footer>
+          <Pagination
+              :current-page="page"
+              :total-pages="totalPages"
+              @update:page="changePage"
+          />
+        </footer>
+      </article>
+    </section>
+  </main>
 </template>

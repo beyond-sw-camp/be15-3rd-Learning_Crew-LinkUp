@@ -17,6 +17,18 @@ a {
     color: inherit;
 }
 
+/* ---------------- 전체 레이아웃 ---------------- */
+.admin-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-container {
+    display: flex;
+    flex: 1;
+}
+
 /* ---------------- 헤더 ---------------- */
 .admin-header {
     display: flex;
@@ -44,21 +56,22 @@ a {
     border-bottom: 2px solid #beb2dd;
 }
 
-/* ---------------- 전체 레이아웃 ---------------- */
-.admin-container {
-    display: flex;
-    height: calc(100vh - 68px);
-}
-
+/* ---------------- 사이드바 ---------------- */
 .admin-sidebar {
     width: 220px;
-    padding: 32px 20px;
-    background-color: #f7f6fc;
-    border-right: 1px solid #e3e1ed;
+    background-color: #f9f8fb;
+    padding: 20px 16px;
+    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.admin-sidebar ul {
+.sidebar-content ul {
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .admin-sidebar li {
@@ -75,41 +88,6 @@ a {
 
 .admin-sidebar a.active {
     background-color: #e8e4f7;
-}
-
-/* ---------------- 메인 ---------------- */
-.admin-main {
-    flex: 1;
-    padding: 40px;
-    overflow-y: auto;
-}
-
-.main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.page-title {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.admin-sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    background-color: #f9f8fb;
-    padding: 20px 16px;
-    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05);
-}
-
-.sidebar-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
 }
 
 .sidebar-footer {
@@ -129,6 +107,26 @@ a {
     color: #333;
 }
 
+/* ---------------- 메인 ---------------- */
+.admin-main {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 600;
+}
 
 /* ---------------- 필터 ---------------- */
 .filter-box {
@@ -261,6 +259,10 @@ a {
     text-align: center;
     margin-top: 8px;
 }
+.pagination-list {
+    display: flex;
+    justify-content: center;
+}
 
 .page-btn,
 .page-nav {
@@ -306,12 +308,6 @@ a {
     border: 1px solid #e3e6ef;
     width: 700px;
     max-width: 90%;
-}
-
-.modal-content img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
 }
 
 .modal-body {
@@ -367,7 +363,7 @@ a {
     margin-top: 24px;
 }
 
-/* ---------------- 신고 상세 모달 ---------------- */
+/* ---------------- 신고 상세 ---------------- */
 .modal-report,
 .penalty-detail-section {
     background: #fff;
@@ -413,7 +409,6 @@ a {
     border-left: 4px solid #7d6fb3;
 }
 
-/* 신고 상세 info grid */
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -447,7 +442,6 @@ a {
     line-height: 1.6;
 }
 
-/* ---------------- 신고 상세 테이블 페이지 ---------------- */
 .report-detail-container {
     max-width: 960px;
     min-width: 850px;
@@ -476,9 +470,7 @@ a {
     line-height: 1.5;
 }
 
-
-
-/* 날짜 스타일 */
+/* ---------------- 날짜 입력 ---------------- */
 .date-input-wrapper {
     position: relative;
     display: inline-block;
@@ -495,7 +487,6 @@ a {
     height: 40px;
 }
 
-/* input 안에 기본적으로 연-월-일 가짜 플레이스홀더처럼 보여주기 */
 .date-input:invalid::before {
     content: "연도 - 월 - 일";
     color: #bbb;
@@ -506,7 +497,6 @@ a {
     pointer-events: none;
 }
 
-/* 사용자가 선택하면 가짜 플레이스홀더 숨기기 */
 .date-input:focus:invalid::before {
     content: "";
 }

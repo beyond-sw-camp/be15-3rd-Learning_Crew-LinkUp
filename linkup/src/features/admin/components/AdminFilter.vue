@@ -8,18 +8,15 @@ const emit = defineEmits(['search'])
 const onSearch = () => emit('search')
 </script>
 
-
 <template>
-  <div class="filter-wrapper">
+  <section class="filter-wrapper">
     <h1 class="page-title" v-if="title">{{ title }}</h1>
-    <div class="filter-box">
+    <form class="filter-box" @submit.prevent="onSearch">
       <slot />
-      <AdminButton type="primary" @click="$emit('search')">검색</AdminButton>
-    </div>
-  </div>
+      <AdminButton type="primary" @click="onSearch">검색</AdminButton>
+    </form>
+  </section>
 </template>
 
-
 <style scoped>
-
 </style>

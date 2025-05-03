@@ -54,66 +54,78 @@ onMounted(fetchData)
 </script>
 
 <template>
-  <AdminFilter @search="onSearch" :title="pageTitle">
-    <label class="filter-label">
-      사용자 ID:
-      <input type="text" v-model="filters.userId" class="select-box id-input" placeholder="ID" />
-    </label>
-    <label class="filter-label">
-      권한:
-      <select v-model="filters.authority" class="select-box">
-        <option value="">전체</option>
-        <option value="MEMBER">회원</option>
-        <option value="OWNER">사업자</option>
-      </select>
-    </label>
-    <label class="filter-label">
-      트랜잭션 유형:
-      <select v-model="filters.transactionType" class="select-box">
-        <option value="">전체</option>
-        <option value="CHARGE">충전</option>
-        <option value="PAYMENT">지불</option>
-        <option value="REFUND">반환</option>
-        <option value="WITHDRAW">환불</option>
-      </select>
-    </label>
-    <label class="filter-label">
-      조회 기간:
-      <input type="date" v-model="filters.startDate" class="select-box date-input"> ~
-      <input type="date" v-model="filters.endDate" class="select-box date-input">
-    </label>
-  </AdminFilter>
+  <main>
+    <section aria-label="포인트 내역 필터">
+      <AdminFilter @search="onSearch" :title="pageTitle">
+        <label class="filter-label">
+          사용자 ID:
+          <input type="text" v-model="filters.userId" class="select-box id-input" placeholder="ID" />
+        </label>
+        <label class="filter-label">
+          권한:
+          <select v-model="filters.authority" class="select-box">
+            <option value="">전체</option>
+            <option value="MEMBER">회원</option>
+            <option value="OWNER">사업자</option>
+          </select>
+        </label>
+        <label class="filter-label">
+          트랜잭션 유형:
+          <select v-model="filters.transactionType" class="select-box">
+            <option value="">전체</option>
+            <option value="CHARGE">충전</option>
+            <option value="PAYMENT">지불</option>
+            <option value="REFUND">반환</option>
+            <option value="WITHDRAW">환불</option>
+          </select>
+        </label>
+        <label class="filter-label">
+          조회 기간:
+          <input type="date" v-model="filters.startDate" class="select-box date-input"> ~
+          <input type="date" v-model="filters.endDate" class="select-box date-input">
+        </label>
+      </AdminFilter>
+    </section>
 
-  <div v-if="loading">로딩 중...</div>
-  <div v-else-if="error">{{ error }}</div>
-  <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
+    <section aria-label="포인트 내역 목록">
+      <div v-if="loading">로딩 중...</div>
+      <div v-else-if="error">{{ error }}</div>
+      <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
-  <div v-else>
-    <AdminTable>
-      <template #thead>
-        <tr>
-          <th>ID</th>
-          <th>사용자 ID</th>
-          <th>사용자 이름</th>
-          <th>권한</th>
-          <th>금액</th>
-          <th>유형</th>
-          <th>일시</th>
-        </tr>
-      </template>
-      <template #tbody>
-        <tr v-for="req in requests" :key="req.pointTransactionId">
-          <td>{{ req.pointTransactionId }}</td>
-          <td>{{ req.userId }}</td>
-          <td>{{ req.userName }}</td>
-          <td>{{ req.authority }}</td>
-          <td>{{ req.amount > 0 ? '+' + req.amount.toLocaleString() : req.amount.toLocaleString() }}</td>
-          <td>{{ req.transactionType }}</td>
-          <td>{{ req.createdAt }}</td>
-        </tr>
-      </template>
-    </AdminTable>
+      <article v-else>
+        <AdminTable>
+          <template #thead>
+            <tr>
+              <th>ID</th>
+              <th>사용자 ID</th>
+              <th>사용자 이름</th>
+              <th>권한</th>
+              <th>금액</th>
+              <th>유형</th>
+              <th>일시</th>
+            </tr>
+          </template>
+          <template #tbody>
+            <tr v-for="req in requests" :key="req.pointTransactionId">
+              <td>{{ req.pointTransactionId }}</td>
+              <td>{{ req.userId }}</td>
+              <td>{{ req.userName }}</td>
+              <td>{{ req.authority }}</td>
+              <td>{{ req.amount > 0 ? '+' + req.amount.toLocaleString() : req.amount.toLocaleString() }}</td>
+              <td>{{ req.transactionType }}</td>
+              <td>{{ req.createdAt }}</td>
+            </tr>
+          </template>
+        </AdminTable>
 
-    <Pagination :current-page="page" :total-pages="totalPages" @update:page="changePage" />
-  </div>
+        <footer>
+          <Pagination
+              :current-page="page"
+              :total-pages="totalPages"
+              @update:page="changePage"
+          />
+        </footer>
+      </article>
+    </section>
+  </main>
 </template>
