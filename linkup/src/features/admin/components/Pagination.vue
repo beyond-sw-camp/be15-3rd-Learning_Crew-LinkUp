@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import '@/assets/css/admin-styles.css'
 
 const props = defineProps({
   currentPage: Number,
@@ -34,53 +35,28 @@ const visiblePages = computed(() => {
 })
 </script>
 
-
 <template>
-  <div class="pagination">
-    <button class="page-btn" @click="goToFirstPage" :disabled="currentPage === 1">«</button>
-    <button class="page-btn" @click="goToPrevPage" :disabled="currentPage === 1">‹</button>
+  <nav class="pagination" aria-label="페이지 네비게이션">
+    <ul class="pagination-list">
+      <li><button class="page-btn page-nav" @click="goToFirstPage" :disabled="currentPage === 1" aria-label="첫 페이지">&lt;&lt;</button></li>
+      <li><button class="page-btn page-nav" @click="goToPrevPage" :disabled="currentPage === 1" aria-label="이전 페이지">&lt;</button></li>
 
-    <button
-        v-for="page in visiblePages"
-        :key="page"
-        @click="$emit('update:page', page)"
-        :class="['page-btn', { active: page === currentPage }]"
-    >
-      {{ page }}
-    </button>
+      <li v-for="page in visiblePages" :key="page">
+        <button
+            @click="$emit('update:page', page)"
+            :class="['page-btn page-nav', { active: page === currentPage }]"
+            :aria-current="page === currentPage ? 'page' : null"
+        >
+          {{ page }}
+        </button>
+      </li>
 
-    <button class="page-btn" @click="goToNextPage" :disabled="currentPage === totalPages">›</button>
-    <button class="page-btn" @click="goToLastPage" :disabled="currentPage === totalPages">»</button>
-  </div>
+      <li><button class="page-btn page-nav" @click="goToNextPage" :disabled="currentPage === totalPages" aria-label="다음 페이지">&gt;</button></li>
+      <li><button class="page-btn page-nav" @click="goToLastPage" :disabled="currentPage === totalPages" aria-label="마지막 페이지">&gt;&gt;</button></li>
+    </ul>
+  </nav>
 </template>
 
-
 <style scoped>
-.pagination {
-  text-align: center;
-  margin-top: 8px;
-}
 
-.page-btn,
-.page-nav {
-  border: none;
-  background-color: #fff;
-  color: #333;
-  padding: 8px 14px;
-  margin: 0 3px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.page-btn:hover,
-.page-nav:hover {
-  background-color: #dcd5f2;
-}
-
-.page-btn.active {
-  background-color: #b7a6e4;
-  color: #fff;
-  font-weight: 600;
-}
 </style>

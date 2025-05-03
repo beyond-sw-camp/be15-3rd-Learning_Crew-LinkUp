@@ -13,10 +13,9 @@ const route = useRoute()
 const isActive = (path) => route.path.startsWith(path)
 </script>
 
-
 <template>
-  <aside class="admin-sidebar">
-    <div class="sidebar-content">
+  <aside class="admin-sidebar" aria-label="관리자 메뉴">
+    <nav class="sidebar-content">
       <ul>
         <li v-for="item in menuItems" :key="item.path">
           <RouterLink
@@ -26,17 +25,14 @@ const isActive = (path) => route.path.startsWith(path)
           >
             {{ item.label }}
           </RouterLink>
-
         </li>
       </ul>
-    </div>
-    <div class="sidebar-footer">
+    </nav>
+    <footer class="sidebar-footer">
       <RouterLink to="/" class="return-link">서비스로 돌아가기</RouterLink>
-    </div>
+    </footer>
   </aside>
 </template>
 
-
 <style scoped>
-
 </style>
