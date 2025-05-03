@@ -75,14 +75,5 @@ const pageTitle = computed(() => {
 
 
 <style scoped>
-.admin-container {
-  display: flex;
-  height: calc(100vh - 68px);
-}
 
-.admin-main {
-  flex: 1;
-  padding: 40px;
-  overflow-y: auto;
-}
 </style>

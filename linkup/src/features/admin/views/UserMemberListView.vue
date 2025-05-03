@@ -52,68 +52,76 @@ onMounted(fetchData)
 </script>
 
 <template>
-  <div>
-    <AdminFilter @search="onSearch" :title="pageTitle">
-      <label class="filter-label">
-        권한:
-        <select v-model="filters.authority" class="select-box">
-          <option value="">전체</option>
-          <option value="USER">회원</option>
-          <option value="BUSINESS">사업자</option>
-          <option value="ADMIN">관리자</option>
-        </select>
-      </label>
+  <main>
+    <!-- 필터 영역 -->
+    <section aria-label="회원 필터">
+      <AdminFilter @search="onSearch" :title="pageTitle">
+        <label class="filter-label">
+          권한:
+          <select v-model="filters.authority" class="select-box">
+            <option value="">전체</option>
+            <option value="USER">회원</option>
+            <option value="BUSINESS">사업자</option>
+            <option value="ADMIN">관리자</option>
+          </select>
+        </label>
 
-      <label class="filter-label">
-        상태:
-        <select v-model="filters.status" class="select-box">
-          <option value="">전체</option>
-          <option value="ACCEPTED">활성화</option>
-          <option value="DELETED">비활성화</option>
-        </select>
-      </label>
-    </AdminFilter>
+        <label class="filter-label">
+          상태:
+          <select v-model="filters.status" class="select-box">
+            <option value="">전체</option>
+            <option value="ACCEPTED">활성화</option>
+            <option value="DELETED">비활성화</option>
+          </select>
+        </label>
+      </AdminFilter>
+    </section>
 
-    <div v-if="loading">로딩 중...</div>
-    <div v-else-if="error">{{ error }}</div>
-    <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
+    <!-- 목록 출력 -->
+    <section aria-label="회원 목록">
+      <div v-if="loading">로딩 중...</div>
+      <div v-else-if="error">{{ error }}</div>
+      <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
 
-    <div v-else>
-      <AdminTable>
-        <template #thead>
-          <tr>
-            <th>회원 ID</th>
-            <th>이름</th>
-            <th>닉네임</th>
-            <th>이메일</th>
-            <th>권한</th>
-            <th>보유 포인트</th>
-            <th>연락처</th>
-            <th>계정 상태</th>
-          </tr>
-        </template>
-        <template #tbody>
-          <tr v-for="req in requests" :key="req.userId">
-            <td>{{ req.userId }}</td>
-            <td>{{ req.userName }}</td>
-            <td>{{ req.nickname || '-' }}</td>
-            <td>{{ req.email }}</td>
-            <td>{{ req.authority }}</td>
-            <td>{{ req.pointBalance.toLocaleString() }}P</td>
-            <td>{{ req.contactNumber }}</td>
-            <td>
-              {{ req.status === 'ACCEPTED' ? '활성화' :
-                req.status === 'DELETED' ? '비활성화' : req.status }}
-            </td>
-          </tr>
-        </template>
-      </AdminTable>
+      <article v-else>
+        <AdminTable>
+          <template #thead>
+            <tr>
+              <th>회원 ID</th>
+              <th>이름</th>
+              <th>닉네임</th>
+              <th>이메일</th>
+              <th>권한</th>
+              <th>보유 포인트</th>
+              <th>연락처</th>
+              <th>계정 상태</th>
+            </tr>
+          </template>
+          <template #tbody>
+            <tr v-for="req in requests" :key="req.userId">
+              <td>{{ req.userId }}</td>
+              <td>{{ req.userName }}</td>
+              <td>{{ req.nickname || '-' }}</td>
+              <td>{{ req.email }}</td>
+              <td>{{ req.authority }}</td>
+              <td>{{ req.pointBalance.toLocaleString() }}P</td>
+              <td>{{ req.contactNumber }}</td>
+              <td>
+                {{ req.status === 'ACCEPTED' ? '활성화' :
+                  req.status === 'DELETED' ? '비활성화' : req.status }}
+              </td>
+            </tr>
+          </template>
+        </AdminTable>
 
-      <Pagination
-          :current-page="page"
-          :total-pages="totalPages"
-          @update:page="changePage"
-      />
-    </div>
-  </div>
+        <footer>
+          <Pagination
+              :current-page="page"
+              :total-pages="totalPages"
+              @update:page="changePage"
+          />
+        </footer>
+      </article>
+    </section>
+  </main>
 </template>
