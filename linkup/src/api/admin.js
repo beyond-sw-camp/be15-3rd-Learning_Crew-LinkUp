@@ -107,12 +107,36 @@ export function fetchSportTypes() {
 }
 
 /* 10. 참가자 평가 내역 조회
- * @param {Object} params - 검색 조건
- * @param {'meetingId'|'writerId'|'revieweeId'} params.searchType - 검색 기준
- * @param {string} params.searchKeyword - 검색 키워드
- * @param {number} params.page - 현재 페이지
- * @returns {Promise} 참가자 평가 리스트 + 페이지 정보
- */
+     * @param {Object} params - 검색 조건
+     * @param {'meetingId'|'writerId'|'revieweeId'} params.searchType - 검색 기준
+     * @param {string} params.searchKeyword - 검색 키워드
+     * @param {number} params.page - 현재 페이지
+     * @returns {Promise} 참가자 평가 리스트 + 페이지 정보
+     */
 export const fetchParticipantReviewList = (params) => {
     return api.get('/admin/participant-reviews', { params })
+}
+
+/* 11. 장소 목록을 필터링 조건과 함께 조회합니다.
+     * @param {Object} params - 필터 조건
+     * @param {string} [params.sportId] - 운동 종목 ID
+     * @param {string} [params.ownerId] - 사업자 ID
+     * @param {string} [params.isActive] - 활성화 여부 ('Y' | 'N')
+     * @param {number} [params.page] - 페이지 번호
+     * @returns {Promise<{ data: { data: Array, totalPages: number } }>} 장소 목록 데이터
+     */
+export const fetchPlaceList = (params) => {
+    return api.get('/admin/places', { params })
+}
+
+/* 12. 장소 후기 목록 조회 API
+     * @param {Object} params - 필터링 및 페이징 파라미터
+     * @param {string} [params.writerId] - 후기 작성자 ID (선택)
+     * @param {string} [params.placeId] - 장소 ID (선택)
+     * @param {string} [params.isActive] - 활성화 여부: 'Y' | 'N' | '' (선택)
+     * @param {number} [params.page=1] - 페이지 번호 (기본값: 1)
+     * @returns {Promise<Object>} 후기 목록과 페이징 정보
+     */
+export function fetchPlaceReviewList(params) {
+    return api.get('/admin/place-reviews', { params })
 }

@@ -81,8 +81,6 @@ onMounted(async () => {
 
 <template>
   <main>
-    <header>
-    </header>
 
     <section aria-label="필터 영역">
       <AdminFilter @search="onSearch" :title="pageTitle">
