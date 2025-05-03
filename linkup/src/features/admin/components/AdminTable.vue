@@ -1,7 +1,7 @@
 <script setup>
 import '@/assets/css/admin-styles.css'
 
-// 이 컴포넌트는 데이터/컬럼 구조가 다양하므로 slot 기반 구조
+// 데이터/컬럼 구조가 다양하므로 slot 기반 구조
 </script>
 
 

@@ -38,7 +38,7 @@ export const adminRoutes = [
                 path: 'points/points',
                 name: 'PointHistoryList',
                 component: () => import('@/features/admin/views/PointHistoryListView.vue')
-            }/*,
+            },
             {
                 path: 'points/accounts',
                 name: 'PointAccountList',
@@ -46,7 +46,7 @@ export const adminRoutes = [
             },
 
             // 장소 관리
-            {
+            /*{
                 path: '/admin/places',
                 redirect: '/admin/places/list'
             },
