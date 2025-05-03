@@ -6,20 +6,20 @@ export const adminRoutes = [
             {
                 path: 'users/members',
                 name: 'UserMemberList',
-                component: () => import('@/features/admin/views/UserMemberList.vue')
-            },
-            /*{
-                path: 'user/authority',
-                name: 'UserAuthorityList',
-                component: () => import('@/features/admin/views/UserAuthorityList.vue')
+                component: () => import('@/features/admin/views/UserMemberListView.vue')
             },
             {
-                path: 'user/posts',
+                path: 'users/authorities',
+                name: 'UserAuthorityList',
+                component: () => import('@/features/admin/views/UserAuthorityListView.vue')
+            },
+            /*{
+                path: 'users/posts',
                 name: 'UserPostList',
                 component: () => import('@/features/admin/views/UserPostList.vue')
             },
             {
-                path: 'user/comments',
+                path: 'users/comments',
                 name: 'UserCommentList',
                 component: () => import('@/features/admin/views/UserCommentList.vue')
             },

@@ -11,7 +11,7 @@ const sidebarItems = computed(() => {
   if (route.path.startsWith('/admin/user')) {
     return [
       { label: '회원 목록 조회', path: '/admin/users/members' },
-      { label: '권한 요청 목록', path: '/admin/users/authority' },
+      { label: '권한 요청 목록', path: '/admin/users/authorities' },
       { label: '게시글 내역 조회', path: '/admin/users/posts' },
       { label: '댓글 내역 조회', path: '/admin/users/comments' }
     ]

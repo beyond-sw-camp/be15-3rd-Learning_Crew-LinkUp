@@ -1,4 +1,6 @@
 <script setup>
+import AdminButton from "@/features/admin/components/AdminButton.vue";
+
 defineProps({ title: String })
 
 const emit = defineEmits(['search'])
@@ -11,7 +13,7 @@ const onSearch = () => emit('search')
     <h1 class="page-title" v-if="title">{{ title }}</h1>
     <div class="filter-box">
       <slot />
-      <button class="btn btn-primary" @click="$emit('search')">검색</button>
+      <AdminButton type="primary" @click="$emit('search')">검색</AdminButton>
     </div>
   </div>
 </template>
@@ -52,5 +54,8 @@ const onSearch = () => emit('search')
   border-radius: 6px;
   background-color: #fff;
   color: #333;
+}
+.id-input {
+  width: 50px;
 }
 </style>

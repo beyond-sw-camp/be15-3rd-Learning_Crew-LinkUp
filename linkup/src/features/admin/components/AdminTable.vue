@@ -15,7 +15,7 @@
 </template>
 
 
-<style scoped>
+<style>
 .admin-table {
   width: 100%;
   border-collapse: collapse;

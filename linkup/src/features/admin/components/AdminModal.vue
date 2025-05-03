@@ -1,4 +1,6 @@
 <script setup>
+import AdminButton from "@/features/admin/components/AdminButton.vue";
+
 defineProps({
   modelValue: {
     type: Boolean,
@@ -18,7 +20,7 @@ defineEmits(['update:modelValue'])
       <slot />
       <div class="modal-buttons">
         <slot name="footer">
-          <button class="btn btn-secondary" @click="$emit('update:modelValue', false)">닫기</button>
+          <AdminButton type="secondary" @click="$emit('update:modelValue', false)">닫기</AdminButton>
         </slot>
       </div>
     </div>
@@ -26,7 +28,7 @@ defineEmits(['update:modelValue'])
 </template>
 
 
-<style scoped>
+<style>
 .modal {
   position: fixed;
   top: 0;
@@ -58,9 +60,58 @@ defineEmits(['update:modelValue'])
   margin-bottom: 8px;
 }
 
+.modal-content img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.modal-body {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+
+.modal-left {
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-left img {
+  width: 240px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.modal-right {
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 10px;
+}
+
+.modal-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+.modal-select,
+.modal-input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.modal-footer,
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  margin-top: 24px;
 }
+
 </style>

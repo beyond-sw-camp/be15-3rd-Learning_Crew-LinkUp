@@ -81,7 +81,7 @@ onMounted(fetchUsers)
     <div v-else-if="error">{{ error }}</div>
 
     <!-- 데이터 없음 -->
-    <div v-else-if="users.length === 0">회원이 없습니다.</div>
+    <div v-else-if="users.length === 0">불러올 데이터가 없습니다.</div>
 
     <!-- 정상 테이블 렌더링 -->
     <div v-else>
