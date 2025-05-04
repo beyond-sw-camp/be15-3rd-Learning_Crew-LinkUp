@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue';
-import { BanknotesIcon } from '@heroicons/vue/16/solid/index.js';
+// import { BanknotesIcon } from '@heroicons/vue/16/solid/index.js';
 
 const props = defineProps({
   imageUrl: { type: String, default: '' },
