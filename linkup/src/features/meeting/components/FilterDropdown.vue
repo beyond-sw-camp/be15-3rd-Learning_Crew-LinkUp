@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, watch, computed } from 'vue'
-import SearchRegionDropdown from './SearchRegionDropdown.vue'
+import FilterRegionDropdown from '../../../components/common/FilterRegionDropdown.vue'
 import SearchSportIcons from './SearchSportIcons.vue'
 
 const props = defineProps({
@@ -48,7 +48,7 @@ function applyFilter() {
     <!-- 지역 -->
     <div class="filter-group">
       <label class="filter-label">지역</label>
-      <SearchRegionDropdown v-model="localFilters.regionCode" :regions="regionOptions" />
+      <FilterRegionDropdown v-model="localFilters.regionCode" :regions="regionOptions" />
     </div>
 
     <!-- 성별 -->

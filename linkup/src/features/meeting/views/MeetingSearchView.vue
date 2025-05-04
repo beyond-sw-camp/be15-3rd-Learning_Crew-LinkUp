@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue'
 import SearchSportIcons from '@/features/meeting/components/SearchSportIcons.vue'
-import SearchMap from '@/features/meeting/components/SearchMap.vue'
+import MapDisplay from '@/components/common/MapDisplay.vue'
 import FilterDropdown from '@/features/meeting/components/FilterDropdown.vue'
 import FloatingNav from '@/features/meeting/components/FloatingNav.vue'
 import MeetingCard from '@/features/meeting/components/MeetingCard.vue'
@@ -114,7 +114,7 @@ function toggleFilterDropdown() {
 
     <!-- 지도 -->
     <div class="map-section">
-      <SearchMap :items="meetings" mapType="meeting" />
+      <MapDisplay :items="meetings" mapType="meeting" />
     </div>
 
     <!-- 플로팅 네비게이션 -->
