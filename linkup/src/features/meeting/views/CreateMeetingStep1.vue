@@ -3,6 +3,9 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
 
+const MIN_USER = 2;
+const MAX_USER = 30;
+
 const router = useRouter();
 
 const placeName = '신촌 풋살 센터';
@@ -32,6 +35,21 @@ const goToNextStep = () => {
   // 유효성 검증
   if (!selectedDate.value || !selectedTimeSlot) {
     alert('날짜와 시간을 선택해주세요.');
+    return;
+  }
+
+  if (minUser.value < MIN_USER) {
+    alert(`최소 인원은 ${MIN_USER}명 이상이어야 합니다.`);
+    return;
+  }
+
+  if (maxUser.value > MAX_USER) {
+    alert(`최대 인원은 ${MAX_USER}명 이하여야 합니다.`);
+    return;
+  }
+
+  if (maxUser.value < minUser.value) {
+    alert(`최대 인원은 최소 인원보다 적을 수 없습니다.`);
     return;
   }
 
@@ -86,11 +104,11 @@ const participationFee = computed(() => {
     <div class="form-group-inline">
       <div>
         <label class="group-label">최소 인원</label>
-        <input type="number" class="input-box" min="2" v-model="minUser" />
+        <input type="number" class="input-box" v-model="minUser" />
       </div>
       <div>
         <label class="group-label">최대 인원</label>
-        <input type="number" class="input-box" max="30" v-model="maxUser" />
+        <input type="number" class="input-box" v-model="maxUser" />
       </div>
     </div>
 
