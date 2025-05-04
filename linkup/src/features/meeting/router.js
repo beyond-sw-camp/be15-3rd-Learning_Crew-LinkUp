@@ -2,11 +2,12 @@ export const meetingRoutes = [
   {
     path: '/meetings',
     // component: () => import('@/components/layout/AdminLayout.vue'),
-    children: [{
-      path: '',
-      name: 'Meetings',
-      component: () => import('@/features/meeting/views/Meetings.vue')
-    },
+    children: [
+    //   {
+    //   path: '',
+    //   name: 'Meetings',
+    //   component: () => import('@/features/meeting/views/Meetings.vue')
+    // },
       {
         path: ':meetingId',
         name: 'MeetingDetails',
@@ -26,8 +27,13 @@ export const meetingRoutes = [
         path: ':meetingId/review/place',
         name: 'CreatePlaceReview',
         component: () => import('@/features/meeting/views/CreatePlaceReview.vue')
-      }
+      },
 
-    ]
+    ],
+  {
+    path: '/meetings',
+    name: 'MeetingSearch',
+    component: () => import('@/features/meeting/views/MeetingSearchView.vue')
   }
+
 ]
