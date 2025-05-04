@@ -1007,7 +1007,7 @@ a {
 /* ---------------- 플로팅 네비게이션 ---------------- */
 .floating-nav {
     position: fixed;
-    top: 80px;
+    top: 100px;
     right: 24px;
     background: #F3F6FF;
     border-radius: 40px;
