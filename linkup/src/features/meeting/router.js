@@ -28,7 +28,36 @@ export const meetingRoutes = [
         name: 'CreatePlaceReview',
         component: () => import('@/features/meeting/views/CreatePlaceReview.vue')
       },
-
+      {
+        path: 'create/reserved/step1',
+        name: 'CreateMeetingStep1Reserved',
+        component: () => import('@/features/meeting/views/CreateMeetingStep1.vue')
+      },
+      {
+        path: 'create/reserved/step2',
+        name: 'CreateMeetingStep2Reserved',
+        component: () => import('@/features/meeting/views/CreateMeetingStep2.vue')
+      },
+      {
+        path: 'create/reserved/step3',
+        name: 'CreateMeetingStep3Reserved',
+        component: () => import('@/features/meeting/views/CreateMeetingStep3.vue')
+      },
+      {
+        path: 'create/custom/step1',
+        name: 'CreateMeetingStep1Custom',
+        component: () => import('@/features/meeting/views/CreateMeetingStep1.vue')
+      },
+      {
+        path: 'create/custom/step2',
+        name: 'CreateMeetingStep2Custom',
+        component: () => import('@/features/meeting/views/CreateMeetingStep2.vue')
+      },
+      {
+        path: 'create/custom/step3',
+        name: 'CreateMeetingStep3Custom',
+        component: () => import('@/features/meeting/views/CreateMeetingStep3.vue')
+      }
     ]
   },
   {

@@ -127,4 +127,7 @@ function toggleFilterDropdown() {
 </template>
 
 <style scoped>
+.sidebar {
+  width: 500px;
+}
 </style>
