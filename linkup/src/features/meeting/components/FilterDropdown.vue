@@ -1,7 +1,6 @@
 <script setup>
 import { reactive, watch, computed } from 'vue'
 import FilterRegionDropdown from '../../../components/common/FilterRegionDropdown.vue'
-import SearchSportIcons from './SearchSportIcons.vue'
 
 const props = defineProps({
   filters: Object,

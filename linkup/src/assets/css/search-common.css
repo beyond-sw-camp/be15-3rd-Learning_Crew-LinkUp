@@ -212,7 +212,7 @@ a {
     flex-direction: column;
     position: relative;
 }
-.place-card img,
+
 .place-card .placeholder-img {
     width: 100%;
     height: 200px;

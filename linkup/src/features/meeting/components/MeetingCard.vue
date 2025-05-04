@@ -38,6 +38,7 @@ function formatDate(iso) {
         </button>
       </header>
 
+
       <h3 class="title">{{ meeting.title }}</h3>
 
       <p class="location">
