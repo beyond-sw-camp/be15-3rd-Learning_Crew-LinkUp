@@ -24,7 +24,7 @@ function formatPrice(value) {
 
 <template>
   <div class="place-card">
-    <img :src="place.thumbnailUrl || fallbackImage" alt="장소 이미지" />
+    <img :src="place.thumbnailUrl || fallbackImage" alt="장소 이미지" class="meeting-img" />
     <div class="place-info">
       <div class="place-title-row">
         <h3>{{ place.name }}</h3>
