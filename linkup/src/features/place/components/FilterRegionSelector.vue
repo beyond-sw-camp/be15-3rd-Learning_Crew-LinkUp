@@ -49,7 +49,7 @@ watch(() => props.modelValue, (val) => {
 
 <template>
   <div class="sport-select-wrapper">
-    <label class="sport-select-label" for="sport-select">운동 종류:</label>
+    <label class="sport-select-label" for="sport-select">지역 :</label>
     <div class="region-dropdown-row">
       <select class="select-box" v-model="mainRegion" @change="onMainChange">
         <option value="">전체</option>
