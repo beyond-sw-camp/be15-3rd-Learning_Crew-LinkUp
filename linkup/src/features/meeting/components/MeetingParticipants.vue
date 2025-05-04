@@ -1,6 +1,7 @@
 <!-- src/features/meeting/components/MeetingParticipants.vue -->
 <template>
-  <section class="organizer-section">
+  <slot name="organizer-section">
+    <section class="organizer-section">
     <h2>개설자 정보</h2>
     <div class="organizer-card">
       <img :src="leader.image" alt="개설자 이미지" class="leader-img" />
@@ -13,6 +14,7 @@
       </div>
     </div>
   </section>
+  </slot>
 </template>
 
 <script setup>

@@ -29,7 +29,8 @@ export const meetingRoutes = [
         component: () => import('@/features/meeting/views/CreatePlaceReview.vue')
       },
 
-    ],
+    ]
+  },
   {
     path: '/meetings',
     name: 'MeetingSearch',
