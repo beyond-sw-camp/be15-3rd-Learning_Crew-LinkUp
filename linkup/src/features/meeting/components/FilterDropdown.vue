@@ -23,7 +23,7 @@ function applyFilter() {
   <div class="filter-dropdown-panel">
 
     <div class="filter-title">
-      <img src="@/assets/icons/meeting_and_place/sidebar-gear.svg" alt="상세 필터" width="20" height="20" />
+      <img src="@/assets/icons/meeting_and_place/filter.svg" alt="상세 필터" width="20" height="20" />
       상세 조건 필터
     </div>
 
@@ -33,7 +33,7 @@ function applyFilter() {
       <div class="filter-label">운동 종목</div>
       <div class="filter-chip-group">
         <button
-          v-for="sport in ['풋살', '테니스', '탁구', '농구', '배드민턴', '기타']"
+          v-for="sport in ['풋살', '테니스', '볼링', '탁구', '농구', '골프', '배드민턴', '기타']"
           :key="sport"
           class="filter-chip"
           :class="{ active: filters.sportType === sport }"

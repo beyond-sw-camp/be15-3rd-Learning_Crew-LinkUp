@@ -43,6 +43,10 @@ function handleNavigate(type) {
           <img src="@/assets/icons/meeting_and_place/sidebar-participated_meetings.svg" alt="참가 모임" width="24" height="24" />
         </button>
 
+        <button class="nav-btn" @click="handleNavigate('pending')" title="참가 신청한 모임 조회">
+          <img src="@/assets/icons/meeting_and_place/sidebar-pending_meetings.svg" alt="참가 신청 모임" width="24" height="24" />
+        </button>
+
         <button class="nav-btn" @click="handleNavigate('liked')" title="찜한 모임">
           <img src="@/assets/icons/meeting_and_place/heart.svg" alt="찜한 모임" width="24" height="24" />
         </button>

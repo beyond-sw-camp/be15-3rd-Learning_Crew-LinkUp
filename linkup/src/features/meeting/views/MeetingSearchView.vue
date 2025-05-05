@@ -95,7 +95,7 @@ function toggleFilterDropdown() {
         <SearchSportIcons :sports="sportsList" v-model:selected="selectedSport" />
 
         <button class="filter-chip-button" @click="toggleFilterDropdown">
-          <img src="@/assets/icons/meeting_and_place/sidebar-gear.svg" alt="필터" width="16" height="16" />
+          <img src="@/assets/icons/meeting_and_place/filter.svg" alt="필터" width="16" height="16" />
           필터
         </button>
 

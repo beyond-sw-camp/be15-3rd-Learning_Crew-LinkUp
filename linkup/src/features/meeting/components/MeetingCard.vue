@@ -34,7 +34,7 @@ function formatDate(iso) {
           {{ formatDate(meeting.createdAt) }}
         </p>
         <button class="bookmark" aria-label="찜하기">
-          <img src="@/assets/icons/meeting_and_place/heart.svg" alt="찜" class="search-icon" />
+          <img src="@/assets/icons/community/empty_heart.svg" alt="찜" class="search-icon" />
         </button>
       </header>
 
