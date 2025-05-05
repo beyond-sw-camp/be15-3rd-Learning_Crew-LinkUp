@@ -7,7 +7,7 @@ defineEmits(['navigate'])
 <template>
   <div class="floating-nav-place">
     <div class="nav-btn" @click="$emit('navigate', 'registerPlace')" title="장소 등록">
-      <img src="@/assets/icons/meeting_and_place/sidebar-creat_meeting.svg" alt="장소 등록" width="24" height="24" />
+      <img src="../../../assets/icons/meeting_and_place/sidebar-create_meeting.svg" alt="장소 등록" width="24" height="24" />
     </div>
   </div>
 </template>

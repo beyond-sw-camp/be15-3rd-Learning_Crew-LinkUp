@@ -27,7 +27,7 @@ function handleNavigate(type) {
       <!-- 상단: 모임 개설 -->
       <div class="nav-section">
         <button class="nav-btn" @click="handleNavigate('create')" title="모임 개설">
-          <img src="@/assets/icons/meeting_and_place/sidebar-creat_meeting.svg" alt="모임 개설" width="24" height="24" />
+          <img src="../../../assets/icons/meeting_and_place/sidebar-create_meeting.svg" alt="모임 개설" width="24" height="24" />
         </button>
       </div>
 

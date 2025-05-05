@@ -5,7 +5,27 @@ import MapDisplay from '@/components/common/MapDisplay.vue'
 import FilterDropdown from '@/features/meeting/components/FilterDropdown.vue'
 import FloatingNav from '@/features/meeting/components/FloatingNav.vue'
 import MeetingCard from '@/features/meeting/components/MeetingCard.vue'
+import CreateMeetingModal from '@/features/meeting/views/CreateMeetingModal.vue';
+
 import '@/assets/css/search-common.css'
+import { useRouter } from 'vue-router';
+import CreatedMeetingsModal from '@/features/meeting/views/CreatedMeetingsModal.vue';
+import ParticipatingMeetingsModal from '@/features/meeting/views/ParticipatingMeetingsModal.vue';
+import PendingMeetingsModal from '@/features/meeting/views/PendingMeetingsModal.vue';
+import InterestedMeetingsModal from '@/features/meeting/views/InterestedMeetingsModal.vue';
+
+const router = useRouter();
+
+const showModal = reactive({
+  create: false,
+  created: false,
+  participated: false,
+  manage: false,
+  participants: false,
+  pending: false,
+  interested: false
+});
+
 
 // 지역/운동 필터 데이터
 const regionOptions = [
@@ -63,10 +83,52 @@ function onFilterApply(newFilters) {
 function handleNavigate(action) {
   switch (action) {
     case 'myMeetings': console.log('내 모임 보기'); break
-    case 'createMeeting': console.warn('createMeeting 기능은 아직 구현되지 않았습니다.'); break
+    case 'create': showModal.create = true; break
+    case 'created': showModal.created = true; break
+    case 'manage': showModal.manage = true; break
+    case 'participated': showModal.participated = true; break
+    case 'participants': showModal.participants = true; break
+    case 'liked': showModal.interested = true; break
+    case 'pending': showModal.pending = true; break
+    // case 'createMeeting': console.warn('createMeeting 기능은 아직 구현되지 않았습니다.'); break
     case 'admin': console.warn('admin 기능은 아직 구현되지 않았습니다.'); break
     default: console.error(`알 수 없는 액션: ${action}`)
   }
+}
+
+function handleCreateModal(type) {
+  if (type === 'reserved') {
+    // router.push();
+  }
+  if (type === 'map') {
+    // router.push();
+  }
+  showModal.create = false;
+}
+
+function handleCreatedModal() {
+
+  showModal.created = false;
+}
+
+function handleParticipatedModal() {
+
+  showModal.participated = false;
+}
+
+function handleParticipantsModal() {
+
+  showModal.participants = false;
+}
+
+function handlePendingModal() {
+
+  showModal.participants = false;
+}
+
+function handleInterestedModal() {
+
+  showModal.interested = false;
 }
 
 function toggleFilterDropdown() {
@@ -123,8 +185,23 @@ function toggleFilterDropdown() {
       @toggle="isFloatingMinimized = !isFloatingMinimized"
       @navigate="handleNavigate"
     />
+
+    <!-- 모임 개설 모달 -->
+    <CreateMeetingModal v-if="showModal.create" @close="showModal.create = false" @select="handleCreateModal"/>
+    <!-- 개설한 모임 모달 -->
+    <CreatedMeetingsModal v-if="showModal.created" @close="showModal.created = false" @select="handleCreatedModal" />
+
+    <!-- 참가한 모임 모달 -->
+    <ParticipatingMeetingsModal v-if="showModal.participated" @close="showModal.participated = false" @select="handleParticipatedModal" />
+
+    <!-- 참가 신청한 모임 모달 -->
+    <PendingMeetingsModal v-if="showModal.pending" @close="showModal.pending = false" @select="handlePendingModal" />
+
+    <!-- 찜한 모임 모달 -->
+    <InterestedMeetingsModal v-if="showModal.interested" @close="showModal.interested = false" @select="handleInterestedModal" />
   </div>
 </template>
+
 
 <style scoped>
 .sidebar {
