@@ -1,91 +1,71 @@
 <script setup>
-import DetailViewer from '@/features/admin/components/DetailViewer.vue'
+import { computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   modelValue: Boolean,
-  modalTitle: {
-    type: String,
-    default: '신고 상세 정보'
-  },
-  modalDescription: {
-    type: String,
-    default: '신고 관련 세부 내역을 확인할 수 있습니다.'
-  },
-  summaryInfo: Array,
-  columns: Array,
-  columnKeys: Array,
-  reportRows: Array,
-  showActionButton: Boolean,
-  actionLabel: {
-    type: String,
-    default: '제재 처리'
-  }
+  title: { type: String, default: '상세 정보' },
+  description: { type: String, default: '' },
+  summary: { type: Object, default: () => ({}) },
+  headers: { type: Array, required: true },
+  rows: { type: Array, default: () => [] },
+  showActionButton: { type: Boolean, default: false },
+  actionLabel: { type: String, default: '처리' }
 })
 
 const emit = defineEmits(['update:modelValue', 'action'])
+const close = () => emit('update:modelValue', false)
+
+const isOpen = computed(() => props.modelValue)
 </script>
 
-
 <template>
-  <DetailViewer
-    :model-value="modelValue"
-    :title="modalTitle"
-    :description="modalDescription"
-    @update:modelValue="$emit('update:modelValue', $event)"
-  >
-  <template #default>
-      <!-- 요약 정보 -->
-      <div class="modal-section">
-        <div class="section-title">기본 정보</div>
-        <div class="info-grid">
-          <div
-            v-for="(item, index) in summaryInfo"
-            :key="index"
-            class="info-item"
-          >
-            <span class="label">{{ item.label }}</span>
+  <div v-if="isOpen" class="modal">
+    <section class="modal-report" aria-modal="true" role="dialog">
+      <!-- 헤더 -->
+      <header>
+        <h2 class="modal-report-title">{{ title }}</h2>
+        <p class="sub-text" v-if="description">{{ description }}</p>
+      </header>
+
+      <!-- 요약 정보 섹션 -->
+      <section class="modal-report-section" aria-labelledby="summary-section">
+        <div class="report-detail-grid">
+          <div class="info-report-item" v-for="(item, index) in summary" :key="index">
+            <span class="label"><strong>{{ item.label }}:</strong></span>
             <span class="value">{{ item.value }}</span>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- 신고 목록 테이블 -->
-      <div class="modal-section">
-        <div class="section-title">신고 목록</div>
-        <table class="table">
+
+      <!-- 신고 목록 테이블 섹션 -->
+      <section class="modal-section" aria-labelledby="report-table-section">
+        <h3 class="report-title" id="report-table-section">신고 목록</h3>
+        <table class="table" role="table">
           <thead>
           <tr>
-            <th v-for="(col, idx) in columns" :key="idx">{{ col }}</th>
+            <th v-for="header in headers" :key="header" scope="col">{{ header }}</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(row, rIdx) in reportRows" :key="rIdx">
-            <td v-for="(key, kIdx) in columnKeys" :key="kIdx">
-              {{ row[key] || '-' }}
-            </td>
+          <tr v-for="(row, idx) in rows" :key="idx">
+            <td v-for="key in Object.keys(row)" :key="key">{{ row[key] }}</td>
           </tr>
           </tbody>
         </table>
-      </div>
+      </section>
 
-      <!-- 버튼 -->
-      <div class="modal-buttons">
-        <slot name="actions">
-          <button
-            v-if="showActionButton"
-            class="btn btn-approve"
-            @click="$emit('action')"
-          >
-            {{ actionLabel }}
-          </button>
-          <button class="btn btn-secondary" @click="$emit('update:modelValue', false)">닫기</button>
-        </slot>
-      </div>
-    </template>
-  </DetailViewer>
+      <!-- 버튼 영역 -->
+      <footer class="modal-buttons">
+        <button
+          v-if="showActionButton"
+          class="btn btn-reject"
+          @click="$emit('action')"
+        >
+          {{ actionLabel }}
+        </button>
+        <button class="btn btn-secondary" @click="close">닫기</button>
+      </footer>
+    </section>
+  </div>
 </template>
-
-
-<style scoped>
-/* 스타일은 admin-styles.css에서 사용 중인 것을 그대로 상속 */
-</style>

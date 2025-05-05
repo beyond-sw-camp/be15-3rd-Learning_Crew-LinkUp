@@ -1,131 +1,105 @@
+<!-- src/features/admin/views/PointHistoryListView.vue -->
 <script setup>
-import { ref, onMounted } from 'vue'
-import AdminFilter from '@/features/admin/components/AdminFilter.vue'
-import AdminTable from '@/features/admin/components/AdminTable.vue'
-import Pagination from '@/features/admin/components/Pagination.vue'
-import { fetchPointHistoryList } from '@/api/admin.js'
-import '@/assets/css/admin-styles.css'
+import { ref } from 'vue'
+import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 
 const props = defineProps({ pageTitle: String })
 
-const filters = ref({
+// 실제 API 연결 (주석 처리)
+/*
+import { fetchPointHistoryList } from '@/api/admin.js'
+
+function fetchPointHistoryList(params) {
+  return api.get('/api/v1/common-service/points/history', { params })
+}
+*/
+
+// 더미 데이터 대체
+function fetchPointHistoryList({ userId = '', authority = '', transactionType = '', startDate = '', endDate = '', page = 1 }) {
+  const dummy = Array.from({ length: 10 }, (_, i) => ({
+    pointTransactionId: i + 1,
+    userId: `user${i + 1}`,
+    userName: `사용자${i + 1}`,
+    authority: i % 2 === 0 ? 'MEMBER' : 'OWNER',
+    amount: (i % 2 === 0 ? 1000 : -500) * (i + 1),
+    transactionType: ['CHARGE', 'PAYMENT', 'REFUND', 'WITHDRAW'][i % 4],
+    createdAt: '2024-05-01 10:00'
+  }))
+
+  const filtered = dummy.filter(item => {
+    const matchUser = !userId || item.userId.includes(userId)
+    const matchAuthority = !authority || item.authority === authority
+    const matchType = !transactionType || item.transactionType === transactionType
+    return matchUser && matchAuthority && matchType
+  })
+
+  return Promise.resolve({
+    data: filtered,
+    totalPages: 1
+  })
+}
+
+// 컬럼 정의
+const columns = [
+  { key: 'pointTransactionId', label: 'ID' },
+  { key: 'userId', label: '사용자 ID' },
+  { key: 'userName', label: '사용자 이름' },
+  { key: 'authority', label: '권한' },
+  { key: 'amount', label: '금액', format: v => `${v > 0 ? '+' : ''}${v.toLocaleString()}` },
+  { key: 'transactionType', label: '유형' },
+  { key: 'createdAt', label: '일시' }
+]
+
+// 초기 필터
+const initFilters = {
   userId: '',
   authority: '',
   transactionType: '',
   startDate: '',
   endDate: ''
-})
-
-const requests = ref([])
-const page = ref(1)
-const totalPages = ref(1)
-const loading = ref(false)
-const error = ref(null)
-
-const fetchData = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const { data } = await fetchPointHistoryList({
-      ...filters.value,
-      page: page.value
-    })
-    requests.value = data.data
-    totalPages.value = data.totalPages || 1
-  } catch (e) {
-    error.value = '데이터를 불러오는 데 실패했습니다.'
-    requests.value = []
-  } finally {
-    loading.value = false
-  }
 }
-
-const onSearch = () => {
-  page.value = 1
-  fetchData()
-}
-
-const changePage = (p) => {
-  page.value = p
-  fetchData()
-}
-
-onMounted(fetchData)
 </script>
 
 <template>
-  <main>
-    <section aria-label="포인트 내역 필터">
-      <AdminFilter @search="onSearch" :title="pageTitle">
-        <label class="filter-label">
-          사용자 ID:
-          <input type="text" v-model="filters.userId" class="select-box id-input" placeholder="ID" />
-        </label>
-        <label class="filter-label">
-          권한:
-          <select v-model="filters.authority" class="select-box">
-            <option value="">전체</option>
-            <option value="MEMBER">회원</option>
-            <option value="OWNER">사업자</option>
-          </select>
-        </label>
-        <label class="filter-label">
-          트랜잭션 유형:
-          <select v-model="filters.transactionType" class="select-box">
-            <option value="">전체</option>
-            <option value="CHARGE">충전</option>
-            <option value="PAYMENT">지불</option>
-            <option value="REFUND">반환</option>
-            <option value="WITHDRAW">환불</option>
-          </select>
-        </label>
-        <label class="filter-label">
-          조회 기간:
-          <input type="date" v-model="filters.startDate" class="select-box date-input"> ~
-          <input type="date" v-model="filters.endDate" class="select-box date-input">
-        </label>
-      </AdminFilter>
-    </section>
+  <AdminListTemplate
+    :fetchFn="fetchPointHistoryList"
+    :columns="columns"
+    :initFilters="initFilters"
+    :pageTitle="props.pageTitle"
+    :enableModal="false"
+  >
+    <template #filters>
+      <label class="filter-label">
+        사용자 ID:
+        <input v-model="initFilters.userId" class="select-box id-input" placeholder="ID" />
+      </label>
 
-    <section aria-label="포인트 내역 목록">
-      <div v-if="loading">로딩 중...</div>
-      <div v-else-if="error">{{ error }}</div>
-      <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
+      <label class="filter-label">
+        권한:
+        <select v-model="initFilters.authority" class="select-box">
+          <option value="">전체</option>
+          <option value="MEMBER">회원</option>
+          <option value="OWNER">사업자</option>
+        </select>
+      </label>
 
-      <article v-else>
-        <AdminTable>
-          <template #thead>
-            <tr>
-              <th>ID</th>
-              <th>사용자 ID</th>
-              <th>사용자 이름</th>
-              <th>권한</th>
-              <th>금액</th>
-              <th>유형</th>
-              <th>일시</th>
-            </tr>
-          </template>
-          <template #tbody>
-            <tr v-for="req in requests" :key="req.pointTransactionId">
-              <td>{{ req.pointTransactionId }}</td>
-              <td>{{ req.userId }}</td>
-              <td>{{ req.userName }}</td>
-              <td>{{ req.authority }}</td>
-              <td>{{ req.amount > 0 ? '+' + req.amount.toLocaleString() : req.amount.toLocaleString() }}</td>
-              <td>{{ req.transactionType }}</td>
-              <td>{{ req.createdAt }}</td>
-            </tr>
-          </template>
-        </AdminTable>
+      <label class="filter-label">
+        트랜잭션 유형:
+        <select v-model="initFilters.transactionType" class="select-box">
+          <option value="">전체</option>
+          <option value="CHARGE">충전</option>
+          <option value="PAYMENT">지불</option>
+          <option value="REFUND">반환</option>
+          <option value="WITHDRAW">환불</option>
+        </select>
+      </label>
 
-        <footer>
-          <Pagination
-              :current-page="page"
-              :total-pages="totalPages"
-              @update:page="changePage"
-          />
-        </footer>
-      </article>
-    </section>
-  </main>
+      <label class="filter-label">
+        조회 기간:
+        <input type="date" v-model="initFilters.startDate" class="select-box date-input" />
+        ~
+        <input type="date" v-model="initFilters.endDate" class="select-box date-input" />
+      </label>
+    </template>
+  </AdminListTemplate>
 </template>

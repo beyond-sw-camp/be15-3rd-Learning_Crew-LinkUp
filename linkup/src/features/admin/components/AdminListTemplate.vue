@@ -1,4 +1,3 @@
-<!-- src/features/admin/components/AdminListTemplate.vue -->
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import AdminFilter from './AdminFilter.vue'
@@ -36,8 +35,8 @@ function closeModal() {
   selected.value = null
 }
 
-function format(value, formatter) {
-  return typeof formatter === 'function' ? formatter(value) : value
+function format(value, formatter, row) {
+  return typeof formatter === 'function' ? formatter(value, row) : value
 }
 
 onMounted(() => fetchList(1))
@@ -67,19 +66,19 @@ onMounted(() => fetchList(1))
         </tr>
       </template>
       <template #tbody>
-        <tr v-for="row in rows" :key="row.id || row.userId || row.idx">
+        <tr v-for="(row, idx) in rows" :key="row.targetId || row.reporterId || row.userId || row.ownerId || row.id || idx">
           <td v-for="col in columns" :key="col.key">
-            <template v-if="typeof format(row[col.key], col.format) === 'object' && format(row[col.key], col.format).type === 'button'">
+            <template v-if="typeof format(row[col.key], col.format, row) === 'object' && format(row[col.key], col.format, row).type === 'button'">
               <button
                 type="button"
                 class="text-button"
-                @click="format(row[col.key], col.format).onClick?.()"
+                @click="format(row[col.key], col.format, row).onClick?.()"
               >
-                {{ format(row[col.key], col.format).label }}
+                {{ format(row[col.key], col.format, row).label }}
               </button>
             </template>
             <template v-else>
-              {{ format(row[col.key], col.format) }}
+              {{ format(row[col.key], col.format, row) ?? '-' }}
             </template>
           </td>
         </tr>
@@ -93,7 +92,7 @@ onMounted(() => fetchList(1))
       @update:page="fetchList"
     />
 
-    <!-- 모달 슬롯 (선택된 row, 닫기 함수 전달) -->
-    <slot name="modal" :selected="selected" :close="closeModal" />
+    <!-- 모달 슬롯 -->
+    <slot name="modal" />
   </div>
 </template>

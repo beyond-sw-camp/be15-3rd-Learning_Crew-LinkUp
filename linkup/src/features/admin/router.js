@@ -62,7 +62,7 @@ export const adminRoutes = [
             {
               path: 'meetings/reviews',
               name: 'MeetingReviewList',
-              component: () => import('@/features/admin/views/ParticipantReviewListView.vue'),
+              component: () => import('@/features/admin/views/MeetingParticipantReviewListView.vue'),
             },
 
             // 장소 관리
@@ -97,19 +97,19 @@ export const adminRoutes = [
               name: 'ReportTargetList',
               component: () => import('@/features/admin/views/ReportTargetListView.vue')
           },
-          /*{
+          {
               path: 'reports/reporters',
               name: 'ReportReporterList',
               component: () => import('@/features/admin/views/ReportReporterListView.vue')
           },
           {
-              path: 'reports/targets',
-              name: 'ReportTargetList',
-              component: () => import('@/features/admin/views/ReportTargetListView.vue')
+              path: 'reports/reportees',
+              name: 'ReportReporteeList',
+              component: () => import('@/features/admin/views/ReportReporteeListView.vue')
           },
 
           // 제재 관리
-          {
+          /*{
               path: '/admin/penalties',
               redirect: '/admin/penalties/list'
           },

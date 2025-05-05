@@ -138,12 +138,13 @@ function handleDecision() {
           <p><strong>사업자 ID:</strong> {{ modalData?.ownerId }}</p>
           <p><strong>이름:</strong> {{ modalData?.userName }}</p>
           <p><strong>이메일:</strong> {{ modalData?.email || '-' }}</p>
-          <p><strong>상태:</strong>
-            {{ modalData?.status === 'PENDING' ? '대기' : modalData?.status === 'ACCEPTED' ? '승인' : '거절' }}
-          </p>
-          <p><strong>처리일자:</strong> {{ modalData?.authorizedAt || '-' }}</p>
-          <p><strong>거절 사유:</strong> {{ modalData?.rejectionReason || '-' }}</p>
-          <p>상태 디버그: {{ modalData?.status }}</p>
+          <template v-if="modalData?.status !== 'PENDING'">
+            <p><strong>상태:</strong>
+              {{ modalData?.status === 'PENDING' ? '대기' : modalData?.status === 'ACCEPTED' ? '승인' : '거절' }}
+            </p>
+            <p><strong>처리일자:</strong> {{ modalData?.authorizedAt || '-' }}</p>
+            <p><strong>거절 사유:</strong> {{ modalData?.rejectionReason || '-' }}</p>
+          </template>
 
 
           <template v-if="modalData?.status === 'PENDING'">

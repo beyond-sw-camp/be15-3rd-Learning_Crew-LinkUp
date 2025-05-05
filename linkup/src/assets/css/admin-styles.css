@@ -389,11 +389,24 @@ a {
     background: #fff;
     padding: 40px;
     border-radius: 12px;
-    width: 700px;
+    width: 850px;
     max-width: 90%;
     display: flex;
     flex-direction: column;
     gap: 28px;
+}
+
+
+.report-detail-grid {
+    display: flex;
+    gap: 30px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.report-detail-grid span {
+    margin-right: 5px;
 }
 
 /* 제목 텍스트 */
@@ -418,6 +431,13 @@ a {
     border-bottom: 1px solid #f0f0f0;
 }
 
+.modal-report-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
 .modal-section:last-child {
     border-bottom: none;
 }
@@ -428,6 +448,14 @@ a {
     font-weight: 600;
     color: #7d6fb3;
     margin: 20px 0 12px;
+    padding-left: 10px;
+    border-left: 4px solid #7d6fb3;
+}
+.report-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #7d6fb3;
+    margin: 0px 0 12px;
     padding-left: 10px;
     border-left: 4px solid #7d6fb3;
 }
@@ -442,6 +470,11 @@ a {
 .info-item {
     display: flex;
     flex-direction: column;
+}
+
+.info-report-item {
+    display: flex;
+    flex-direction: row;
 }
 
 .info-item .label {

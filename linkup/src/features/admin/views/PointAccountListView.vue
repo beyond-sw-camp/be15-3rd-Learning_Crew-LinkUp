@@ -1,124 +1,96 @@
+<!-- src/features/admin/views/AccountListView.vue -->
 <script setup>
-import { ref, onMounted } from 'vue'
-import AdminFilter from '@/features/admin/components/AdminFilter.vue'
-import AdminTable from '@/features/admin/components/AdminTable.vue'
-import Pagination from '@/features/admin/components/Pagination.vue'
-import { fetchAccountList } from '@/api/admin.js'
-import '@/assets/css/admin-styles.css'
+import { ref } from 'vue'
+import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 
 const props = defineProps({ pageTitle: String })
 
-const filters = ref({
-  authority: '',   // MEMBER | OWNER
-  status: ''       // PENDING | APPROVED | REJECTED
-})
+// ✅ 실제 API 연결 (주석 처리)
+/*
+import { fetchAccountList } from '@/api/admin.js'
+function fetchAccountList(params) {
+  return api.get('/api/v1/common-service/accounts', { params })
+}
+*/
 
-const requests = ref([])
-const page = ref(1)
-const totalPages = ref(1)
-const loading = ref(false)
-const error = ref(null)
+// ✅ 더미 데이터 기반 함수
+function fetchAccountList({ authority = '', status = '', page = 1 }) {
+  const dummyData = Array.from({ length: 10 }, (_, i) => ({
+    accountId: i + 1,
+    userId: `user${i + 1}`,
+    authority: i % 2 === 0 ? 'MEMBER' : 'OWNER',
+    status: ['PENDING', 'APPROVED', 'REJECTED'][i % 3],
+    bankName: ['신한', '국민', '하나', '카카오'][i % 4],
+    accountNumber: `110-${i + 1}23-456${i}`,
+    holderName: `홍길동${i + 1}`,
+    createdAt: '2024-05-01 10:00'
+  }))
 
-const fetchData = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const { data } = await fetchAccountList({
-      ...filters.value,
-      page: page.value
-    })
-    requests.value = data.data
-    totalPages.value = data.totalPages || 1
-  } catch (e) {
-    error.value = '계좌 정보를 불러오는 데 실패했습니다.'
-    requests.value = []
-  } finally {
-    loading.value = false
-  }
+  const filtered = dummyData.filter(item => {
+    const matchAuthority = !authority || item.authority === authority
+    const matchStatus = !status || item.status === status
+    return matchAuthority && matchStatus
+  })
+
+  return Promise.resolve({
+    data: filtered,
+    totalPages: 1
+  })
 }
 
-const onSearch = () => {
-  page.value = 1
-  fetchData()
-}
+// ✅ 컬럼 정의
+const columns = [
+  { key: 'accountId', label: '계좌 ID' },
+  { key: 'userId', label: '사용자 ID' },
+  { key: 'authority', label: '권한' },
+  {
+    key: 'status',
+    label: '상태',
+    format: v =>
+      v === 'PENDING' ? '대기' :
+        v === 'APPROVED' ? '승인' :
+          v === 'REJECTED' ? '거절' : v
+  },
+  { key: 'bankName', label: '은행명' },
+  { key: 'accountNumber', label: '계좌번호' },
+  { key: 'holderName', label: '예금주명' },
+  { key: 'createdAt', label: '등록일' }
+]
 
-const changePage = (p) => {
-  page.value = p
-  fetchData()
+// ✅ 초기 필터
+const initFilters = {
+  authority: '',
+  status: ''
 }
-
-onMounted(fetchData)
 </script>
 
 <template>
-  <main>
-    <section aria-label="계좌 필터">
-      <AdminFilter @search="onSearch" :title="pageTitle">
-        <label class="filter-label">
-          권한:
-          <select v-model="filters.authority" class="select-box">
-            <option value="">전체</option>
-            <option value="MEMBER">회원</option>
-            <option value="OWNER">사업자</option>
-          </select>
-        </label>
-        <label class="filter-label">
-          상태:
-          <select v-model="filters.status" class="select-box">
-            <option value="">전체</option>
-            <option value="PENDING">대기</option>
-            <option value="APPROVED">승인</option>
-            <option value="REJECTED">거절</option>
-          </select>
-        </label>
-      </AdminFilter>
-    </section>
+  <AdminListTemplate
+    :fetchFn="fetchAccountList"
+    :columns="columns"
+    :initFilters="initFilters"
+    :pageTitle="props.pageTitle"
+    :enableModal="false"
+  >
+    <template #filters>
+      <label class="filter-label">
+        권한:
+        <select v-model="initFilters.authority" class="select-box">
+          <option value="">전체</option>
+          <option value="MEMBER">회원</option>
+          <option value="OWNER">사업자</option>
+        </select>
+      </label>
 
-    <section aria-label="계좌 목록 테이블">
-      <div v-if="loading">로딩 중...</div>
-      <div v-else-if="error">{{ error }}</div>
-      <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
-
-      <article v-else>
-        <AdminTable>
-          <template #thead>
-            <tr>
-              <th>계좌 ID</th>
-              <th>사용자 ID</th>
-              <th>권한</th>
-              <th>상태</th>
-              <th>은행명</th>
-              <th>계좌번호</th>
-              <th>예금주명</th>
-              <th>등록일</th>
-            </tr>
-          </template>
-          <template #tbody>
-            <tr v-for="req in requests" :key="req.accountId">
-              <td>{{ req.accountId }}</td>
-              <td>{{ req.userId }}</td>
-              <td>{{ req.authority }}</td>
-              <td>
-                {{ req.status === 'PENDING' ? '대기' :
-                  req.status === 'APPROVED' ? '승인' :
-                      req.status === 'REJECTED' ? '거절' : req.status }}
-              </td>
-              <td>{{ req.bankName }}</td>
-              <td>{{ req.accountNumber }}</td>
-              <td>{{ req.holderName }}</td>
-              <td>{{ req.createdAt }}</td>
-            </tr>
-          </template>
-        </AdminTable>
-
-        <footer>
-          <Pagination
-              :current-page="page"
-              :total-pages="totalPages"
-              @update:page="changePage"
-          />
-        </footer>
-      </article>
-    </section>
-  </main>
+      <label class="filter-label">
+        상태:
+        <select v-model="initFilters.status" class="select-box">
+          <option value="">전체</option>
+          <option value="PENDING">대기</option>
+          <option value="APPROVED">승인</option>
+          <option value="REJECTED">거절</option>
+        </select>
+      </label>
+    </template>
+  </AdminListTemplate>
 </template>
