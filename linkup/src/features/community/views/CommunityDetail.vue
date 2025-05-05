@@ -288,7 +288,10 @@ onMounted(() => {
     </div>
 
     <!-- 댓글 등록 폼 -->
-    <PostCommentForm :postId="post?.postId" :onCommentAdded="fetchPost" />
+    <PostCommentForm
+        :postId="post?.postId"
+        :onCommentAdded="fetchPost"
+    />
 
     <!-- 댓글 리스트 -->
     <PostCommentList :comments="post?.comments" />

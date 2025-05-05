@@ -10,16 +10,8 @@ import Navigation from '@/components/layout/Navigation.vue';
           <img class="logo" src="@/assets/icons/logo.svg" alt="Linkup 로고" />
         </RouterLink>
       </h1>
-
       <Navigation />
-      <nav class="nav" aria-label="메인 네비게이션">
-        <ul class="nav-list">
-          <li><RouterLink class="nav-link" to="/community">커뮤니티</RouterLink></li>
-          <li><RouterLink class="nav-link" to="/likes">모임</RouterLink></li>
-          <li><RouterLink class="nav-link" to="/create">장소</RouterLink></li>
-          <li><RouterLink class="nav-link" to="/login">로그인/회원가입</RouterLink></li>
-        </ul>
-      </nav>
+
     </div>
   </header>
 </template>

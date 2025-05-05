@@ -9,8 +9,7 @@ import { userRoutes } from '@/features/user/router.js';
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [...mainRoutes, ...adminRoutes, ...meetingRoutes, ...communityRoute]
-  routes: [...mainRoutes, ...adminRoutes, ...authRoutes, ...userRoutes, ...meetingRoutes],
+  routes: [...mainRoutes, ...adminRoutes, ...authRoutes, ...userRoutes, ...meetingRoutes, ...communityRoute],
 });
 
 export default router;
