@@ -13,6 +13,8 @@ import CreatedMeetingsModal from '@/features/meeting/views/CreatedMeetingsModal.
 import ParticipatingMeetingsModal from '@/features/meeting/views/ParticipatingMeetingsModal.vue';
 import PendingMeetingsModal from '@/features/meeting/views/PendingMeetingsModal.vue';
 import InterestedMeetingsModal from '@/features/meeting/views/InterestedMeetingsModal.vue';
+import MeetingManageModal from '@/features/meeting/views/MeetingManageModal.vue';
+import ParticipantsModal from '@/features/meeting/views/ParticipantsModal.vue';
 
 const router = useRouter();
 
@@ -85,9 +87,7 @@ function handleNavigate(action) {
     case 'myMeetings': console.log('내 모임 보기'); break
     case 'create': showModal.create = true; break
     case 'created': showModal.created = true; break
-    case 'manage': showModal.manage = true; break
     case 'participated': showModal.participated = true; break
-    case 'participants': showModal.participants = true; break
     case 'liked': showModal.interested = true; break
     case 'pending': showModal.pending = true; break
     // case 'createMeeting': console.warn('createMeeting 기능은 아직 구현되지 않았습니다.'); break
@@ -95,6 +95,7 @@ function handleNavigate(action) {
     default: console.error(`알 수 없는 액션: ${action}`)
   }
 }
+
 
 function handleCreateModal(type) {
   if (type === 'reserved') {
@@ -106,18 +107,22 @@ function handleCreateModal(type) {
   showModal.create = false;
 }
 
-function handleCreatedModal() {
-
-  showModal.created = false;
+const selectedMeeting = ref(null);
+function handleCreatedModal(meeting) {
+  selectedMeeting.value = meeting;
+  showModal.manage = true;
 }
 
-function handleParticipatedModal() {
+function handleManageModal() {
+  showModal.manage = false;
+}
 
-  showModal.participated = false;
+function handleParticipatedModal(meeting) {
+  selectedMeeting.value = meeting;
+  showModal.participants = true;
 }
 
 function handleParticipantsModal() {
-
   showModal.participants = false;
 }
 
@@ -190,13 +195,14 @@ function toggleFilterDropdown() {
     <CreateMeetingModal v-if="showModal.create" @close="showModal.create = false" @select="handleCreateModal"/>
     <!-- 개설한 모임 모달 -->
     <CreatedMeetingsModal v-if="showModal.created" @close="showModal.created = false" @select="handleCreatedModal" />
-
+    <!-- 개설 모임 관리 모달 -->
+    <MeetingManageModal :visible="showModal.manage" :meeting="selectedMeeting" @close="showModal.manage = false" @select="handleManageModal" />
     <!-- 참가한 모임 모달 -->
     <ParticipatingMeetingsModal v-if="showModal.participated" @close="showModal.participated = false" @select="handleParticipatedModal" />
-
+    <!-- 참가자 목록 조회 모달 -->
+    <ParticipantsModal :visible="showModal.participants" :meeting="selectedMeeting" @close="showModal.participants = false" @select="handleParticipantsModal"/>
     <!-- 참가 신청한 모임 모달 -->
     <PendingMeetingsModal v-if="showModal.pending" @close="showModal.pending = false" @select="handlePendingModal" />
-
     <!-- 찜한 모임 모달 -->
     <InterestedMeetingsModal v-if="showModal.interested" @close="showModal.interested = false" @select="handleInterestedModal" />
   </div>
