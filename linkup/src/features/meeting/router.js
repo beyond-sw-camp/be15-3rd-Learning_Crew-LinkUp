@@ -3,11 +3,6 @@ export const meetingRoutes = [
     path: '/meetings',
     // component: () => import('@/components/layout/AdminLayout.vue'),
     children: [
-    //   {
-    //   path: '',
-    //   name: 'Meetings',
-    //   component: () => import('@/features/meeting/views/Meetings.vue')
-    // },
       {
         path: ':meetingId',
         name: 'MeetingDetails',
@@ -32,6 +27,11 @@ export const meetingRoutes = [
         path: 'create/reserved/step1',
         name: 'CreateMeetingStep1Reserved',
         component: () => import('@/features/meeting/views/CreateMeetingStep1.vue')
+      },
+      {
+        path: 'create/reserved/check-balance',
+        name: 'CheckCreatorBalance',
+        component: () => import('@/features/meeting/views/CheckCreatorBalance.vue')
       },
       {
         path: 'create/reserved/step2',

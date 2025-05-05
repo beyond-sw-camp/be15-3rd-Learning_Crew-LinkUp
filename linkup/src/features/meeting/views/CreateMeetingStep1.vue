@@ -55,7 +55,7 @@ const goToNextStep = () => {
   }
 
   router.push({
-    name: 'CreateMeetingStep2Reserved',
+    name: 'CheckCreatorBalance',
     query: {
       date: selectedDate.value,
       startTime: selectedTimeSlot.value.startTime,
