@@ -48,7 +48,7 @@ const props = defineProps({
 
 <style scoped>
 .card {
-  @apply flex flex-col gap-8 bg-white rounded-lg shadow-md transition-transform hover:-translate-y-1 overflow-hidden cursor-pointer;
+  @apply flex flex-col gap-2 bg-white rounded-lg shadow-md transition-transform hover:-translate-y-1 overflow-hidden cursor-pointer;
 }
 
 .card-image img {
