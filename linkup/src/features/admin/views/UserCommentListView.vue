@@ -1,123 +1,88 @@
+<!-- src/features/admin/views/UserCommentListView.vue -->
 <script setup>
-import { ref, onMounted } from 'vue'
-import AdminFilter from '@/features/admin/components/AdminFilter.vue'
-import AdminTable from '@/features/admin/components/AdminTable.vue'
-import Pagination from '@/features/admin/components/Pagination.vue'
-import { fetchCommentList } from '@/api/admin.js'
-import '@/assets/css/admin-styles.css'
+import { ref } from 'vue'
+import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 
 const props = defineProps({ pageTitle: String })
 
-const filters = ref({ userId: '', isDeleted: '' })
-const requests = ref([])
-const page = ref(1)
-const totalPages = ref(1)
-const loading = ref(false)
-const error = ref(null)
+// 실제 API (주석 처리)
+/*
+import { fetchCommentList } from '@/api/admin.js'
 
-const fetchData = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const { data } = await fetchCommentList({
-      userId: filters.value.userId,
-      isDeleted: filters.value.isDeleted,
-      page: page.value
-    })
-    requests.value = data.data
-    totalPages.value = data.totalPages || 1
-  } catch (e) {
-    error.value = '데이터를 불러오는 데 실패했습니다.'
-    requests.value = []
-  } finally {
-    loading.value = false
-  }
+function fetchCommentList(params) {
+  return api.get('/api/v1/common-service/comments', { params })
+}
+*/
+
+// 더미 데이터로 대체
+function fetchCommentList({ userId = '', isDeleted = '', page = 1 }) {
+  const dummy = Array.from({ length: 10 }, (_, i) => ({
+    commentId: `C00${i + 1}`,
+    postId: `P00${i + 1}`,
+    userId: `user${i + 1}`,
+    userName: `작성자${i + 1}`,
+    content: `댓글 내용 ${i + 1}`,
+    createdAt: '2024-05-01',
+    deletedAt: i % 4 === 0 ? '2024-05-02' : null,
+    isDeleted: i % 4 === 0 ? 'Y' : 'N'
+  }))
+
+  const filtered = dummy.filter(item => {
+    const matchUser = !userId || item.userId.includes(userId)
+    const matchDeleted = !isDeleted || item.isDeleted === isDeleted
+    return matchUser && matchDeleted
+  })
+
+  return Promise.resolve({
+    data: filtered,
+    totalPages: 1
+  })
 }
 
-const onSearch = () => {
-  page.value = 1
-  fetchData()
-}
+// 테이블 컬럼 정의
+const columns = [
+  { key: 'commentId', label: '댓글 ID' },
+  { key: 'postId', label: '게시글 ID' },
+  { key: 'userId', label: '작성자 ID' },
+  { key: 'userName', label: '작성자 이름' },
+  { key: 'content', label: '내용' },
+  { key: 'createdAt', label: '작성일' },
+  { key: 'deletedAt', label: '삭제일', format: v => v || '-' },
+  { key: 'isDeleted', label: '공개 여부', format: v => (v === 'Y' ? '비공개' : '공개') }
+]
 
-const changePage = (p) => {
-  page.value = p
-  fetchData()
+// 필터 초기값
+const initFilters = {
+  userId: '',
+  isDeleted: ''
 }
-
-onMounted(fetchData)
 </script>
 
 <template>
-  <main>
-    <!-- 필터 영역 -->
-    <section aria-label="댓글 필터">
-      <AdminFilter @search="onSearch" :title="pageTitle">
-        <label class="filter-label">
-          작성자 ID:
-          <input
-              type="text"
-              v-model="filters.userId"
-              class="select-box id-input"
-              placeholder="ID"
-          />
-        </label>
-        <label class="filter-label">
-          공개 여부:
-          <select v-model="filters.isDeleted" class="select-box">
-            <option value="">전체</option>
-            <option value="N">공개</option>
-            <option value="Y">비공개</option>
-          </select>
-        </label>
-      </AdminFilter>
-    </section>
-
-    <!-- 데이터 표시 영역 -->
-    <section aria-label="댓글 목록">
-      <div v-if="loading">로딩 중...</div>
-      <div v-else-if="error">{{ error }}</div>
-      <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
-
-      <article v-else>
-        <AdminTable>
-          <template #thead>
-            <tr>
-              <th>댓글 ID</th>
-              <th>게시글 ID</th>
-              <th>작성자 ID</th>
-              <th>작성자 이름</th>
-              <th>내용</th>
-              <th>작성일</th>
-              <th>삭제일</th>
-              <th>공개 여부</th>
-            </tr>
-          </template>
-          <template #tbody>
-            <tr v-for="req in requests" :key="req.commentId">
-              <td>{{ req.commentId }}</td>
-              <td>{{ req.postId }}</td>
-              <td>{{ req.userId }}</td>
-              <td>{{ req.userName }}</td>
-              <td>{{ req.content }}</td>
-              <td>{{ req.createdAt }}</td>
-              <td>{{ req.deletedAt || '-' }}</td>
-              <td>{{ req.isDeleted === 'Y' ? '비공개' : '공개' }}</td>
-            </tr>
-          </template>
-        </AdminTable>
-
-        <footer>
-          <Pagination
-              :current-page="page"
-              :total-pages="totalPages"
-              @update:page="changePage"
-          />
-        </footer>
-      </article>
-    </section>
-  </main>
+  <AdminListTemplate
+    :fetchFn="fetchCommentList"
+    :columns="columns"
+    :initFilters="initFilters"
+    :pageTitle="props.pageTitle"
+    :enableModal="false"
+  >
+    <template #filters>
+      <label class="filter-label">
+        작성자 ID:
+        <input v-model="initFilters.userId" class="select-box id-input" placeholder="ID" />
+      </label>
+      <label class="filter-label">
+        공개 여부:
+        <select v-model="initFilters.isDeleted" class="select-box">
+          <option value="">전체</option>
+          <option value="N">공개</option>
+          <option value="Y">비공개</option>
+        </select>
+      </label>
+      <label class="filter-label">
+        게시글 ID:
+        <input v-model="initFilters.postId" class="select-box id-input" placeholder="ID" />
+      </label>
+    </template>
+  </AdminListTemplate>
 </template>
-
-
-<style scoped>
-</style>
