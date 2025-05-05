@@ -141,10 +141,10 @@ export function fetchPlaceReviewList(params) {
     return api.get('/admin/place-reviews', { params })
 }
 
-// 신고 목록 조회 API
-    // 관리자 페이지에서 신고 내역을 필터링 조건에 따라 조회합니다.
-    // 필터 조건: 상태, 신고 유형, 페이지네이션
-    // 반환 데이터: 신고 ID, 신고자/피신고자 정보, 신고 유형, 상태, 일시 등
+/* 13. 신고 목록 조회 API
+    관리자 페이지에서 신고 내역을 필터링 조건에 따라 조회합니다.
+    필터 조건: 상태, 신고 유형, 페이지네이션
+    반환 데이터: 신고 ID, 신고자/피신고자 정보, 신고 유형, 상태, 일시 등*/
 export async function fetchReportList({ status = '', reportTypeId = '', page = 1 }) {
     return await api.get('/admin/reports', {
         params: {
@@ -153,4 +153,23 @@ export async function fetchReportList({ status = '', reportTypeId = '', page = 1
             page            // 현재 페이지 번호
         }
     })
+}
+
+/*14. 신고 대상별 목록 조회
+    @param {Object} params - 필터 조건 및 페이지 정보
+    @param {string} [params.isActive] - 활성화 여부 ('Y' | 'N' | '')
+    @param {string} [params.searchType] - 검색 기준 ('userId' | 'postId' | 'commentId')
+    @param {string} [params.searchKeyword] - 검색 키워드
+    @param {number} [params.page=1] - 페이지 번호
+    @returns {Promise<Object>}*/
+export function fetchReportedTargetList(params) {
+    return api.get('/admin/reports/targets', { params })
+}
+
+/*15. 특정 신고 대상 상세 정보 + 신고 이력 조회
+    @param {string} targetType - 대상 유형 ('USER' | 'POST' | 'COMMENT')
+    @param {string|number} targetId - 대상 ID
+    @returns {Promise<Object>}*/
+export function fetchTargetDetailById(targetType, targetId) {
+    return api.get(`/admin/reports/targets/${targetType}/${targetId}`)
 }

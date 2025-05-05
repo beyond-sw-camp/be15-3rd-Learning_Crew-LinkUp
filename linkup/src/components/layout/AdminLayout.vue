@@ -37,9 +37,9 @@ const sidebarItems = computed(() => {
   if (route.path.startsWith('/admin/report')) {
     return [
       { label: '신고 목록 조회', path: '/admin/reports/list' },
+      { label: '신고 대상별 내역', path: '/admin/reports/targets' },
       { label: '신고자 목록 조회', path: '/admin/reports/reporters' },
-      { label: '피신고자 목록 조회', path: '/admin/reports/targets' },
-      { label: '신고 대상별 내역', path: '/admin/reports/target-contents' }
+      { label: '피신고자 목록 조회', path: '/admin/reports/reportees' }
     ]
   }
   if (route.path.startsWith('/admin/penalty')) {

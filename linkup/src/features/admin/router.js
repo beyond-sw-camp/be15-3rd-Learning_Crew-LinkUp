@@ -5,6 +5,10 @@ export const adminRoutes = [
         children: [
               // 회원 관리
               {
+                path: '/admin',
+                redirect: '/admin/users/members',
+              },
+              {
                 path: '/admin/users',
                 redirect: '/admin/users/members',
               },
@@ -88,42 +92,42 @@ export const adminRoutes = [
                 name: 'ReportList',
                 component: () => import('@/features/admin/views/ReportListView.vue')
             },
-            /*{
-                path: 'reports/reporters',
-                name: 'ReportReporterList',
-                component: () => import('@/features/admin/views/ReportReporterListView.vue')
-            },
-            {
-                path: 'reports/targets',
-                name: 'ReportTargetList',
-                component: () => import('@/features/admin/views/ReportTargetListView.vue')
-            },
-            {
-                path: 'reports/target-contents',
-                name: 'ReportTargetContentList',
-                component: () => import('@/features/admin/views/ReportTargetContentListView.vue')
-            },
+          {
+              path: 'reports/targets',
+              name: 'ReportTargetList',
+              component: () => import('@/features/admin/views/ReportTargetListView.vue')
+          },
+          /*{
+              path: 'reports/reporters',
+              name: 'ReportReporterList',
+              component: () => import('@/features/admin/views/ReportReporterListView.vue')
+          },
+          {
+              path: 'reports/targets',
+              name: 'ReportTargetList',
+              component: () => import('@/features/admin/views/ReportTargetListView.vue')
+          },
 
-            // 제재 관리
-            {
-                path: '/admin/penalties',
-                redirect: '/admin/penalties/list'
-            },
-            {
-                path: 'penalties/list',
-                name: 'PenaltyList',
-                component: () => import('@/features/admin/views/PenaltyListView.vue')
-            },
-            {
-                path: 'penalties/objections',
-                name: 'ObjectionList',
-                component: () => import('@/features/admin/views/ObjectionListView.vue')
-            },
-            {
-                path: 'penalties/blacklist',
-                name: 'BlacklistList',
-                component: () => import('@/features/admin/views/BlacklistListView.vue')
-            }*/
+          // 제재 관리
+          {
+              path: '/admin/penalties',
+              redirect: '/admin/penalties/list'
+          },
+          {
+              path: 'penalties/list',
+              name: 'PenaltyList',
+              component: () => import('@/features/admin/views/PenaltyListView.vue')
+          },
+          {
+              path: 'penalties/objections',
+              name: 'ObjectionList',
+              component: () => import('@/features/admin/views/ObjectionListView.vue')
+          },
+          {
+              path: 'penalties/blacklist',
+              name: 'BlacklistList',
+              component: () => import('@/features/admin/views/BlacklistListView.vue')
+          }*/
     ],
   },
 ];
