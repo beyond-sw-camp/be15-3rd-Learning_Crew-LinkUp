@@ -48,7 +48,7 @@ const roleIcon = {
 <template>
   <nav class="nav" aria-label="메인 네비게이션">
     <ul class="nav-list">
-      <li><RouterLink class="nav-link" to="/likes">커뮤니티</RouterLink></li>
+      <li><RouterLink class="nav-link" to="/community">커뮤니티</RouterLink></li>
       <li><RouterLink class="nav-link" to="/community">모임</RouterLink></li>
       <li><RouterLink class="nav-link" to="/create">장소</RouterLink></li>
 

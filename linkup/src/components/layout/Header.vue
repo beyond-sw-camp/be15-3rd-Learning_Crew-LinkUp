@@ -10,8 +10,8 @@ import Navigation from '@/components/layout/Navigation.vue';
           <img class="logo" src="@/assets/icons/logo.svg" alt="Linkup 로고" />
         </RouterLink>
       </h1>
-
       <Navigation />
+
     </div>
   </header>
 </template>
