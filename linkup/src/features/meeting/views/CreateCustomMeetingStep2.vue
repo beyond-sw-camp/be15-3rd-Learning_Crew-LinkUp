@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
+import CreateCustomMeetingLayout from '@/features/meeting/components/CreateCustomMeetingLayout.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -11,7 +11,7 @@ const meetingTitle = ref('');
 const meetingContent = ref('');
 
 const {
-  date, startTime, endTime, minUser, maxUser, sportId
+  date, startTime, endTime, minUser, maxUser
 } = route.query;
 
 const goToNextStep = () => {
@@ -26,7 +26,7 @@ const goToNextStep = () => {
   }
 
   router.push({
-    name: 'CreateMeetingStep3Reserved',
+    name: 'CreateMeetingStep3Custom',
     query: {
       ...route.query,
       meetingTitle: meetingTitle.value.trim(),
@@ -37,7 +37,7 @@ const goToNextStep = () => {
 </script>
 
 <template>
-  <CreateMeetingLayout :step="2" title="모임 정보 작성">
+  <CreateCustomMeetingLayout :step="2" title="모임 정보 작성">
         <div class="form-group">
           <label class="group-label">모임 제목</label>
           <input type="text" class="input-box" v-model="meetingTitle" placeholder="모임 제목을 입력하세요" />
@@ -49,7 +49,7 @@ const goToNextStep = () => {
         </div>
 
         <button class="next-btn" @click="goToNextStep">다음 단계로</button>
-  </CreateMeetingLayout>
+  </CreateCustomMeetingLayout>
 </template>
 
 <style scoped>

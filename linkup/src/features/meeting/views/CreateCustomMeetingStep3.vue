@@ -3,7 +3,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
-import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
+import CreateCustomMeetingLayout from '@/features/meeting/components/CreateCustomMeetingLayout.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -98,7 +98,7 @@ const createMeeting = async () => {
     <p>로딩 중...</p>
   </template>
   <template v-else>
-  <CreateMeetingLayout :step="3" title="상세 조건 설정">
+  <CreateCustomMeetingLayout :step="3" title="상세 조건 설정">
     <!-- 모집 성별 -->
     <div class="form-group">
       <label class="group-label">모집 성별</label>
@@ -158,7 +158,7 @@ const createMeeting = async () => {
     </div>
 
     <button class="submit-btn" @click="createMeeting">모임 개설 완료</button>
-  </CreateMeetingLayout>
+  </CreateCustomMeetingLayout>
   </template>
 </template>
 

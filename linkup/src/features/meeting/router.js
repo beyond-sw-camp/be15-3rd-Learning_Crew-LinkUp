@@ -46,17 +46,17 @@ export const meetingRoutes = [
       {
         path: 'create/custom/step1',
         name: 'CreateMeetingStep1Custom',
-        component: () => import('@/features/meeting/views/CreateMeetingStep1.vue')
+        component: () => import('@/features/meeting/views/CreateCustomMeetingStep1.vue')
       },
       {
         path: 'create/custom/step2',
         name: 'CreateMeetingStep2Custom',
-        component: () => import('@/features/meeting/views/CreateMeetingStep2.vue')
+        component: () => import('@/features/meeting/views/CreateCustomMeetingStep2.vue')
       },
       {
         path: 'create/custom/step3',
         name: 'CreateMeetingStep3Custom',
-        component: () => import('@/features/meeting/views/CreateMeetingStep3.vue')
+        component: () => import('@/features/meeting/views/CreateCustomMeetingStep3.vue')
       }
     ]
   },

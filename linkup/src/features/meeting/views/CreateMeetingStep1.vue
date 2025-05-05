@@ -9,6 +9,7 @@ const MAX_USER = 30;
 const router = useRouter();
 
 const placeName = '신촌 풋살 센터';
+const sportId = 1;
 const rentalCost = 130000;
 
 const selectedDate = ref('');
@@ -61,6 +62,7 @@ const goToNextStep = () => {
       endTime: selectedTimeSlot.value.endTime,
       minUser: minUser.value,
       maxUser: maxUser.value,
+      sportId: sportId
     },
   });
 };
