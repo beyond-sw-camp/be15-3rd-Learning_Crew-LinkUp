@@ -84,6 +84,10 @@ function onSubmit() {
   @apply w-full p-3 bg-blue-500 text-white font-bold rounded-sm mt-3 text-base hover:bg-blue-700 transition-colors;
 }
 
+.login-button:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed;
+}
+
 .login-links {
   @apply w-full flex justify-between items-center mt-6 text-sm;
 }

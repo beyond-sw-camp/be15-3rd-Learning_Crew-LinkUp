@@ -5,6 +5,8 @@ import api from './axios.js';
  * @typedef {Object} TokenResponse
  * @property {string} accessToken - 발급된 액세스 토큰 (Bearer Token)
  * @property {string} refreshToken - 발급된 리프레시 토큰 (HttpOnly 쿠키로도 전달될 수 있음)
+ * @property {string} nickname - 회원명
+ * @property {string} profileImageUrl - 프로필 이미지
  */
 
 /**
