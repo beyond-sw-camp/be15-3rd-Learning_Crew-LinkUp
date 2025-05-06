@@ -14,7 +14,14 @@ const handleLogin = async (formData) => {
     console.log(resp);
     const { accessToken, userName, profileImageUrl } = resp.data.data;
     authStore.setAuth(accessToken, userName, profileImageUrl);
-    await router.push('/');
+
+    // 로그인 직전에 가려던 경로가 있다면 그쪽으로 이동
+    const redirectPath = router.currentRoute.value.query.redirect;
+    if (redirectPath) {
+      await router.replace(redirectPath);
+    } else {
+      await router.replace('/');
+    }
   } catch (e) {
     console.log(e);
   }
