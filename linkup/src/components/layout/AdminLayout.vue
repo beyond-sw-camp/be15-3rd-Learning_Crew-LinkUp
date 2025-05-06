@@ -42,7 +42,7 @@ const sidebarItems = computed(() => {
       { label: '피신고자 목록 조회', path: '/admin/reports/reportees' }
     ]
   }
-  if (route.path.startsWith('/admin/penalty')) {
+  if (route.path.startsWith('/admin/penalties')) {
     return [
       { label: '제재 내역 조회', path: '/admin/penalties/list' },
       { label: '이의 제기 내역 조회', path: '/admin/penalties/objections' },

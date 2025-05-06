@@ -109,7 +109,7 @@ export const adminRoutes = [
           },
 
           // 제재 관리
-          /*{
+          {
               path: '/admin/penalties',
               redirect: '/admin/penalties/list'
           },
@@ -127,7 +127,12 @@ export const adminRoutes = [
               path: 'penalties/blacklist',
               name: 'BlacklistList',
               component: () => import('@/features/admin/views/BlacklistListView.vue')
-          }*/
+          },
+          {
+              path: 'report/types',
+              name: 'reportTypes',
+              component: () => import('@/features/admin/views/ReportTriggerView.vue')
+          }
     ],
   },
 ];
