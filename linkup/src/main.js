@@ -11,23 +11,23 @@ import router from './router'
 import { useAuthStore } from '@/stores/auth'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(Toast, {
   position: 'top-left',
   timeout: 1000,
 })
 
-// 앱 마운트 후 인증 토큰 강제 삽입 (개발용)
-app.mount('#app')
-
-// 개발용 토큰 자동 삽입 (추후 삭제 필요)
+// 인증 토큰 강제 삽입 (마운트 전에 실행)
 if (import.meta.env.MODE === 'development') {
-  const authStore = useAuthStore()
+  const authStore = useAuthStore(pinia) // pinia 인스턴스 명시
   const devToken = import.meta.env.VITE_DEV_ACCESS_TOKEN
   if (devToken) {
     authStore.setAuth(devToken)
     console.info('[dev] accessToken injected')
   }
 }
+
+app.mount('#app')
