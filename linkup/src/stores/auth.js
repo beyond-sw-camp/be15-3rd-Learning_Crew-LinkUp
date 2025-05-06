@@ -1,5 +1,8 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
+import { connectSse, disconnectSse } from '@/api/utils/sse.js'
+
+
 
 export const useAuthStore = defineStore('auth', () => {
     const accessToken = ref(null);
@@ -20,6 +23,9 @@ export const useAuthStore = defineStore('auth', () => {
             userRole.value = payload.role;
             userId.value = payload.sub;
             expirationTime.value = payload.exp * 1000;
+
+            // ✅ SSE 연결 시작
+            connectSse(userId.value);
         } catch (e) {
             accessToken.value = null;
             userRole.value = null;
@@ -31,6 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
         accessToken.value = null;
         userRole.value = null;
         expirationTime.value = null;
+        disconnectSse(); // ✅ 로그아웃 시 SSE 연결 해제
     }
 
     return {
