@@ -56,3 +56,13 @@ export function getUsers() {
 export function getUserDetail() {
   return api.get('/user-service/users/me');
 }
+
+/* 7. 회원 마이페이지 조회 */
+export function getUserMypage() {
+  return api.get('/user-service/users/me/mypage');
+}
+
+/* 8. 사업자 마이페이지 조회 */
+export function getBusinessMypage() {
+  return api.get('/user-service/users/me/mypage/business');
+}
