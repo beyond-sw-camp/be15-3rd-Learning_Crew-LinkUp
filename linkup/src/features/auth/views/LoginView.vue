@@ -12,8 +12,8 @@ const handleLogin = async (formData) => {
   try {
     const resp = await loginUser(formData);
     console.log(resp);
-    const accessToken = resp.data.data.accessToken;
-    authStore.setAuth(accessToken);
+    const { accessToken, userName, profileImageUrl } = resp.data.data;
+    authStore.setAuth(accessToken, userName, profileImageUrl);
     await router.push('/');
   } catch (e) {
     console.log(e);
