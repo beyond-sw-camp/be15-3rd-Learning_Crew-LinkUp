@@ -69,23 +69,19 @@ export function fetchPlaceReviewList(params) {
  * @param {Object} params
  * @param {number} [params.statusId] - 처리 상태 ID (1: 처리중, 2: 완료, 3: 기각)
  * @param {number} [params.reportTypeId] - 신고 유형 ID
- * @param {number} [params.page] - 페이지 번호 (기본값: 1)
- * @returns {Promise<Object>} 신고 목록과 페이징 정보
+ * @param {number} [params.page] - 페이지 번호
+ * @returns {Promise<Object>} 신고 목록 + pagination 정보
  */
 export function fetchReportList({ statusId = null, reportTypeId = null, page = 1 }) {
     return api.get('/common-service/report', {
-        params: {
-            statusId,
-            reportTypeId,
-            page
-        }
+        params: { statusId, reportTypeId, page }
     })
 }
 
 /**
  * 신고 상세 정보 조회
- * @param {number|string} reportId - 조회할 신고 ID
- * @returns {Promise<Object>} 신고 상세 정보
+ * @param {number|string} reportId
+ * @returns {Promise<Object>} 단일 신고 상세 정보
  */
 export function fetchReportDetail(reportId) {
     return api.get(`/common-service/report/${reportId}`)
@@ -93,16 +89,16 @@ export function fetchReportDetail(reportId) {
 
 /**
  * 신고 유형 목록 조회
- * @returns {Promise<Object>} 신고 유형 목록 (id, name 포함)
+ * @returns {Promise<Object>} 신고 유형 배열 (id, name)
  */
 export function fetchReportTypes() {
     return api.get('/common-service/report/types')
 }
 
 /**
- * 허위 신고 처리 (statusId: 3)
- * @param {number|string} reportId - 처리할 신고 ID
- * @param {string} message - 처리 메시지 (기본값 제공됨)
+ * 허위 신고 처리 (statusId = 3)
+ * @param {number|string} reportId
+ * @param {string} [message] - 기본 메시지 제공
  * @returns {Promise<void>}
  */
 export function rejectReport(reportId, message = '허위 신고로 처리되었습니다.') {
@@ -114,9 +110,9 @@ export function rejectReport(reportId, message = '허위 신고로 처리되었�
 }
 
 /**
- * 정상 신고 처리 및 제재 등록 (statusId: 2)
- * @param {number|string} reportId - 처리할 신고 ID
- * @param {string} message - 처리 메시지 (기본값 제공됨)
+ * 정상 신고 처리 및 제재 등록 (statusId = 2)
+ * @param {number|string} reportId
+ * @param {string} [message] - 기본 메시지 제공
  * @returns {Promise<void>}
  */
 export function acceptReport(reportId, message = '신고가 처리되고 제재가 등록되었습니다.') {
@@ -128,37 +124,57 @@ export function acceptReport(reportId, message = '신고가 처리되고 제재�
 }
 
 /**
- * 신고 대상별 목록 조회
+ * 신고 대상 목록 조회 (피신고자)
  * @param {Object} params
- * @param {string} [params.isActive] - 'Y' 또는 'N' (활성 여부 필터)
- * @param {string} [params.searchType] - 'targetId' (현재 지원되는 유일한 타입)
- * @param {string} [params.searchKeyword] - 검색 키워드
- * @param {number} [params.page] - 페이지 번호
- * @returns {Promise<Object>} 대상 목록과 페이징 정보
+ * @param {string} [params.isActive] - 'Y' | 'N'
+ * @param {string} [params.searchType] - 'targetId'만 지원
+ * @param {string} [params.searchKeyword]
+ * @param {number} [params.page]
+ * @returns {Promise<Object>} 대상 리스트 + pagination
  */
 export function fetchReportedTargetList({ page = 1, isActive = '', searchType = '', searchKeyword = '' }) {
     const params = {
-        targetType: 'ALL', // 항상 전체 유형
+        targetType: 'ALL',
         page
     }
-
     if (isActive) params.isActive = isActive
-    if (searchType === 'targetId' && searchKeyword) {
-        params.targetId = searchKeyword
-    }
+    if (searchType === 'targetId' && searchKeyword) params.targetId = searchKeyword
 
     return api.get('/common-service/report/target', { params })
 }
 
 /**
- * 특정 신고 대상 상세 정보 + 신고 이력 조회
- * @param {'USER'|'POST'|'COMMENT'} targetType - 대상 유형
- * @param {number|string} targetId - 대상 ID
- * @returns {Promise<Object>} 대상 요약 정보 + reportList 포함
+ * 특정 신고 대상 상세 조회
+ * @param {'USER'|'POST'|'COMMENT'} targetType
+ * @param {number|string} targetId
+ * @returns {Promise<Object>} 상세 정보 + reportList
  */
 export function fetchTargetDetailById(targetType, targetId) {
     return api.get(`/common-service/report/target/${targetType}/${targetId}`)
 }
+
+/**
+ * 신고자 목록 조회 (누적 신고 기준)
+ * @param {Object} params
+ * @param {string|number} [params.reporterId]
+ * @param {number} [params.page]
+ * @returns {Promise<Object>} 신고자 목록 + pagination
+ */
+export function fetchReporterUserList({ reporterId = null, page = 1 }) {
+    return api.get('/common-service/report/reporter-user', {
+        params: { reporterId, page }
+    })
+}
+
+/**
+ * 신고자별 신고 이력 상세 조회
+ * @param {number|string} reporterId
+ * @returns {Promise<Object>} 신고 리스트 포함 상세 정보
+ */
+export function fetchReporterUserDetail(reporterId) {
+    return api.get(`/common-service/report/reporter-user/${reporterId}`)
+}
+
 
 
 /* ------------------------------------ 제재 관리 ------------------------------------ */

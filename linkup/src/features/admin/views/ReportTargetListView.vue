@@ -22,9 +22,9 @@ const fetchList = async ({ page, isActive, searchType, searchKeyword }) => {
   try {
     const params = {
       page,
-      isActive: isActive || undefined,
-      searchType: searchType || undefined,
-      searchKeyword: searchKeyword || undefined
+      isActive: filters.isActive === '' ? null : filters.isActive,
+      searchType: filters.searchType || undefined,
+      searchKeyword: filters.searchKeyword || undefined
     }
 
     const res = await fetchReportedTargetList(params)
