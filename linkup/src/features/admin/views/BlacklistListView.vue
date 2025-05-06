@@ -4,6 +4,11 @@ import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import DetailViewer from '@/features/admin/components/DetailViewer.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
+import {
+  fetchBlacklist,
+  fetchBlacklistDetail,
+  unblockBlacklist
+} from '@/api/admin.js'
 
 const pageTitle = '블랙리스트 조회'
 
@@ -13,27 +18,45 @@ const filters = ref({
 
 const selected = ref(null)
 
-const fetchBlacklistList = async ({ userId }) => {
-  const dummy = [
-    {
-      memberId: 53,
-      userName: '차민규',
-      reason: '협박성 콘텐츠 작성으로 인한 서비스 이용 제한',
-      createdAt: '2025-04-09T19:32:00'
-    },
-    {
-      memberId: 54,
-      userName: '서하늘',
-      reason: '다수의 허위 신고 기록 및 반복된 제재 이력',
-      createdAt: '2025-04-21T14:15:00'
+// 📌 목록 API
+const fetchList = async ({ page, userId }) => {
+  try {
+    const res = await fetchBlacklist({ memberId: userId, page })
+    return {
+      data: res.data.blacklists || [],
+      totalPages: res.data.pagination?.totalPage || 1
     }
-  ]
+  } catch (e) {
+    console.error('🚨 블랙리스트 목록 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
+}
 
-  const filtered = dummy.filter(b =>
-    !userId || String(b.memberId).includes(userId)
-  )
+// 📌 상세 API
+async function openModal(row) {
+  try {
+    const res = await fetchBlacklistDetail(row.memberId)
+    selected.value = res.data
+  } catch (e) {
+    console.error('🚨 블랙리스트 상세 조회 실패:', e)
+    alert('상세 정보를 불러오지 못했습니다.')
+  }
+}
 
-  return { data: filtered, totalPages: 1 }
+// 📌 해제 API
+async function handleUnblock() {
+  try {
+    await unblockBlacklist(selected.value.memberId)
+    alert('블랙리스트 해제 처리되었습니다.')
+    selected.value = null
+  } catch (e) {
+    console.error('🚨 블랙리스트 해제 실패:', e)
+    alert('해제 처리 중 오류가 발생했습니다.')
+  }
+}
+
+function closeModal() {
+  selected.value = null
 }
 
 const columns = [
@@ -55,24 +78,11 @@ const columns = [
     })
   }
 ]
-
-function openModal(row) {
-  selected.value = row
-}
-
-function closeModal() {
-  selected.value = null
-}
-
-function handleUnblock() {
-  alert('블랙리스트 해제 처리되었습니다.')
-  closeModal()
-}
 </script>
 
 <template>
   <AdminListTemplate
-    :fetchFn="fetchBlacklistList"
+    :fetchFn="fetchList"
     :columns="columns"
     :initFilters="filters"
     :pageTitle="pageTitle"

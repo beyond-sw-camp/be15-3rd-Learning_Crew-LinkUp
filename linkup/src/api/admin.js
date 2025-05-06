@@ -213,17 +213,21 @@ export function reportComment(payload) {
 /* ----------------------------- 제재 관련 API ----------------------------- */
 
 /**
- * 제재 목록 조회
- * @param {Object} params - 필터링 조건
- * @param {string|number} [params.userId]
+ * 제재 내역 목록 조회
+ * @param {Object} params
+ * @param {number|string} [params.userId]
  * @param {string} [params.penaltyType] - POST | COMMENT | REVIEW
- * @param {number|string} [params.statusId] - 1: 대기, 2: 승인, 3: 거절
+ * @param {number|string} [params.statusId]
  * @param {number} [params.page]
- * @returns {Promise<Object>} 제재 목록 + pagination
  */
-export function fetchPenaltyList({ userId = '', penaltyType = '', statusId = '', page = 1 }) {
+export function fetchPenaltyList({ userId, penaltyType, statusId, page = 1 }) {
     return api.get('/common-service/penalty', {
-        params: { userId, penaltyType, statusId, page }
+        params: {
+            userId: userId || undefined,
+            penaltyType: penaltyType || undefined,
+            statusId: statusId || undefined,
+            page
+        }
     })
 }
 
@@ -286,35 +290,88 @@ export function withdrawPenalty(penaltyId) {
 
 
 /* ------------------------------------ 이의 제기 ------------------------------------ */
-export function fetchObjectionList(params) {
-    return api.get('/admin/objections', { params })
+/**
+ * 이의 제기 목록 조회 (관리자용)
+ * @param {Object} params - 조회 조건
+ * @param {string} params.memberId - 사용자 ID (옵션)
+ * @param {string} params.statusId - 처리 상태 (옵션: 1=대기, 2=승인, 3=거절)
+ * @param {number} params.page - 페이지 번호
+ * @returns {Promise<Object>} - objections 배열과 pagination 정보
+ */
+export function fetchObjectionList({ memberId = '', statusId = '', page = 1 }) {
+    return api.get('/common-service/objections', {
+        params: { memberId, statusId, page }
+    })
 }
 
+/**
+ * 이의 제기 상세 조회 (관리자용)
+ * @param {number|string} objectionId - 이의 제기 ID
+ * @returns {Promise<Object>} - objection 상세 정보
+ */
 export function fetchObjectionDetail(objectionId) {
-    return api.get(`/admin/objections/${objectionId}`)
+    return api.get(`/common-service/objections/${objectionId}`)
 }
 
+/**
+ * 이의 제기 승인 (관리자용)
+ * @param {number|string} objectionId - 이의 제기 ID
+ * @returns {Promise<Object>} - 처리 결과 메시지 포함
+ */
 export function acceptObjection(objectionId) {
-    return api.post(`/api/v1/common-service/objections/${objectionId}/accept`, {
-        objectionId
-    })
+    return api.put(`/common-service/objections/${objectionId}/accept`)
 }
 
+/**
+ * 이의 제기 거절 (관리자용)
+ * @param {number|string} objectionId - 이의 제기 ID
+ * @returns {Promise<Object>} - 처리 결과 메시지 포함
+ */
 export function rejectObjection(objectionId) {
-    return api.post(`/api/v1/common-service/objections/${objectionId}/reject`, {
-        objectionId
-    })
+    return api.put(`/common-service/objections/${objectionId}/reject`)
 }
 
 /* ------------------------------------ 블랙리스트 ------------------------------------ */
-export function fetchBlacklistList(params) {
-    return api.get('/admin/blacklist', { params })
+/**
+ * 블랙리스트 목록 조회
+ * @param {Object} params
+ * @param {string|number} [params.memberId] - 사용자 ID (필터용)
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @returns {Promise<Object>} 블랙리스트 사용자 목록과 페이징 정보
+ */
+export function fetchBlacklist({ memberId = null, page = 1 }) {
+    return api.get('/common-service/blacklist', {
+        params: { memberId, page }
+    })
 }
 
+/**
+ * 블랙리스트 상세 정보 조회
+ * @param {number|string} memberId - 조회할 사용자 ID
+ * @returns {Promise<Object>} 사용자 블랙리스트 상세 정보
+ */
 export function fetchBlacklistDetail(memberId) {
-    return api.get(`/api/v1/common-service/blacklist/${memberId}`)
+    return api.get(`/common-service/blacklist/${memberId}`)
 }
 
-export function clearBlacklist(memberId) {
-    return api.post(`/api/v1/common-service/blacklist/${memberId}/clear`)
+/**
+ * 블랙리스트 등록
+ * @param {number|string} memberId - 등록 대상 사용자 ID
+ * @param {string} reason - 등록 사유
+ * @returns {Promise<Object>} 등록 결과 메시지
+ */
+export function registerBlacklist(memberId, reason) {
+    return api.post(`/common-service/blacklist/${memberId}`, {
+        memberId,
+        reason
+    })
+}
+
+/**
+ * 블랙리스트 해제
+ * @param {number|string} memberId - 해제할 사용자 ID
+ * @returns {Promise<Object>} 해제 결과 메시지
+ */
+export function unblockBlacklist(memberId) {
+    return api.delete(`/common-service/blacklist/${memberId}/clear`)
 }

@@ -4,50 +4,66 @@ import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import DetailViewer from '@/features/admin/components/DetailViewer.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
+import {
+  fetchObjectionList,
+  fetchObjectionDetail,
+  acceptObjection,
+  rejectObjection
+} from '@/api/admin.js'
 
 const pageTitle = '이의 제기 내역 조회'
-
-const STATUS_MAP = {
-  1: '대기',
-  2: '승인',
-  3: '거절'
-}
-
-const filters = ref({
-  userId: '',
-  statusId: ''
-})
-
+const STATUS_MAP = { 1: '대기', 2: '승인', 3: '거절' }
+const filters = ref({ userId: '', statusId: '' })
 const selected = ref(null)
 
-const fetchList = async ({ userId, statusId }) => {
-  const dummy = [
-    {
-      objectionId: 2,
-      penaltyId: 2,
-      memberId: 48,
-      userName: '오지현',
-      statusId: 1,
-      reason: '상대방도 먼저 도발해서 댓글을 단 상황입니다.',
-      createdAt: '2025-04-09T14:10:00',
-      penaltyInfo: {
-        penaltyType: 'COMMENT',
-        postId: null,
-        commentId: 1,
-        reviewId: null,
-        reason: '폭력적인 언행이 포함된 댓글로 제재됨',
-        isActive: 'Y',
-        createdAt: '2025-04-09T11:10:00'
-      }
+// 목록 조회
+const fetchList = async ({ page, userId, statusId }) => {
+  try {
+    const res = await fetchObjectionList({ memberId: userId, statusId, page })
+    return {
+      data: res.data.objections || [],
+      totalPages: res.data.pagination?.totalPage || 1
     }
-  ]
+  } catch (e) {
+    console.error('🚨 이의 제기 목록 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
+}
 
-  const filtered = dummy.filter(o =>
-    (!userId || String(o.memberId).includes(userId)) &&
-    (!statusId || String(o.statusId) === String(statusId))
-  )
+// 상세 조회
+const openDetail = async (row) => {
+  try {
+    const res = await fetchObjectionDetail(row.objectionId)
+    selected.value = res.data
+  } catch (e) {
+    console.error('🚨 상세 조회 실패:', e)
+  }
+}
 
-  return { data: filtered, totalPages: 1 }
+function close() {
+  selected.value = null
+}
+
+async function handleAccept() {
+  try {
+    await acceptObjection(selected.value.objectionId)
+    alert('이의 제기를 승인하였습니다.')
+    close()
+  } catch (e) {
+    console.error('🚨 승인 실패:', e)
+    alert('이의 제기 승인 실패')
+  }
+}
+
+async function handleReject() {
+  try {
+    await rejectObjection(selected.value.objectionId)
+    alert('이의 제기를 거절하였습니다.')
+    close()
+  } catch (e) {
+    console.error('🚨 거절 실패:', e)
+    alert('이의 제기 거절 실패')
+  }
 }
 
 const columns = [
@@ -72,24 +88,10 @@ const columns = [
     format: (_, row) => ({
       type: 'button',
       label: '보기',
-      onClick: () => (selected.value = row)
+      onClick: () => openDetail(row)
     })
   }
 ]
-
-function close() {
-  selected.value = null
-}
-
-function handleAccept() {
-  alert('이의 제기를 승인하였습니다.')
-  close()
-}
-
-function handleReject() {
-  alert('이의 제기를 거절하였습니다.')
-  close()
-}
 </script>
 
 <template>
@@ -140,7 +142,7 @@ function handleReject() {
                 {{ selected.penaltyInfo.postId ?? selected.penaltyInfo.commentId ?? selected.penaltyInfo.reviewId ?? '-' }}
               </span></div>
               <div class="info-item"><span class="label">사유</span><span class="value">{{ selected.penaltyInfo.reason }}</span></div>
-              <div class="info-item"><span class="label">상태</span><span class="value">{{ selected.penaltyInfo.isActive === 'Y' ? '활성' : '비활성' }}</span></div>
+              <div class="info-item"><span class="label">상태</span><span class="value">{{ selected.penaltyInfo.statusId === 2 ? '활성' : '비활성' }}</span></div>
               <div class="info-item"><span class="label">제재 일시</span><span class="value">{{ format(new Date(selected.penaltyInfo.createdAt), 'yyyy-MM-dd HH:mm') }}</span></div>
             </div>
           </section>
@@ -152,8 +154,8 @@ function handleReject() {
         </template>
 
         <template #footer>
-          <AdminButton type="approve" @click="handleAccept">승인</AdminButton>
-          <AdminButton type="reject" @click="handleReject">거절</AdminButton>
+          <AdminButton v-if="selected.statusId === 1" type="approve" @click="handleAccept">승인</AdminButton>
+          <AdminButton v-if="selected.statusId === 1" type="reject" @click="handleReject">거절</AdminButton>
           <AdminButton type="secondary" @click="close">닫기</AdminButton>
         </template>
       </DetailViewer>
