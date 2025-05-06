@@ -132,6 +132,11 @@ export const adminRoutes = [
               path: 'report/types',
               name: 'reportTypes',
               component: () => import('@/features/admin/views/ReportTriggerView.vue')
+          },
+          {
+              path: 'objections/types',
+              name: 'objections',
+              component: () => import('@/features/admin/views/ObjectionView.vue')
           }
     ],
   },
