@@ -43,19 +43,18 @@ async function openModal(row) {
     ]
 
     reportRows.value = reports.map(r => ({
-      reportId: r.reportId,
-      reporterId: r.reporterMemberId,
-      reporterName: r.reporterName,
-      reportType: r.reportType,
-      createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      status: r.status
+      신고ID: r.reportId,
+      신고자ID: r.reporterMemberId,
+      신고자이름: r.reporterName,
+      신고유형: r.reportType,
+      신고일시: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
+      처리상태: r.status
     }))
   } catch (e) {
     console.error('🚨 상세 조회 실패:', e)
   }
 }
 
-// 제재 처리 (임시)
 function handleSanction() {
   alert('제재 처리를 수행합니다.')
   selectedRow.value = null
@@ -85,20 +84,27 @@ const columns = [
     :pageTitle="pageTitle"
     :enableModal="true"
   >
+    <!-- 필터 영역 -->
     <template #filters>
-      <label class="filter-label">
-        피신고자 ID:
-        <input v-model="filters.reporteeId" class="select-box id-input" placeholder="ID" />
-      </label>
+      <label class="filter-label" for="reporteeId">피신고자 ID:</label>
+      <input
+        id="reporteeId"
+        v-model="filters.reporteeId"
+        class="select-box id-input"
+        placeholder="ID"
+        type="text"
+        inputmode="numeric"
+      />
     </template>
 
+    <!-- 상세 모달 -->
     <template #modal>
       <ReportDetailModal
         v-if="selectedRow"
         :model-value="true"
         @update:modelValue="selectedRow = null"
-        :title="'피신고자 상세 정보'"
-        :description="'해당 피신고자에 대한 신고 이력을 확인할 수 있습니다.'"
+        title="피신고자 상세 정보"
+        description="해당 피신고자에 대한 신고 이력을 확인할 수 있습니다."
         :summary="summaryInfo"
         :headers="['신고 ID', '신고자 ID', '신고자 이름', '신고 유형', '신고 일시', '처리 상태']"
         :rows="reportRows"

@@ -20,26 +20,26 @@ function close() {
 <template>
   <div
     v-if="modelValue"
-    class="modal user-authority-modal"
+    class="modal"
     role="dialog"
     aria-modal="true"
     aria-labelledby="modalTitle"
     @click.self="close"
   >
-    <section class="modal-content user-authority-modal-content">
-      <!-- 헤더 영역 -->
-      <header>
+    <section class="modal-content" aria-describedby="modalContent">
+      <!-- 모달 헤더 -->
+      <header class="modal-header">
         <slot name="title">
           <h2 class="modal-title" id="modalTitle">상세 보기</h2>
         </slot>
       </header>
 
-      <!-- 본문 영역 -->
-      <section class="modal-body" aria-label="모달 본문">
+      <!-- 모달 본문 -->
+      <section id="modalContent" class="modal-body" aria-label="상세 정보">
         <slot />
       </section>
 
-      <!-- 푸터 영역 -->
+      <!-- 모달 푸터 -->
       <footer class="modal-footer">
         <slot name="footer">
           <AdminButton type="secondary" @click="close">닫기</AdminButton>
@@ -50,5 +50,8 @@ function close() {
 </template>
 
 <style scoped>
-/* 실제 스타일은 admin-styles.css에 포함됨 */
+/* 스타일은 admin-styles.css 기반이므로 여기선 최소한으로 유지 */
+.modal-header {
+  margin-bottom: 16px;
+}
 </style>

@@ -18,14 +18,14 @@ const isActive = (path) => route.path.startsWith(path)
 
 <template>
   <header class="admin-header" role="banner">
-    <h1 class="header-left">서비스 관리</h1>
-    <nav class="admin-nav" aria-label="관리자 내비게이션">
-      <ul>
+    <div class="header-left" aria-label="서비스 이름">서비스 관리</div>
+    <nav class="admin-nav" role="navigation" aria-label="관리자 메뉴">
+      <ul class="admin-nav-list">
         <li v-for="item in navItems" :key="item.path">
           <RouterLink
-              :to="item.path"
-              class="nav-link"
-              :class="{ active: isActive(item.path) }"
+            :to="item.path"
+            class="nav-link"
+            :class="{ active: isActive(item.path) }"
           >
             {{ item.label }}
           </RouterLink>
@@ -36,16 +36,5 @@ const isActive = (path) => route.path.startsWith(path)
 </template>
 
 <style scoped>
-/* ul, li가 리스트 스타일로 보이지 않게 하기 위한 기본 설정 */
-.admin-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 10px;
-  padding: 0;
-  margin: 0;
-}
 
-.admin-nav li {
-  margin: 0;
-}
 </style>

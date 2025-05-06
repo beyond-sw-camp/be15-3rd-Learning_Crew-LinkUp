@@ -19,6 +19,7 @@ const sidebarItems = computed(() => {
   if (route.path.startsWith('/admin/point')) {
     return [
       { label: '포인트 내역 조회', path: '/admin/points/points' },
+      { label: '정산 내역 조회', path: '/admin/points/settlement' },
       { label: '계좌 목록 조회', path: '/admin/points/accounts' }
     ]
   }
@@ -57,32 +58,31 @@ const pageTitle = computed(() => {
   const matched = sidebarItems.value.find(item => route.path === item.path)
   return matched?.label || ''
 })
-
 </script>
-
 
 <template>
   <div class="admin-wrapper">
     <!-- 시맨틱 header -->
-    <header>
+    <header role="banner">
       <AdminHeader />
     </header>
 
     <div class="admin-container">
-      <!-- 시맨틱 nav/aside -->
+      <!-- 시맨틱 navigation/aside -->
+      <aside role="complementary" aria-label="관리자 메뉴" class="sidebar">
         <AdminSidebar :menu-items="sidebarItems" />
+      </aside>
 
-      <!-- 시맨틱 main 영역 -->
+      <!-- 시맨틱 main 콘텐츠 영역 -->
       <main class="admin-main" role="main">
-        <section aria-labelledby="admin-content-title">
-          <!-- RouterView 에 페이지 타이틀 prop 전달 -->
+        <section :aria-labelledby="'admin-content-title'">
+          <h2 id="admin-content-title" class="sr-only">{{ pageTitle }}</h2>
           <RouterView :page-title="pageTitle" />
         </section>
       </main>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 

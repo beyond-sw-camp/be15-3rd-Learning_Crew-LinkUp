@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import AdminFilter from './AdminFilter.vue'
 import AdminTable from './AdminTable.vue'
 import Pagination from './Pagination.vue'
@@ -16,7 +16,6 @@ const props = defineProps({
 const emit = defineEmits(['update:page'])
 
 const filters = props.initFilters
-
 const rows = ref([])
 const page = ref(1)
 const totalPages = ref(1)
@@ -36,7 +35,6 @@ const fetchList = async (newPage = 1) => {
   }
 }
 
-
 const handleRowClick = (row) => {
   if (props.enableModal) selected.value = row
 }
@@ -45,17 +43,16 @@ const closeModal = () => {
   selected.value = null
 }
 
-const format = (value, formatter, row) => {
-  return typeof formatter === 'function' ? formatter(value, row) : value
-}
+const format = (value, formatter, row) =>
+  typeof formatter === 'function' ? formatter(value, row) : value
 
 onMounted(() => fetchList(1))
 </script>
 
 <template>
   <div class="main-admin">
-    <!-- 제목 및 필터 -->
-    <div class="filter-wrapper">
+    <!--  헤더 & 필터 -->
+    <section class="filter-wrapper" aria-label="필터 섹션">
       <h2 class="page-title">{{ pageTitle || '관리 목록' }}</h2>
       <AdminFilter
         v-if="showFilter"
@@ -66,43 +63,53 @@ onMounted(() => fetchList(1))
           <slot name="filters" />
         </template>
       </AdminFilter>
-    </div>
+    </section>
 
-    <!-- 테이블 영역 -->
-    <AdminTable @row-click="handleRowClick">
-      <template #thead>
-        <tr>
-          <th v-for="col in columns" :key="col.key">{{ col.label }}</th>
-        </tr>
-      </template>
-      <template #tbody>
-        <tr v-for="(row, idx) in rows" :key="row.id || row.targetId || row.reporterId || row.userId || row.ownerId || idx">
-          <td v-for="col in columns" :key="col.key">
-            <template v-if="format(row[col.key], col.format, row)?.type === 'button'">
-              <button
-                type="button"
-                class="text-button"
-                @click="format(row[col.key], col.format, row).onClick?.()"
-              >
-                {{ format(row[col.key], col.format, row).label }}
-              </button>
-            </template>
-            <template v-else>
-              {{ format(row[col.key], col.format, row) ?? '-' }}
-            </template>
-          </td>
-        </tr>
-      </template>
-    </AdminTable>
+    <!--  테이블 -->
+    <section aria-label="데이터 테이블">
+      <AdminTable @row-click="handleRowClick">
+        <template #thead>
+          <tr>
+            <th v-for="col in columns" :key="col.key" scope="col">
+              {{ col.label }}
+            </th>
+          </tr>
+        </template>
+        <template #tbody>
+          <tr
+            v-for="(row, idx) in rows"
+            :key="row.id || row.targetId || row.reporterId || row.userId || row.ownerId || idx"
+          >
+            <td v-for="col in columns" :key="col.key">
+              <template v-if="format(row[col.key], col.format, row)?.type === 'button'">
+                <button
+                  type="button"
+                  class="text-button"
+                  @click="format(row[col.key], col.format, row).onClick?.()"
+                  :aria-label="format(row[col.key], col.format, row).label"
+                >
+                  {{ format(row[col.key], col.format, row).label }}
+                </button>
+              </template>
+              <template v-else>
+                {{ format(row[col.key], col.format, row) ?? '-' }}
+              </template>
+            </td>
+          </tr>
+        </template>
+      </AdminTable>
+    </section>
 
-    <!-- 페이지네이션 -->
-    <Pagination
-      :current-page="page"
-      :total-pages="totalPages"
-      @update:page="fetchList"
-    />
+    <!--  페이지네이션 -->
+    <nav aria-label="페이지 이동">
+      <Pagination
+        :current-page="page"
+        :total-pages="totalPages"
+        @update:page="fetchList"
+      />
+    </nav>
 
-    <!-- 모달 영역 -->
+    <!--  모달 영역 -->
     <slot name="modal" />
   </div>
 </template>

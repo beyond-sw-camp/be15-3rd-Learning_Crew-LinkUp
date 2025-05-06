@@ -14,21 +14,28 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'action'])
 const close = () => emit('update:modelValue', false)
-
 const isOpen = computed(() => props.modelValue)
 </script>
 
 <template>
-  <div v-if="isOpen" class="modal">
-    <section class="modal-report" aria-modal="true" role="dialog">
+  <div
+    v-if="isOpen"
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    @click.self="close"
+  >
+    <section class="modal-report">
       <!-- 헤더 -->
       <header>
-        <h2 class="modal-report-title">{{ title }}</h2>
-        <p class="sub-text" v-if="description">{{ description }}</p>
+        <h2 id="modal-title" class="modal-report-title">{{ title }}</h2>
+        <p v-if="description" class="sub-text">{{ description }}</p>
       </header>
 
-      <!-- 요약 정보 섹션 -->
+      <!-- 요약 정보 -->
       <section class="modal-report-section" aria-labelledby="summary-section">
+        <h3 id="summary-section" class="sr-only">신고자 및 피신고자 정보</h3>
         <div class="report-detail-grid">
           <div class="info-report-item" v-for="(item, index) in summary" :key="index">
             <span class="label"><strong>{{ item.label }}:</strong></span>
@@ -37,10 +44,9 @@ const isOpen = computed(() => props.modelValue)
         </div>
       </section>
 
-
-      <!-- 신고 목록 테이블 섹션 -->
-      <section class="modal-section" aria-labelledby="report-table-section">
-        <h3 class="report-title" id="report-table-section">신고 목록</h3>
+      <!-- 테이블 -->
+      <section class="modal-section" aria-labelledby="report-table-title">
+        <h3 id="report-table-title" class="report-title">신고 목록</h3>
         <table class="table" role="table">
           <thead>
           <tr>
@@ -55,7 +61,7 @@ const isOpen = computed(() => props.modelValue)
         </table>
       </section>
 
-      <!-- 버튼 영역 -->
+      <!-- 하단 버튼 -->
       <footer class="modal-buttons">
         <button
           v-if="showActionButton"
@@ -69,3 +75,7 @@ const isOpen = computed(() => props.modelValue)
     </section>
   </div>
 </template>
+
+<style scoped>
+
+</style>
