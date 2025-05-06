@@ -22,12 +22,19 @@ const totalPages = ref(1)
 const selected = ref(null)
 
 const fetchList = async (newPage = 1) => {
-  page.value = newPage
-  const res = await props.fetchFn({ ...filters, page: newPage })
-  rows.value = res.data || res.list || []
-  totalPages.value = res.totalPages || 1
-  emit('update:page', newPage)
+  try {
+    page.value = newPage
+    const res = await props.fetchFn({ ...filters, page: newPage })
+    rows.value = res.data || res.list || []
+    totalPages.value = res.totalPages || 1
+    emit('update:page', newPage)
+  } catch (err) {
+    console.error('🚨 리스트 로딩 실패:', err)
+    rows.value = []
+    totalPages.value = 1
+  }
 }
+
 
 const handleRowClick = (row) => {
   if (props.enableModal) selected.value = row

@@ -63,9 +63,6 @@ export function fetchPlaceReviewList(params) {
 }
 
 /* ----------------------------- 신고 관련 API ----------------------------- */
-
-import api from '@/api/axios'  // ← axios 인스턴스 import 필요
-
 /**
  * 신고 목록 조회
  * @param {Object} params

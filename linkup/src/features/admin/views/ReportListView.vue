@@ -45,26 +45,31 @@ onMounted(async () => {
     }))
   } catch (e) {
     toast.error('신고 유형 목록을 불러오지 못했습니다.')
+    reportTypes.value = []
   }
 })
 
 // ---------------- 목록 조회 함수 ----------------
 async function loadReportList({ status, reportTypeId, page }) {
   try {
+    const statusId = status && statusToId[status] ? statusToId[status] : null
     const res = await fetchReportList({
-      statusId: statusToId[status] || null,
+      statusId,
       reportTypeId: reportTypeId || null,
       page: page || 1
     })
+
     return {
-      data: res.data.reports,
-      totalPages: res.data.pagination.totalPage
+      data: res.data.reports || [],
+      totalPages: res.data.pagination?.totalPage || 1
     }
   } catch (error) {
+    console.error('🚨 신고 목록 로딩 실패:', error)
     toast.error('신고 목록을 불러오지 못했습니다.')
     return { data: [], totalPages: 1 }
   }
 }
+
 
 // ---------------- 상세 보기 상태 ----------------
 const selected = ref(null)

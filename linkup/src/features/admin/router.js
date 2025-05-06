@@ -5,11 +5,11 @@ export const adminRoutes = [
         children: [
               // 회원 관리
               {
-                path: '/admin',
+                path: '',
                 redirect: '/admin/users/members',
               },
               {
-                path: '/admin/users',
+                path: 'users',
                 redirect: '/admin/users/members',
               },
               {
@@ -35,7 +35,7 @@ export const adminRoutes = [
 
               // 포인트 관리
               {
-                path: '/admin/points',
+                path: 'points',
                 redirect: '/admin/points/points',
               },
               {
@@ -51,7 +51,7 @@ export const adminRoutes = [
 
               // 모임 관리
               {
-                path: '/admin/meetings',
+                path: 'meetings',
                 redirect: '/admin/meetings/list',
               },
               {
@@ -67,7 +67,7 @@ export const adminRoutes = [
 
             // 장소 관리
             {
-                  path: '/admin/places',
+                  path: 'places',
                   redirect: '/admin/places/list'
               },
               {
@@ -84,7 +84,7 @@ export const adminRoutes = [
 
             // 신고 관리
             {
-                path: '/admin/reports',
+                path: 'reports',
                 redirect: '/admin/reports/list'
             },
             {
@@ -110,7 +110,7 @@ export const adminRoutes = [
 
           // 제재 관리
           {
-              path: '/admin/penalties',
+              path: 'penalties',
               redirect: '/admin/penalties/list'
           },
           {
