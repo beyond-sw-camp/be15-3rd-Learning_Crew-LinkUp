@@ -62,42 +62,96 @@ export function fetchPlaceReviewList(params) {
     return api.get('/admin/place-reviews', { params })
 }
 
-/* ------------------------------------ 신고 관리 ------------------------------------ */
-export function fetchReportList({ status = '', reportTypeId = '', page = 1 }) {
-    return api.get('/admin/reports', {
-        params: { status, reportTypeId, page }
+/* ----------------------------- 신고 관련 API ----------------------------- */
+
+import api from '@/api/axios'  // ← axios 인스턴스 import 필요
+
+/**
+ * 신고 목록 조회
+ * @param {Object} params
+ * @param {string|number} [params.statusId] - 처리 상태 ID (예: 1: 처리중, 2: 완료, 3: 기각)
+ * @param {number} [params.reportTypeId] - 신고 유형 ID
+ * @param {number} [params.page] - 페이지 번호
+ * @returns {Promise<Object>} 신고 목록과 페이징 정보
+ */
+export function fetchReportList({ statusId = null, reportTypeId = null, page = 1 }) {
+    return api.get('/api/v1/common-service/report', {
+        params: {
+            statusId,
+            reportTypeId,
+            page
+        }
     })
 }
 
-export function fetchReportedTargetList(params) {
-    return api.get('/admin/reports/targets', { params })
-}
-
-export function fetchTargetDetailById(targetType, targetId) {
-    return api.get(`/admin/reports/targets/${targetType}/${targetId}`)
-}
-
+/**
+ * 신고 상세 정보 조회
+ * @param {number|string} reportId
+ * @returns {Promise<Object>} 신고 상세 정보
+ */
 export function fetchReportDetail(reportId) {
-    return api.get(`/admin/reports/${reportId}`)
+    return api.get(`/api/v1/common-service/report/${reportId}`)
 }
 
-// 신고 처리: 허위 신고 처리
-export function rejectReport(reportId, message) {
-    return api.post(`/api/v1/common-service/report/${reportId}/rejected`, {
+/**
+ * 신고 유형 목록 조회
+ * @returns {Promise<Array>} 신고 유형 배열
+ */
+export function fetchReportTypes() {
+    return api.get('/api/v1/common-service/reportType')
+}
+
+/**
+ * 허위 신고 처리 (statusId: 3)
+ * @param {number|string} reportId
+ * @param {string} message - 처리 메시지
+ * @returns {Promise<void>}
+ */
+export function rejectReport(reportId, message = '허위 신고로 처리되었습니다.') {
+    return api.put(`/api/v1/common-service/report/${reportId}/rejected`, {
         reportId,
         statusId: 3,
         message
     })
 }
 
-// 신고 처리: 제재 확정 처리
-export function acceptReport(reportId, message) {
-    return api.post(`/api/v1/common-service/report/${reportId}/accepted`, {
+/**
+ * 정상 신고 처리 및 제재 등록 (statusId: 2)
+ * @param {number|string} reportId
+ * @param {string} message - 처리 메시지
+ * @returns {Promise<void>}
+ */
+export function acceptReport(reportId, message = '신고가 처리되고 제재가 등록되었습니다.') {
+    return api.put(`/api/v1/common-service/report/${reportId}/accepted`, {
         reportId,
         statusId: 2,
         message
     })
 }
+
+/**
+ * 신고 대상 목록 조회 (피신고자 목록)
+ * @param {Object} params
+ * @param {string} [params.isActive] - 'Y' | 'N'
+ * @param {string} [params.searchType] - 'userId' | 'postId' | 'commentId'
+ * @param {string} [params.searchKeyword]
+ * @param {number} [params.page]
+ * @returns {Promise<Object>}
+ */
+export function fetchReportedTargetList(params) {
+    return api.get('/admin/reports/targets', { params })
+}
+
+/**
+ * 특정 신고 대상 상세 정보 + 이력 조회
+ * @param {'USER'|'POST'|'COMMENT'} targetType
+ * @param {string|number} targetId
+ * @returns {Promise<Object>}
+ */
+export function fetchTargetDetailById(targetType, targetId) {
+    return api.get(`/admin/reports/targets/${targetType}/${targetId}`)
+}
+
 
 /* ------------------------------------ 제재 관리 ------------------------------------ */
 export function fetchPenaltyList(params) {

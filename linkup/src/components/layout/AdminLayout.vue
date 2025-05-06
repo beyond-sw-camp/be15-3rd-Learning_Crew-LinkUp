@@ -63,11 +63,21 @@ const pageTitle = computed(() => {
 
 <template>
   <div class="admin-wrapper">
-    <AdminHeader />
+    <!-- 시맨틱 header -->
+    <header>
+      <AdminHeader />
+    </header>
+
     <div class="admin-container">
-      <AdminSidebar :menu-items="sidebarItems" />
-      <main class="admin-main">
-        <RouterView :page-title="pageTitle" />
+      <!-- 시맨틱 nav/aside -->
+        <AdminSidebar :menu-items="sidebarItems" />
+
+      <!-- 시맨틱 main 영역 -->
+      <main class="admin-main" role="main">
+        <section aria-labelledby="admin-content-title">
+          <!-- RouterView 에 페이지 타이틀 prop 전달 -->
+          <RouterView :page-title="pageTitle" />
+        </section>
       </main>
     </div>
   </div>

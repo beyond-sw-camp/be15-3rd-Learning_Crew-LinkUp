@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, watch } from 'vue'
 import AdminFilter from './AdminFilter.vue'
 import AdminTable from './AdminTable.vue'
 import Pagination from './Pagination.vue'
@@ -13,29 +13,31 @@ const props = defineProps({
   pageTitle: { type: String, default: '' }
 })
 
+const emit = defineEmits(['update:page'])
+
 const filters = reactive({ ...props.initFilters })
 const rows = ref([])
 const page = ref(1)
 const totalPages = ref(1)
 const selected = ref(null)
 
-function fetchList(newPage = 1) {
+const fetchList = async (newPage = 1) => {
   page.value = newPage
-  props.fetchFn({ ...filters, page: newPage }).then((res) => {
-    rows.value = res.data || res.list || []
-    totalPages.value = res.totalPages || 1
-  })
+  const res = await props.fetchFn({ ...filters, page: newPage })
+  rows.value = res.data || res.list || []
+  totalPages.value = res.totalPages || 1
+  emit('update:page', newPage)
 }
 
-function handleRowClick(row) {
+const handleRowClick = (row) => {
   if (props.enableModal) selected.value = row
 }
 
-function closeModal() {
+const closeModal = () => {
   selected.value = null
 }
 
-function format(value, formatter, row) {
+const format = (value, formatter, row) => {
   return typeof formatter === 'function' ? formatter(value, row) : value
 }
 
@@ -44,7 +46,7 @@ onMounted(() => fetchList(1))
 
 <template>
   <div class="main-admin">
-    <!-- 제목 -->
+    <!-- 제목 및 필터 -->
     <div class="filter-wrapper">
       <h2 class="page-title">{{ pageTitle || '관리 목록' }}</h2>
       <AdminFilter
@@ -58,7 +60,7 @@ onMounted(() => fetchList(1))
       </AdminFilter>
     </div>
 
-    <!-- 테이블 -->
+    <!-- 테이블 영역 -->
     <AdminTable @row-click="handleRowClick">
       <template #thead>
         <tr>
@@ -66,9 +68,9 @@ onMounted(() => fetchList(1))
         </tr>
       </template>
       <template #tbody>
-        <tr v-for="(row, idx) in rows" :key="row.targetId || row.reporterId || row.userId || row.ownerId || row.id || idx">
+        <tr v-for="(row, idx) in rows" :key="row.id || row.targetId || row.reporterId || row.userId || row.ownerId || idx">
           <td v-for="col in columns" :key="col.key">
-            <template v-if="typeof format(row[col.key], col.format, row) === 'object' && format(row[col.key], col.format, row).type === 'button'">
+            <template v-if="format(row[col.key], col.format, row)?.type === 'button'">
               <button
                 type="button"
                 class="text-button"
@@ -92,7 +94,7 @@ onMounted(() => fetchList(1))
       @update:page="fetchList"
     />
 
-    <!-- 모달 슬롯 -->
+    <!-- 모달 영역 -->
     <slot name="modal" />
   </div>
 </template>
