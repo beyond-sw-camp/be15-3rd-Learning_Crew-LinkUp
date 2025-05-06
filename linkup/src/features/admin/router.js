@@ -5,7 +5,7 @@ export const adminRoutes = [
         children: [
               // 회원 관리
               {
-                path: '',
+                path: 'service',
                 redirect: '/admin/users/members',
               },
               {

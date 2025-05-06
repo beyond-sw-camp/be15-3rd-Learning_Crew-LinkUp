@@ -87,7 +87,7 @@ export function fetchReportList({ statusId = null, reportTypeId = null, page = 1
  * @returns {Promise<Object>} 신고 상세 정보
  */
 export function fetchReportDetail(reportId) {
-    return api.get(`/api/v1/common-service/report/${reportId}`)
+    return api.get(`/common-service/report/${reportId}`)
 }
 
 /**
@@ -95,7 +95,7 @@ export function fetchReportDetail(reportId) {
  * @returns {Promise<Array>} 신고 유형 배열
  */
 export function fetchReportTypes() {
-    return api.get('/api/v1/common-service/report/types')
+    return api.get('/common-service/report/types')
 }
 
 /**
@@ -105,7 +105,7 @@ export function fetchReportTypes() {
  * @returns {Promise<void>}
  */
 export function rejectReport(reportId, message = '허위 신고로 처리되었습니다.') {
-    return api.put(`/api/v1/common-service/report/${reportId}/rejected`, {
+    return api.put(`/common-service/report/${reportId}/rejected`, {
         reportId,
         statusId: 3,
         message
@@ -119,11 +119,11 @@ export function rejectReport(reportId, message = '허위 신고로 처리되었�
  * @returns {Promise<void>}
  */
 export function acceptReport(reportId, message = '신고가 처리되고 제재가 등록되었습니다.') {
-    return api.put(`/api/v1/common-service/report/${reportId}/accepted`, {
-        reportId,
-        statusId: 2,
-        message
-    })
+    return api.put(`/common-service/report/${reportId}/accepted`, {
+      reportId,
+      statusId: 2,
+      message,
+    });
 }
 
 /**
@@ -136,7 +136,7 @@ export function acceptReport(reportId, message = '신고가 처리되고 제재�
  * @returns {Promise<Object>}
  */
 export function fetchReportedTargetList(params) {
-    return api.get('/admin/reports/targets', { params })
+    return api.get('/common-service/report/reportee-user', { params })
 }
 
 /**
@@ -146,7 +146,7 @@ export function fetchReportedTargetList(params) {
  * @returns {Promise<Object>}
  */
 export function fetchTargetDetailById(targetType, targetId) {
-    return api.get(`/admin/reports/targets/${targetType}/${targetId}`)
+    return api.get(`/common-service/report/reportee-user/${targetId}`)
 }
 
 

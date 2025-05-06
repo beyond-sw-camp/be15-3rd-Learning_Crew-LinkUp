@@ -12,7 +12,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const authStore = useAuthStore();
 
-  // 개발용 강제 토큰 삽입 제거됨 ✅
+  // 개발용 강제 토큰 삽입 제거됨
   if (authStore.accessToken) {
     config.headers.Authorization = `Bearer ${authStore.accessToken}`;
   }
