@@ -1,6 +1,7 @@
 <script setup>
 
 import { onMounted, ref } from 'vue';
+import api from '@/api/axios.js';
 
 const meetings = ref([]);
 
@@ -14,10 +15,10 @@ meetings.value = [{
 
 // onMounted(async() => {
 //   try {
-//     const response = await axios.get(`/meetings/user/${userId}`)
+//     const response = api.get(`/meetings/user/${userId}`)
 //     meetings.value = response.data.data.meetings
 //   } catch (e) {
-//     console.error('개설 모임 조회 실패', e);
+//     console.error('참가 모임 조회 실패', e);
 //   }
 // })
 

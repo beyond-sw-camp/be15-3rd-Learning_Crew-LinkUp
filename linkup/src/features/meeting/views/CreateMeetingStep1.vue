@@ -1,17 +1,21 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
+import api from '@/api/axios.js';
 
 const MIN_USER = 2;
 const MAX_USER = 30;
 
+const route = useRoute();
 const router = useRouter();
 
 // const isLoading = ref(true);
 // const place = ref(null);
-
-// onMounted(async() => {
+//
+// const placeId = route.query.placeId;
+//
+// onMounted(async () => {
 //   try {
 //     const response = api.get(`/common-service/place/${placeId}`)
 //     place.value = response.data.data.place

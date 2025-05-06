@@ -15,13 +15,13 @@
           :key="'participant-' + index"
           class="participant-card"
         >
-          <img :src="participant.image" alt="프로필" class="participant-thumb" />
+          <img :src="participant.profileImageUrl" alt="프로필" class="participant-thumb" />
           <div class="participant-content">
             <div class="participant-nickname">{{ participant.nickname }}</div>
             <div class="participant-subinfo">매너온도: {{ participant.mannerTemperature }}°C</div>
           </div>
           <div class="participant-actions">
-            <template v-if="participant.nickname === creatorNickname">
+            <template v-if="participant.nickname === leaderNickname">
               <button class="participant-btn disabled" disabled>
                 <img src="@/assets/icons/meeting_and_place/crown.svg" alt="개설자" class="leader"/>
               </button>
@@ -41,18 +41,19 @@
 import { ref } from 'vue'
 import api from '@/api/axios.js';
 
-const creatorNickname = '방구석메시';
+const leaderNickname = '방구석메시';
+// 참가자 목록 조회 api.get(`common-service/my/meetings/${meetingId}/participation`);
 
 const participants = ref([
   {
     nickname: '방구석메시',
     mannerTemperature: 38,
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup',
+    profileImageUrl: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup',
   },
   {
     nickname: '운동광인생',
     mannerTemperature: 40,
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup2',
+    profileImageUrl: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup2',
   },
 ])
 

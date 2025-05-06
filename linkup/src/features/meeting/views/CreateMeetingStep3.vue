@@ -11,7 +11,6 @@ import api from '@/api/axios.js';
 const route = useRoute();
 const router = useRouter();
 
-const selectedSport = ref('');
 const selectedGender = ref('BOTH');
 const selectedAgeGroups = reactive([]);
 const selectedLevels = reactive([]);
@@ -32,7 +31,7 @@ const createMeeting = async () => {
     meetingDate: route.query.meetingDate,
     meetingTime: route.query.meetingTime,
     placeId: route.query.placeId,
-    sportType: selectedSport.value,
+    sportId: route.query.sportId,
     gender: selectedGender.value,
     ageGroup: selectedAgeGroups.join(','),
     level: selectedLevels.join(','),

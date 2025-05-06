@@ -21,7 +21,7 @@ s
             <div class="participant-subinfo">매너온도: {{ participant.mannerTemperature }}°C</div>
           </div>
           <div class="participant-actions">
-            <template v-if="participant.nickname === creatorNickname">
+            <template v-if="participant.nickname === leaderNickname">
               <button class="participant-btn disabled" disabled>
                 <img src="@/assets/icons/meeting_and_place/crown.svg" alt="개설자" class="leader"/>
                 <span class="hidden-text">권한 위임</span>
@@ -43,13 +43,13 @@ s
           class="applicant-card"
         >
           <div class="applicant-profile">
-            <img :src="applicant.image" alt="프로필" />
+            <img :src="applicant.profileImageUrl" alt="프로필" />
           </div>
           <div class="applicant-info">
             <p><strong>{{ applicant.nickname }}</strong></p>
             <p><strong>{{ applicant.gender }}</strong> | <strong>{{ applicant.age }}세</strong> | <strong>{{ applicant.mannerTemperature
               }}°C</strong></p>
-            <p>{{ applicant.comment }}</p>
+            <p>{{ applicant.introduction }}</p>
           </div>
           <div class="applicant-actions">
             <button class="btn accept" @click="acceptParticipation(applicant)">수락</button>
@@ -60,7 +60,7 @@ s
 
       <div class="participant-modal-button">
         <button class="btn accept">모임 바로가기</button>
-        <button class="btn cancel">모임 취소</button>
+        <button class="btn cancel" @click="cancelMeeting">모임 취소</button>
       </div>
     </div>
 </template>
@@ -69,7 +69,9 @@ s
 import { computed, ref } from 'vue';
 import api from '@/api/axios.js';
 
-const creatorNickname = '방구석메시';
+const leaderNickname = '방구석메시';
+// 참가자 목록 조회: api.get(`common-service/my/meetings/${meetingId}/participation`);
+// 참가 신청 목록 조회: api.get(`common-service/meetings/${meetingId}/participation_request`);
 
 const participants = ref([
   {
@@ -91,8 +93,8 @@ const applicants = ref([
     gender: '남자',
     age: 30,
     mannerTemperature: 38,
-    comment: '승부욕 강한 타입입니다.',
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup3',
+    introduction: '승부욕 강한 타입입니다.',
+    profileImageUrl: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup3',
   },
 ])
 
@@ -127,6 +129,18 @@ async function rejectParticipation(applicant) {
     alert('참가 거절에 실패했습니다.');
   }
 }
+
+const cancelMeeting = async () => {
+  try {
+    const result = confirm('정말 모집을 취소하시겠습니까?');
+    if (result) {
+      return api.delete(`common-service/meetings/${meetingId.value}/cancel`);
+    }
+  } catch (e) {
+    console.error('모임 취소 실패', e);
+    alert('모임 취소에 실패했습니다.');
+  }
+};
 </script>
 
 <style scoped>
