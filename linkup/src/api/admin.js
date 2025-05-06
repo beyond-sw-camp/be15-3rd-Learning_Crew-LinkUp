@@ -161,30 +161,6 @@ export function fetchTargetDetailById(targetType, targetId) {
 }
 
 
-/**
- * 신고 대상 목록 조회 (피신고자 목록)
- * @param {Object} params
- * @param {string} [params.isActive] - 'Y' | 'N'
- * @param {string} [params.searchType] - 'userId' | 'postId' | 'commentId'
- * @param {string} [params.searchKeyword]
- * @param {number} [params.page]
- * @returns {Promise<Object>}
- */
-export function fetchReportedTargetList(params) {
-    return api.get('/common-service/report/reportee-user', { params })
-}
-
-/**
- * 특정 신고 대상 상세 정보 + 이력 조회
- * @param {'USER'|'POST'|'COMMENT'} targetType
- * @param {string|number} targetId
- * @returns {Promise<Object>}
- */
-export function fetchTargetDetailById(targetType, targetId) {
-    return api.get(`/common-service/report/reportee-user/${targetId}`)
-}
-
-
 /* ------------------------------------ 제재 관리 ------------------------------------ */
 export function fetchPenaltyList(params) {
     return api.get('/admin/penalties', { params })
