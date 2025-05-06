@@ -16,8 +16,12 @@ const isLoading = ref(true); // 로딩 중 상태
 // onMounted(async () => {
 //   try {
 //     const { meetingId } = useRoute().params;
-//     const response = await axios.get(`/meetings/${meetingId}`);
-//     meeting.value = response.data;
+//     const response = await axios.get(`/meetings/${meetingId}`, {
+//       headers: {
+//         'Accept': 'application/json'
+//       }
+//     });
+//     meeting.value = response.data.data.meeting;
 //   } catch (err) {
 //     console.error('모임 정보를 불러오는 중 오류 발생:', err);
 //   } finally {
@@ -49,7 +53,7 @@ onMounted(() => {
         age: 29,
         introduction: '지금이 메시고',
         mannerTemperature: 92,
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+        profileImageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
       },
     ],
   };
@@ -71,13 +75,13 @@ const dayName = computed(() => {
 });
 
 // 실력 변환
-const formattedLevel = computed(() => meeting.value.level.replaceAll(',', ', ') || '');
+const formattedLevel = computed(() => meeting.value?.level?.replaceAll(',', ', ') || '');
 
 // 나이대 변환
 const formattedAge = computed(() => {
   return (
-    meeting.value.ageGroup
-      .replace('70+', '70')
+    meeting.value?.ageGroup
+      ?.replace('70+', '70')
       .split(',')
       .map((age) => (age === '70' ? '70대 이상' : `${age}대`))
       .join(', ') || ''
@@ -123,7 +127,7 @@ const formattedAge = computed(() => {
       </template>
 
       <template #extra>
-        <MeetingParticipants :leader="meeting.leader[0]" />
+        <MeetingParticipants :leader="meeting.leader" />
       </template>
 
       <template #footer>

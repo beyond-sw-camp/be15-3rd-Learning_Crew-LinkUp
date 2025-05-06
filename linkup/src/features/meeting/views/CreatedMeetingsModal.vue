@@ -13,8 +13,8 @@ meetings.value = [{
 
 // onMounted(async() => {
 //   try {
-//     const response = await axios.get(`/meetings/user/{userId}/created`)
-//     meetings.value = response.data
+//     const response = await axios.get(`/meetings/user/${userId}/created`)
+//     meetings.value = response.data.data.meeting
 //   } catch (e) {
 //     console.error('개설 모임 조회 실패', e);
 //   }

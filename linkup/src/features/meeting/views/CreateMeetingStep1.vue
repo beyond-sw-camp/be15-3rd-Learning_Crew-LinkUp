@@ -2,11 +2,25 @@
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
+import axios from 'axios';
 
 const MIN_USER = 2;
 const MAX_USER = 30;
 
 const router = useRouter();
+
+// const isLoading = ref(true);
+// const place = ref(null);
+// onMounted(async() => {
+//   try {
+//     const response = await axios.get(`/place/${placeId}`)
+//     place.value = response.data.data.place
+//   } catch (e) {
+//     console.error('장소 조회 실패', e);
+//   } finally {
+//      isLoading.value = false;
+//   }
+// })
 
 const placeName = '신촌 풋살 센터';
 const sportId = 1;

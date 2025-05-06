@@ -13,7 +13,7 @@ meetings.value = [{
 
 // onMounted(async() => {
 //   try {
-//     const response = await axios.get(`/meetings/user/{userId}/created`)
+//     const response = await axios.get(`/meetings/user/${userId}`)
 //     meetings.value = response.data
 //   } catch (e) {
 //     console.error('개설 모임 조회 실패', e);
@@ -41,7 +41,7 @@ const statusName = (id) => {
     <div class="modal-box">
       <!-- 모달 헤더 -->
       <div class="modal-header">
-        <img src="@/assets/icons/meeting_and_place/sidebar-participated_meetings.svg" alt="개설 모임 목록" class="icon-img"/>
+        <img src="@/assets/icons/meeting_and_place/sidebar-participated_meetings.svg" alt="참가 모임 목록" class="icon-img"/>
         <h2>참가 모임 목록</h2>
         <button class="close-btn" @click="$emit('close')">×</button>
       </div>

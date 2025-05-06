@@ -99,7 +99,7 @@ function handleNavigate(action) {
 
 function handleCreateModal(type) {
   if (type === 'reserved') {
-    // router.push();
+    router.push('/places');
   }
   if (type === 'map') {
     // router.push();
@@ -109,7 +109,6 @@ function handleCreateModal(type) {
 
 const selectedMeeting = ref(null);
 function handleCreatedModal(meeting) {
-  console.log(selectedMeeting.value);
   selectedMeeting.value = meeting;
   showModal.manage = true;
 }

@@ -1,6 +1,10 @@
 <script setup>
 import PointCheckLayout from '@/features/meeting/components/PointCheckLayout.vue';
 import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
+const route = useRoute();
+
+const meetingId = route.params.meetingId;
 
 const currentPoints = ref(5000);  // 예시로 5000 포인트
 const participationFee = ref(2000); // 예시로 2000 포인트
@@ -10,18 +14,17 @@ const handleCreateParticipation = async () => {
   try {
     const response = await fetch(`/meetings/${meetingId}/participation`, {
       method: 'POST',
-      body: JSON.stringify({ memberId: 123 }),
+      body: JSON.stringify({ memberId: 54 }),
       headers: { 'Content-Type': 'application/json' },
     });
 
     if (response.ok) {
-      applicationStatus.value = '신청 성공.';
+      console.log('참가 신청 성공');
     } else {
-      applicationStatus.value = '신청 실패. 다시 시도해주세요.';
+      console.log('참가 신청 실패');
     }
   } catch (error) {
     console.error('모임 신청 중 오류 발생:', error);
-    applicationStatus.value = '신청 실패. 다시 시도해주세요.';
   }
 };
 </script>
