@@ -66,7 +66,7 @@ export function fetchPlaceReviewList(params) {
 /**
  * 신고 목록 조회
  * @param {Object} params
- * @param {string|number} [params.statusId] - 처리 상태 ID (예: 1: 처리중, 2: 완료, 3: 기각)
+ * @param {number} [params.statusId] - 처리 상태 ID (예: 1: 처리중, 2: 완료, 3: 기각)
  * @param {number} [params.reportTypeId] - 신고 유형 ID
  * @param {number} [params.page] - 페이지 번호
  * @returns {Promise<Object>} 신고 목록과 페이징 정보

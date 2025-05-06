@@ -1,53 +1,44 @@
-<!-- ✅ ReportTargetListView.vue -->
 <script setup>
-import { reactive, ref } from 'vue' // reactive로 수정
+import { reactive, ref } from 'vue'
 import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import ReportDetailModal from '@/features/admin/components/ReportDetailModal.vue'
+import { fetchReportedTargetList, fetchTargetDetailById } from '@/api/admin.js'
 
 const pageTitle = '신고 대상별 목록 조회'
 
-// ✅ 필터 값은 reactive로 선언 (v-model에 안정적으로 대응)
 const filters = reactive({
   isActive: '',
   searchType: '',
   searchKeyword: ''
 })
 
-// 선택된 행 및 모달 정보
 const selectedRow = ref(null)
 const reportRows = ref([])
 const summaryInfo = ref([])
 
-// ✅ 안전한 fetch 함수
+// 실제 API 호출
 const fetchList = async ({ page, isActive, searchType, searchKeyword }) => {
-  const dummy = [
-    {
-      targetType: 'USER',
-      targetId: 101,
-      reportCount: 3,
-      lastReportDate: '2025-04-25T14:30:00',
-      isActive: 'Y'
-    },
-    {
-      targetType: 'POST',
-      targetId: 102,
-      reportCount: 2,
-      lastReportDate: '2025-04-24T16:10:00',
-      isActive: 'N'
+  try {
+    const params = {
+      page,
+      isActive: isActive || undefined,
+      searchType: searchType || undefined,
+      searchKeyword: searchKeyword || undefined
     }
-  ]
 
-  const filtered = dummy.filter(row => {
-    const targetValue = searchType ? String(row[searchType] ?? '') : ''
-    return (!isActive || row.isActive === isActive) &&
-      (!searchType || !searchKeyword || targetValue.includes(searchKeyword))
-  })
-
-  return { data: filtered, totalPages: 1 }
+    const res = await fetchReportedTargetList(params)
+    return {
+      data: res.data.targets || [],
+      totalPages: res.data.pagination?.totalPage || 1
+    }
+  } catch (e) {
+    console.error('🚨 신고 대상 목록 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
 }
 
-// 테이블 컬럼 정의
+// 컬럼 정의
 const columns = [
   { key: 'targetType', label: '대상 유형' },
   { key: 'targetId', label: '대상 ID' },
@@ -72,38 +63,34 @@ const columns = [
   }
 ]
 
-// 모달 열기
-function openModal(row) {
-  const date = new Date(row.lastReportDate)
-  const formattedDate = isNaN(date.getTime()) ? '-' : format(date, 'yyyy-MM-dd HH:mm')
+// 모달 열기 → 상세 API 호출
+async function openModal(row) {
+  try {
+    const res = await fetchTargetDetailById(row.targetType, row.targetId)
+    const reports = res.data.reports || []
 
-  selectedRow.value = row
-  summaryInfo.value = [
-    { label: '대상 유형', value: row.targetType },
-    { label: '대상 ID', value: row.targetId },
-    { label: '신고 횟수', value: row.reportCount },
-    { label: '최근 신고일', value: formattedDate },
-    { label: '활성화 여부', value: row.isActive }
-  ]
+    const formattedDate = format(new Date(row.lastReportDate), 'yyyy-MM-dd HH:mm')
 
-  reportRows.value = [
-    {
-      reportId: 201,
-      reporterId: 21,
-      reporterName: '김지민',
-      reportType: '욕설 및 비방',
-      createdAt: '2025-04-01 10:15',
-      status: '처리중'
-    },
-    {
-      reportId: 202,
-      reporterId: 22,
-      reporterName: '윤다현',
-      reportType: '허위 정보 게시',
-      createdAt: '2025-04-06 09:00',
-      status: '처리완료'
-    }
-  ]
+    selectedRow.value = row
+    summaryInfo.value = [
+      { label: '대상 유형', value: row.targetType },
+      { label: '대상 ID', value: row.targetId },
+      { label: '신고 횟수', value: row.reportCount },
+      { label: '최근 신고일', value: formattedDate },
+      { label: '활성화 여부', value: row.isActive }
+    ]
+
+    reportRows.value = reports.map(r => ({
+      reportId: r.reportId,
+      reporterId: r.reporterId,
+      reporterName: r.reporterName,
+      reportType: r.reportType,
+      createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
+      status: r.status
+    }))
+  } catch (e) {
+    console.error('🚨 상세 정보 조회 실패:', e)
+  }
 }
 
 // 제재 처리
@@ -121,7 +108,6 @@ function handleSanction() {
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <!-- 필터 -->
     <template #filters>
       <label class="filter-label">
         활성화 여부:
@@ -145,9 +131,7 @@ function handleSanction() {
       </label>
     </template>
 
-    <!-- 신고 상세 모달 -->
     <template #modal>
-      <!-- ✅ 명시적으로 model-value 사용 -->
       <ReportDetailModal
         v-if="selectedRow"
         :model-value="selectedRow"

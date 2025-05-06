@@ -59,7 +59,7 @@ async function loadReportList({ status, reportTypeId, page }) {
       page: page || 1
     })
 
-    // ✅ statusId → status 문자열로 변환
+    // statusId → status 문자열로 변환
     const list = (res.data.reports || []).map(report => ({
       ...report,
       status: idToStatus[report.statusId] ?? '-' // 추가
