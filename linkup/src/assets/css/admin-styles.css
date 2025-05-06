@@ -138,7 +138,7 @@ a {
 
 .filter-wrapper {
     display: flex;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     justify-content: space-between;
 }
 
@@ -301,6 +301,13 @@ a {
     z-index: 1000;
 }
 
+.modal-title {
+    display: block;
+    font-size: 1.3em;
+    font-weight: bold;
+    unicode-bidi: isolate;
+}
+
 .modal-content {
     background: #fff;
     border-radius: 12px;
@@ -346,6 +353,11 @@ a {
     margin-top: 12px;
 }
 
+.modal-image {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
 .modal-select,
 .modal-input {
     padding: 8px;
@@ -363,19 +375,41 @@ a {
     margin-top: 24px;
 }
 
-/* ---------------- 신고 상세 ---------------- */
+.review-text {
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* 신고 상세 모달 공통 레이아웃 */
 .modal-report,
 .penalty-detail-section {
     background: #fff;
     padding: 40px;
     border-radius: 12px;
-    width: 700px;
+    width: 850px;
     max-width: 90%;
     display: flex;
     flex-direction: column;
     gap: 28px;
 }
 
+
+.report-detail-grid {
+    display: flex;
+    gap: 30px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.report-detail-grid span {
+    margin-right: 5px;
+}
+
+/* 제목 텍스트 */
 .modal-report-title {
     font-size: 22px;
     font-weight: 700;
@@ -388,7 +422,8 @@ a {
     margin-top: 10px;
 }
 
-.modal-report-section {
+/* 모달 섹션 */
+.modal-section {
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
@@ -396,10 +431,18 @@ a {
     border-bottom: 1px solid #f0f0f0;
 }
 
-.modal-report-section:last-child {
+.modal-report-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-section:last-child {
     border-bottom: none;
 }
 
+/* 구역 제목 */
 .section-title {
     font-size: 18px;
     font-weight: 600;
@@ -408,7 +451,16 @@ a {
     padding-left: 10px;
     border-left: 4px solid #7d6fb3;
 }
+.report-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #7d6fb3;
+    margin: 0px 0 12px;
+    padding-left: 10px;
+    border-left: 4px solid #7d6fb3;
+}
 
+/*  기존 grid → 수직 정렬용 flex로 수정 */
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -418,6 +470,11 @@ a {
 .info-item {
     display: flex;
     flex-direction: column;
+}
+
+.info-report-item {
+    display: flex;
+    flex-direction: row;
 }
 
 .info-item .label {
@@ -432,6 +489,7 @@ a {
     color: #222;
 }
 
+/* 신고 사유 */
 .reason-box {
     background: #f9f9fb;
     border: 1px solid #e0e0e0;
@@ -442,33 +500,13 @@ a {
     line-height: 1.6;
 }
 
-.report-detail-container {
-    max-width: 960px;
-    min-width: 850px;
-    margin: 60px auto;
-    padding: 40px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-}
-
-.report-detail-container h2 {
-    font-size: 22px;
-    margin-bottom: 24px;
-    color: #333;
-}
-
-.report-detail-grid {
+/* 버튼 하단 정렬 */
+.modal-buttons {
     display: flex;
-    gap: 40px;
-    font-size: 15px;
-    margin-bottom: 20px;
-    color: #555;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
-.report-detail-grid div {
-    line-height: 1.5;
-}
 
 /* ---------------- 날짜 입력 ---------------- */
 .date-input-wrapper {

@@ -3,6 +3,8 @@ import 'pretendard/dist/web/static/pretendard.css';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css'; // 스타일도 꼭 가져와야 합니다
 
+
+
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 

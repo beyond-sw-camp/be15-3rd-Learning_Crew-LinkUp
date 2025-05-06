@@ -37,12 +37,12 @@ const sidebarItems = computed(() => {
   if (route.path.startsWith('/admin/report')) {
     return [
       { label: '신고 목록 조회', path: '/admin/reports/list' },
+      { label: '신고 대상별 내역', path: '/admin/reports/targets' },
       { label: '신고자 목록 조회', path: '/admin/reports/reporters' },
-      { label: '피신고자 목록 조회', path: '/admin/reports/targets' },
-      { label: '신고 대상별 내역', path: '/admin/reports/target-contents' }
+      { label: '피신고자 목록 조회', path: '/admin/reports/reportees' }
     ]
   }
-  if (route.path.startsWith('/admin/penalty')) {
+  if (route.path.startsWith('/admin/penalties')) {
     return [
       { label: '제재 내역 조회', path: '/admin/penalties/list' },
       { label: '이의 제기 내역 조회', path: '/admin/penalties/objections' },
@@ -63,11 +63,21 @@ const pageTitle = computed(() => {
 
 <template>
   <div class="admin-wrapper">
-    <AdminHeader />
+    <!-- 시맨틱 header -->
+    <header>
+      <AdminHeader />
+    </header>
+
     <div class="admin-container">
-      <AdminSidebar :menu-items="sidebarItems" />
-      <main class="admin-main">
-        <RouterView :page-title="pageTitle" />
+      <!-- 시맨틱 nav/aside -->
+        <AdminSidebar :menu-items="sidebarItems" />
+
+      <!-- 시맨틱 main 영역 -->
+      <main class="admin-main" role="main">
+        <section aria-labelledby="admin-content-title">
+          <!-- RouterView 에 페이지 타이틀 prop 전달 -->
+          <RouterView :page-title="pageTitle" />
+        </section>
       </main>
     </div>
   </div>
