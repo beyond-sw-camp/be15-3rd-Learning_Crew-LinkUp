@@ -11,9 +11,9 @@ import {
   acceptReport,
   rejectReport
 } from '@/api/admin.js'
-import { useToast } from 'vue-toastification'
+// import { useToast } from 'vue-toastification'
 
-const toast = useToast()
+// const toast = useToast()
 const props = defineProps({ pageTitle: String })
 
 // ---------------- 필터 및 상태 ----------------
@@ -59,8 +59,14 @@ async function loadReportList({ status, reportTypeId, page }) {
       page: page || 1
     })
 
+    // ✅ statusId → status 문자열로 변환
+    const list = (res.data.reports || []).map(report => ({
+      ...report,
+      status: idToStatus[report.statusId] ?? '-' // 추가
+    }))
+
     return {
-      data: res.data.reports || [],
+      data: list,
       totalPages: res.data.pagination?.totalPage || 1
     }
   } catch (error) {
@@ -70,14 +76,16 @@ async function loadReportList({ status, reportTypeId, page }) {
   }
 }
 
-
 // ---------------- 상세 보기 상태 ----------------
 const selected = ref(null)
 
 async function openDetail(row) {
   try {
     const res = await fetchReportDetail(row.reportId)
-    selected.value = res.data
+    selected.value = {
+      ...res.data,
+      status: idToStatus[res.data.statusId] ?? '-' // 상세에도 변환 적용
+    }
   } catch (e) {
     // toast.error('상세 정보를 불러오지 못했습니다.')
   }
@@ -98,7 +106,7 @@ async function handleSanction(action) {
     }
 
     selected.value = null
-    reloadKey.value++ // 리스트 갱신
+    reloadKey.value++
   } catch (e) {
     // toast.error('신고 처리 중 오류가 발생했습니다.')
   }
