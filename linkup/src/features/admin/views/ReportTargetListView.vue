@@ -68,7 +68,7 @@ const columns = [
 async function openModal(row) {
   try {
     const res = await fetchTargetDetailById(row.targetType, row.targetId)
-    const reports = res.data.reports || []
+    const reports = res.data.reportList || []
 
     const formattedDate = format(new Date(row.lastReportDate), 'yyyy-MM-dd HH:mm')
 
@@ -81,13 +81,15 @@ async function openModal(row) {
       { label: '활성화 여부', value: row.isActive }
     ]
 
+    const statusMap = { 1: '처리중', 2: '완료', 3: '기각' }
+
     reportRows.value = reports.map(r => ({
       reportId: r.reportId,
       reporterId: r.reporterId,
       reporterName: r.reporterName,
       reportType: r.reportType,
       createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      status: r.status
+      status: statusMap[r.statusId] || '-'
     }))
   } catch (e) {
     console.error('🚨 상세 정보 조회 실패:', e)
