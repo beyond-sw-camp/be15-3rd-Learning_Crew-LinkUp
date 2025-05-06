@@ -109,6 +109,7 @@ function handleCreateModal(type) {
 
 const selectedMeeting = ref(null);
 function handleCreatedModal(meeting) {
+  console.log(selectedMeeting.value);
   selectedMeeting.value = meeting;
   showModal.manage = true;
 }
@@ -190,6 +191,7 @@ function toggleFilterDropdown() {
       @toggle="isFloatingMinimized = !isFloatingMinimized"
       @navigate="handleNavigate"
     />
+  </div>
 
     <!-- 모임 개설 모달 -->
     <CreateMeetingModal v-if="showModal.create" @close="showModal.create = false" @select="handleCreateModal"/>
@@ -205,12 +207,17 @@ function toggleFilterDropdown() {
     <PendingMeetingsModal v-if="showModal.pending" @close="showModal.pending = false" @select="handlePendingModal" />
     <!-- 찜한 모임 모달 -->
     <InterestedMeetingsModal v-if="showModal.interested" @close="showModal.interested = false" @select="handleInterestedModal" />
-  </div>
+
 </template>
 
 
 <style scoped>
 .sidebar {
   width: 500px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
 }
 </style>

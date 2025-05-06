@@ -1,5 +1,4 @@
 <template>
-  <div class="container">
     <!-- 참가자 관리 모달 -->
     <div v-if="visible" class="participant-modal">
       <div class="modal-header">
@@ -36,7 +35,6 @@
         <button class="btn cancel">모임 참가 취소</button>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -67,10 +65,10 @@ function closeModal() {
 </script>
 
 <style scoped>
-/* ---------------- 참가자 관리 모달 ---------------- */
+/* ---------------- 참가자 조회 모달 ---------------- */
 .participant-modal {
   position: fixed;
-  top: 160px; /* assignment-modal과 같은 높이 */
+  top: 200px; /* assignment-modal과 같은 높이 */
   right: calc(84px + 480px + 35px); /* assignment-modal 오른쪽 끝 + 여유 24px */
   width: 32%;
   min-width: 400px;
@@ -79,7 +77,7 @@ function closeModal() {
   border-radius: 24px;
   padding: 32px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 1100;
   display: flex;
   flex-direction: column;
 }

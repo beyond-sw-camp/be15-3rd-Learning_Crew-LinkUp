@@ -1,5 +1,4 @@
 <template>
-  <div class="container">
     <!-- 참가자 관리 모달 -->
     <div v-if="visible" class="participant-modal">
       <div class="modal-header">
@@ -8,7 +7,7 @@
         <button class="close-btn" @click="closeModal">&times;</button>
       </div>
       <hr class="divider" />
-
+s
       <div class="participant-modal-content">
         <h2>참가자 목록</h2>
         <div
@@ -64,7 +63,6 @@
         <button class="btn cancel">모임 취소</button>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
