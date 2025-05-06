@@ -7,6 +7,7 @@
       :title="place.name"
       :address="place.address"
       :price="place.price"
+      :rating="formatRating(place.reviewRating)"
       @click="$emit('select', place)"
     />
   </div>
@@ -14,8 +15,14 @@
 
 <script setup>
 import PlaceCard from './PlaceCard.vue';
+
 defineProps({ places: Array });
 defineEmits(['select']);
+
+function formatRating(value) {
+  const num = parseFloat(value);
+  return isNaN(num) ? '0.0' : num.toFixed(1);
+}
 </script>
 
 <style scoped>

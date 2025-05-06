@@ -1,10 +1,11 @@
 // @/api/place.js
 import api from './axios';
 
-export const getPlaceList = () => {
+export const getPlaceList = (params = {}) => {
   return api.get('/common-service/places', {
+    params,
     withCredentials: false
-  });
+  })
 };
 
 export const getPlaceDetail = (placeId) => {

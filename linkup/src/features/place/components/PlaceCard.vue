@@ -1,48 +1,98 @@
 <template>
   <div class="place-card" @click="$emit('click')">
-    <img v-if="image" :src="image" :alt="title" />
-    <div v-else class="placeholder-img" />
-
+    <div class="image-wrapper">
+      <img :src="resolvedImage" :alt="title" class="place-image" />
+      <img
+        src="@/assets/icons/meeting_and_place/heart.svg"
+        alt="즐겨찾기"
+        class="heart-icon"
+      />
+    </div>
     <div class="place-info">
-      <h3>{{ title }}</h3>
-      <p>{{ address }}</p>
-      <p>{{ price }}원/시간</p>
+      <h3 class="place-title">{{ title }}</h3>
+      <p class="place-address">{{ address }}</p>
+      <div class="info-bottom">
+        <p class="place-price">{{ price }}원/시간</p>
+        <p class="place-rating">
+          <img src="@/assets/icons/meeting_and_place/empty-star.svg" class="star-icon" />
+          {{ formattedRating }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+import defaultImage from '@/assets/images/linkup_bg.jpg';
+
+const props = defineProps({
   image: String,
   title: String,
   address: String,
   price: String,
+  rating: [String, Number]
 });
-defineEmits(['click']);
+
+function isValidImage(img) {
+  return typeof img === 'string' && img.trim() !== '' && img !== 'null' && img !== 'undefined';
+}
+
+const resolvedImage = computed(() => {
+  return isValidImage(props.image) ? props.image : defaultImage;
+});
+
+const formattedRating = computed(() => {
+  const r = parseFloat(props.rating);
+  return !isNaN(r) ? r.toFixed(1) : '0.0';
+});
 </script>
 
 <style scoped>
 .place-card {
-  @apply bg-white rounded-lg shadow p-3 flex flex-col overflow-hidden transition hover:-translate-y-1 cursor-pointer;
+  @apply flex flex-col bg-white rounded-xl shadow p-2 transition hover:-translate-y-1 cursor-pointer;
+  min-height: 240px;
+  position: relative;
 }
-
-.place-card img {
+.image-wrapper {
+  position: relative;
+}
+.place-image {
   @apply w-full h-[160px] object-cover rounded-md;
 }
-
-.placeholder-img {
-  @apply w-full h-[160px] bg-gray-200 rounded-md;
+.heart-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
 }
-
 .place-info {
   @apply mt-2;
+  padding: 12px 16px;
+  background: white;
+  position: relative;
+  z-index: 1;
 }
-
-.place-info h3 {
-  @apply font-semibold text-base mb-1;
+.place-title {
+  @apply text-base font-semibold text-black mb-1;
 }
-
-.place-info p {
+.place-address {
+  @apply text-sm text-gray-600 mb-1;
+}
+.info-bottom {
+  @apply flex justify-between items-center;
+}
+.place-price {
   @apply text-sm text-gray-600;
+}
+.place-rating {
+  @apply text-sm font-semibold text-yellow-500 flex items-center gap-1;
+}
+.star-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0.6) saturate(2);
 }
 </style>

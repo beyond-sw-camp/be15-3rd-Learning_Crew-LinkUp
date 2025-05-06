@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
     expirationTime.value = null;
     userName.value = null;
     profileImageUrl.value = null;
-    disconnectSse(); // ✅ 로그아웃 시 SSE 연결 해제
+    disconnectSse();
   }
 
   return {
