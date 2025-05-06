@@ -17,4 +17,13 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'));
   <!-- 공통 라우터 뷰 (AdminLayout 포함됨) -->
   <RouterView />
   <Footer />
+<<<<<<< HEAD
 </template>
+=======
+</template>
+
+
+<style scoped>
+
+</style>
+>>>>>>> 3cce4635314e46be68f8fd7039b5174d222c260b
