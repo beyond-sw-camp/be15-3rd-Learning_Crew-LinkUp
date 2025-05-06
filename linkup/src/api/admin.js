@@ -95,7 +95,7 @@ export function fetchReportDetail(reportId) {
  * @returns {Promise<Array>} 신고 유형 배열
  */
 export function fetchReportTypes() {
-    return api.get('/api/v1/common-service/reportType')
+    return api.get('/api/v1/common-service/report/types')
 }
 
 /**
