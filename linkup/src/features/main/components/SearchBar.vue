@@ -18,7 +18,15 @@ const props = defineProps({
           </button>
         </li>
       </ul>
-      <button type="button" class="filter-button">⚙️ 필터</button>
+      <button class="filter-button">
+        <img
+          src="@/assets/icons/meeting_and_place/sidebar-gear.svg"
+          alt="필터"
+          width="16"
+          height="16"
+        />
+        필터
+      </button>
     </div>
   </nav>
 </template>
@@ -58,6 +66,6 @@ const props = defineProps({
 }
 
 .filter-button {
-  @apply flex-shrink-0 ml-4 px-6 py-3 border border-border-subtle rounded-md text-sm text-text-default;
+  @apply flex-shrink-0 flex gap-2 ml-4 px-6 py-3 border border-border-subtle rounded-md text-sm text-text-default;
 }
 </style>

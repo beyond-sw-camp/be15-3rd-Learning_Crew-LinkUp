@@ -29,7 +29,7 @@ const props = defineProps({
 
 <style scoped>
 .card-list {
-  @apply overflow-y-auto bg-white p-12;
+  @apply overflow-y-auto bg-white p-5;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -39,7 +39,7 @@ const props = defineProps({
 }
 
 .card-list-inner {
-  @apply flex flex-col gap-3 list-none p-0 m-0;
+  @apply flex flex-col gap-y-4 list-none p-0 m-0;
 }
 
 .empty-message {

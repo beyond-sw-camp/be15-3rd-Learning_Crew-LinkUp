@@ -39,7 +39,7 @@ const sidebarWidth = props.width;
 }
 
 .sidebar {
-  @apply flex-shrink-0 bg-background-default;
+  @apply flex-shrink-0;
 }
 
 .main-content {
