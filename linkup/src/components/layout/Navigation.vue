@@ -1,8 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { useRouter } from 'vue-router';
-import { logoutUser } from '@/api/user.js';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -30,12 +29,11 @@ onUnmounted(() => {
 
 const logout = async () => {
   try {
-    await logoutUser();
+    await authStore.logout();
+    await router.push('/login');
   } catch (e) {
     console.log(e);
   }
-  authStore.clearAuth();
-  await router.push('/login');
 };
 
 const roleLabel = {
@@ -49,6 +47,15 @@ const roleIcon = {
   BUSINESS: new URL('@/assets/icons/profile/user.svg', import.meta.url).href,
   ADMIN: new URL('@/assets/icons/profile/admin.svg', import.meta.url).href,
 };
+
+const userRole = computed(() => authStore.userRole);
+
+const mypageLink = computed(() => {
+  if (userRole.value === 'BUSINESS') {
+    return '/mypage/business';
+  }
+  return '/mypage'; // 기본은 회원
+});
 </script>
 
 <template>
@@ -80,7 +87,7 @@ const roleIcon = {
               </div>
 
               <!-- 메뉴 목록 -->
-              <RouterLink class="dropdown-item" to="/mypage">
+              <RouterLink class="dropdown-item" :to="mypageLink">
                 <img src="@/assets/icons/profile/mypage.svg" alt="Mypage Icon" class="menu-icon" />
                 마이페이지
               </RouterLink>
