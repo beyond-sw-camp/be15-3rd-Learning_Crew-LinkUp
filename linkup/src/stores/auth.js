@@ -1,8 +1,6 @@
-import {defineStore} from "pinia";
-import {computed, ref} from "vue";
-import { connectSse, disconnectSse } from '@/api/utils/sse.js'
-
-
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
+import { connectSse, disconnectSse } from '@/api/utils/sse.js';
 
 export const useAuthStore = defineStore('auth', () => {
   const accessToken = ref(null);
@@ -10,10 +8,11 @@ export const useAuthStore = defineStore('auth', () => {
   const expirationTime = ref(null);
   const userName = ref(null);
   const profileImageUrl = ref(null);
+  const userId = ref(null);
 
   // 인증 되어 있는지 확인하는 getter 값
   const isAuthenticated = computed(
-    () => !!accessToken.value && Date.now() < (expirationTime.value || 0),
+      () => !!accessToken.value && Date.now() < (expirationTime.value || 0),
   );
 
   function setAuth(at, un, pi) {
@@ -25,16 +24,16 @@ export const useAuthStore = defineStore('auth', () => {
       console.log('payload', payload);
       userRole.value = payload.role;
       expirationTime.value = payload.exp * 1000;
+      userId.value = payload.sub;
 
-        // ✅ SSE 연결 시작
-        connectSse(userId.value);
+      // SSE 연결 시작
+      connectSse(userId.value);
     } catch (e) {
       accessToken.value = null;
       userRole.value = null;
       expirationTime.value = null;
     }
   }
-
 
   function clearAuth() {
     accessToken.value = null;
@@ -43,7 +42,6 @@ export const useAuthStore = defineStore('auth', () => {
     userName.value = null;
     profileImageUrl.value = null;
     disconnectSse(); // ✅ 로그아웃 시 SSE 연결 해제
-
   }
 
   return {
