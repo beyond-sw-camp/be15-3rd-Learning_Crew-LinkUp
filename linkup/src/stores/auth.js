@@ -4,6 +4,7 @@ import {computed, ref} from "vue";
 export const useAuthStore = defineStore('auth', () => {
     const accessToken = ref(null);
     const userRole = ref(null);
+    const userId = ref(null);
     const expirationTime = ref(null);
 
     // 인증 되어 있는지 확인하는 getter 값
@@ -17,6 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
             const payload = JSON.parse(atob(at.split('.')[1]));
             console.log('payload', payload);
             userRole.value = payload.role;
+            userId.value = payload.sub;
             expirationTime.value = payload.exp * 1000;
         } catch (e) {
             accessToken.value = null;
@@ -34,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
     return {
         accessToken,
         userRole,
+        userId,
         expirationTime,
         isAuthenticated,
         setAuth,

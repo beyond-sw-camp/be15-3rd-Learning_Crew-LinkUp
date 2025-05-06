@@ -13,6 +13,7 @@ export default {
           default: '#F1F3FC',
           surface: '#FFFFFF',
           muted: '#F3F3F3',
+          lightDark: '#6B7280',
         },
         primary: {
           default: '#5790FF',
@@ -79,15 +80,6 @@ export default {
       },
       letterSpacing: {
         caption: '0.01em',
-      },
-      spacing: {
-        4: '4px',
-        8: '8px',
-        12: '12px',
-        16: '16px',
-        24: '24px',
-        32: '32px',
-        40: '40px',
       },
       borderRadius: {
         none: '0px',

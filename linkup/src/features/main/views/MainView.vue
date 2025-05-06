@@ -19,6 +19,15 @@ const cards = ref([
     likeCount: 32,
     price: '20,000원',
   },
+  {
+    imageUrl: 'https://cdn.pixabay.com/photo/2023/06/08/13/31/balls-8049598_1280.jpg',
+    date: '2025.04.23 (화)',
+    title:
+      '요즘같은 선선한 날에 축구 한판 어때요! 요즘같은 선선한 날에 축구 한판 어때요! 요즘같은 선선한 날에 축구 한판 어때요! 요즘같은 선선한 날에 축구 한판 어때요!',
+    location: '서울 도봉구 방학로 223',
+    likeCount: 32,
+    price: '20,000원',
+  },
 ]);
 
 const filteredCards = computed(() => {
@@ -61,7 +70,7 @@ const searchItems = [
 
 <style scoped>
 .sidebar-content {
-  @apply relative flex flex-col gap-4 h-full pt-[80px]; /* SearchBar 높이만큼 패딩 */
+  @apply relative flex flex-col h-full pt-[90px]; /* SearchBar 높이만큼 패딩 */
 }
 
 .map-area {
