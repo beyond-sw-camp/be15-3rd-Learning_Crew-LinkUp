@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import CreateCustomMeetingLayout from '@/features/meeting/components/CreateCustomMeetingLayout.vue';
 import MeetingCalendar from '@/features/meeting/components/MeetingCalendar.vue';
 import TimeSelectionForm from '@/features/meeting/components/TimeSelectionForm.vue';
@@ -17,10 +17,11 @@ import sport8 from "@/assets/icons/sports/badminton.svg";
 const MIN_USER = 2;
 const MAX_USER = 30;
 
+const route = useRoute();
 const router = useRouter();
 
-const lattitude = 120.000000;
-const longitude = 37.000000;
+const latitude = route.query.latitude || 120.000000;
+const longitude = route.query.longitude || 37.000000;
 const rentalCost = 0;
 
 const selectedDate = ref(null);
@@ -105,7 +106,7 @@ function getIcon(sport) {
   <CreateCustomMeetingLayout :step="1" title="장소, 종목, 인원 선택">
     <div class="form-group">
       <label class="group-label">선택된 장소</label>
-      <div class="selected-place">위도: {{lattitude}}, 경도: {{longitude}}</div>
+      <div class="selected-place">위도: {{latitude}}, 경도: {{longitude}}</div>
     </div>
 
     <MeetingCalendar v-model="selectedDate"/>

@@ -1,18 +1,26 @@
 <script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue'
-
+import { useRouter } from 'vue-router';
 import MapDisplay from '@/components/common/MapDisplay.vue'
-import MeetingCard from '@/features/meeting/components/MeetingCard.vue'
 
 
 import '@/assets/css/search-common.css'
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 const latitude = ref(null);
 const longitude = ref(null);
 
+// const customPlaceAddress
+
+function goToCreate() {
+  router.push({name: "CreateMeetingStep1Custom",
+    query: {
+      latitude: latitude,
+      longitude: longitude
+    }});
+
+}
 </script>
 
 <template>
@@ -22,16 +30,16 @@ const longitude = ref(null);
       <div class="filter-toggle-wrap" ref="filterWrap">
         위도: <input type="number" v-model="latitude" class="input-box" readonly/>
         경도: <input type="number" v-model="longitude" class="input-box" readonly/>
-        <button class="btn accept">선택</button>
+        <button class="btn accept" @click="goToCreate">선택</button>
       </div>
 
-<!--      &lt;!&ndash; 모임 카드 리스트 &ndash;&gt;-->
-<!--      <MeetingCard v-for="meeting in meetings" :key="meeting.id" :meeting="meeting" />-->
+      <!--      &lt;!&ndash; 모임 카드 리스트 &ndash;&gt;-->
+      <!--      <MeetingCard v-for="meeting in meetings" :key="meeting.id" :meeting="meeting" />-->
     </div>
 
     <!-- 지도 -->
     <div class="map-section">
-      <MapDisplay :items="meetings" mapType="meeting" />
+      <!--      <MapDisplay :items="meetings" mapType="meeting" />-->
     </div>
   </div>
 

@@ -102,7 +102,7 @@ function handleCreateModal(type) {
     router.push('/places');
   }
   if (type === 'map') {
-    // router.push();
+    // router.push('/meetings/create/custom');
   }
   showModal.create = false;
 }
