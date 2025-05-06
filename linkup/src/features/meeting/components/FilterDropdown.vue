@@ -1,21 +1,19 @@
 <script setup>
-import { reactive, watch, computed } from 'vue';
-import FilterRegionDropdown from './FilterRegionDropdown.vue';
+import { reactive, watch, computed } from 'vue'
+import FilterRegionDropdown from './FilterRegionDropdown.vue'
 
 const props = defineProps({
   filters: Object,
-  regionOptions: Array,
-});
-const emit = defineEmits(['update:filters']);
+  regionOptions: Array
+})
+const emit = defineEmits(['update:filters'])
 
-const localFilters = reactive({ ...props.filters });
+const localFilters = reactive({ ...props.filters })
 
-watch(
-  () => props.filters,
-  (newVal) => {
-    Object.assign(localFilters, newVal);
-  },
-);
+
+watch(() => props.filters, (newVal) => {
+  Object.assign(localFilters, newVal)
+})
 
 function applyFilter() {
   emit('update:filters', { ...localFilters });
@@ -25,12 +23,7 @@ function applyFilter() {
 <template>
   <div class="filter-dropdown-panel">
     <div class="filter-title">
-      <img
-        src="@/assets/icons/meeting_and_place/sidebar-gear.svg"
-        alt="상세 필터"
-        width="20"
-        height="20"
-      />
+      <img src="@/assets/icons/meeting_and_place/filter.svg" alt="상세 필터" width="20" height="20" />
       상세 조건 필터
     </div>
 
@@ -39,7 +32,7 @@ function applyFilter() {
       <div class="filter-label">운동 종목</div>
       <div class="filter-chip-group">
         <button
-          v-for="sport in ['풋살', '테니스', '탁구', '농구', '배드민턴', '기타']"
+          v-for="sport in ['풋살', '테니스', '볼링', '탁구', '농구', '골프', '배드민턴', '기타']"
           :key="sport"
           class="filter-chip"
           :class="{ active: filters.sportType === sport }"
@@ -77,7 +70,7 @@ function applyFilter() {
       <label class="filter-label">나이대</label>
       <div class="filter-chip-group">
         <button
-          v-for="age in ['전체', '10대', '20대', '30대', '40대', '50대', '60대', '70대+']"
+          v-for="age in ['전체', '10대', '20대', '30대', '40대', '50대', '60대', '70대 이상']"
           :key="age"
           :class="{ active: localFilters.ageGroup === age }"
           class="filter-chip"

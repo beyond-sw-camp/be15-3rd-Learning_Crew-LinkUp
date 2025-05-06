@@ -17,9 +17,7 @@
     </main>
 
     <footer>
-      <slot name="footer">
-        <button class="button">모임 신청하기</button>
-      </slot>
+      <slot name="footer" />
     </footer>
   </div>
 </template>

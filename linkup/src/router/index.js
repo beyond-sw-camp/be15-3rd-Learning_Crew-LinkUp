@@ -12,8 +12,8 @@ const router = createRouter({
   routes: [
     ...mainRoutes,
     ...adminRoutes,
-    ...authRoutes, 
-    ...userRoutes, 
+    ...authRoutes,
+    ...userRoutes,
     ...meetingRoutes,
     ...placeRoutes,
     ...communityRoute
