@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { useRouter } from 'vue-router';
+import { logoutUser } from '@/api/user.js';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -28,7 +29,12 @@ onUnmounted(() => {
 });
 
 const logout = async () => {
-  await authStore.clearAuth();
+  try {
+    await logoutUser();
+  } catch (e) {
+    console.log(e);
+  }
+  authStore.clearAuth();
   await router.push('/login');
 };
 
@@ -58,11 +64,11 @@ const roleIcon = {
             <img
               class="profile-image"
               :src="
-                authStore.profileImage || 'https://api.dicebear.com/9.x/thumbs/svg?seed=profile'
+                authStore.profileImageUrl || 'https://api.dicebear.com/9.x/thumbs/svg?seed=profile'
               "
               alt="프로필 이미지"
             />
-            <span class="profile-name">{{ authStore.nickname || '사용자' }}</span>
+            <span class="profile-name">{{ authStore.userName || '사용자' }}</span>
           </button>
 
           <transition name="fade-slide">
