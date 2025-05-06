@@ -72,7 +72,7 @@ export function fetchPlaceReviewList(params) {
  * @returns {Promise<Object>} 신고 목록과 페이징 정보
  */
 export function fetchReportList({ statusId = null, reportTypeId = null, page = 1 }) {
-    return api.get('/api/v1/common-service/report', {
+    return api.get('/common-service/report', {
         params: {
             statusId,
             reportTypeId,
