@@ -29,10 +29,9 @@ const fetchList = async ({ page, isActive, searchType, searchKeyword }) => {
 
     const res = await fetchReportedTargetList(params)
     return {
-      -     data: res.data.targets || [],
-      +     data: res.data.targetList || [],
+      data: res.data.targetList || [],
       totalPages: res.data.pagination?.totalPage || 1
-  }
+    }
   } catch (e) {
     console.error('🚨 신고 대상 목록 조회 실패:', e)
     return { data: [], totalPages: 1 }
