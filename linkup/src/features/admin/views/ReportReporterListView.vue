@@ -60,13 +60,19 @@ async function openModal(row) {
       { label: '최근 신고일', value: format(new Date(row.lastReportDate), 'yyyy-MM-dd HH:mm') }
     ]
 
+    const statusMap = {
+      1: '처리중',
+      2: '완료',
+      3: '기각'
+    }
+
     reportRows.value = reports.map(r => ({
       reportId: r.reportId,
       targetId: r.targetMemberId,
       targetName: r.targetName,
       reportType: r.reportType,
       createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      status: r.status
+      status: statusMap[r.statusId] || '-'
     }))
   } catch (e) {
     console.error('🚨 신고자 상세 조회 실패:', e)
