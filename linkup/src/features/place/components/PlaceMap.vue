@@ -1,7 +1,4 @@
-<template>
-  <div ref="mapContainer" class="map-container" />
-</template>
-
+<!-- src/features/place/components/PlaceMap.vue -->
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 
@@ -16,8 +13,7 @@ let overlays = [];
 
 onMounted(() => {
   const script = document.createElement('script');
-  script.src =
-    'https://dapi.kakao.com/v2/maps/sdk.js?appkey=12dbd011a1ea44fdcaf77a5d5bdb81bc&libraries=services&autoload=false';
+  script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=12dbd011a1ea44fdcaf77a5d5bdb81bc&libraries=services&autoload=false';
   document.head.appendChild(script);
 
   script.onload = () => {
@@ -26,37 +22,20 @@ onMounted(() => {
         center: new kakao.maps.LatLng(37.5665, 126.978),
         level: 4,
       });
+
       drawOverlays();
       kakao.maps.event.addListener(map, 'zoom_changed', adjustOverlayScale);
     });
   };
 });
 
-watch(
-  () => props.places,
-  () => {
-    if (map) {
-      clearOverlays();
-      drawOverlays();
-    }
-  },
-  { deep: true }
-);
-
-function clearOverlays() {
-  overlays.forEach(({ overlay }) => overlay.setMap(null));
-  overlays = [];
-}
-
 function drawOverlays() {
   const geocoder = new kakao.maps.services.Geocoder();
-  console.log('[마커 생성 시작]', props.places);
 
   props.places.forEach((place) => {
     geocoder.addressSearch(place.address, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-        console.log('[마커 대상]', place.name, result[0].y, result[0].x);
 
         const overlayContent = document.createElement('div');
         overlayContent.textContent = place.name;
@@ -74,6 +53,7 @@ function drawOverlays() {
         `;
 
         overlayContent.addEventListener('click', () => {
+          console.log('[MAP] Overlay clicked:', place.name);
           emit('select', place);
         });
 
@@ -98,6 +78,10 @@ function adjustOverlayScale() {
   });
 }
 </script>
+
+<template>
+  <div ref="mapContainer" class="map-container" />
+</template>
 
 <style scoped>
 .map-container {

@@ -14,8 +14,6 @@
       </main>
     </template>
 
-    <button class="floating-add-btn">장소 등록</button>
-
     <PlaceDetailMember
       v-if="selectedPlace"
       :place="selectedPlace"
