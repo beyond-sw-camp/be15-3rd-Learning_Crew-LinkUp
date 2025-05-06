@@ -1,63 +1,24 @@
-<<<<<<< HEAD
-import axios from "axios";
-import { useAuthStore } from "@/stores/auth.js";
-import { refreshUserToken } from "@/api/user.js";
+/* 요청, 응답에 공통적으로 적용 될 부분을 axios 객체로 정의 */
+import axios from 'axios';
+import { useAuthStore } from '@/stores/auth.js';
+import { refreshUserToken } from '@/api/user.js';
+import { showErrorToast } from '@/utill/toast.js';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
-  withCredentials: true
+  headers: { 'Content-Type': 'application/json' },
+  // HttpOnly Cookie 사용하실 경우
+  withCredentials: true,
 });
 
-// 요청 인터셉터 - 인증 토큰 삽입
+// 해당 객체를 통해 요청을 하면 interceptor에 의해 access token이 header에 삽입 된다
 api.interceptors.request.use((config) => {
   const authStore = useAuthStore();
-
-  // 개발용 강제 토큰 삽입 제거됨
-  if (authStore.accessToken) {
-    config.headers.Authorization = `Bearer ${authStore.accessToken}`;
-  }
-
+  if (authStore.accessToken) config.headers.Authorization = `Bearer ${authStore.accessToken}`;
   return config;
 });
 
-// 응답 인터셉터 - 토큰 만료 시 자동 갱신
 api.interceptors.response.use(
-<<<<<<< HEAD
-  (res) => res,
-  async (err) => {
-    const authStore = useAuthStore();
-    const { config, response } = err;
-
-    if (config.url.includes("/auth/refresh")) {
-      await authStore.clearAuth();
-      return Promise.reject(err);
-    }
-
-    if (response?.status === 401) {
-      if (config._retry) {
-        await authStore.clearAuth();
-        return Promise.reject(err);
-      }
-
-      config._retry = true;
-
-      try {
-        const refreshRes = await refreshUserToken();
-        const newToken = refreshRes.data.data.accessToken;
-        authStore.setAuth(newToken);
-
-        config.headers.Authorization = `Bearer ${newToken}`;
-        return api(config);
-      } catch (refreshErr) {
-        await authStore.clearAuth();
-        return Promise.reject(refreshErr);
-      }
-    }
-
-    return Promise.reject(err);
-  }
-=======
   (response) => response,
   async (error) => {
     const authStore = useAuthStore();
@@ -130,7 +91,6 @@ api.interceptors.response.use(
 
     return Promise.reject(error);
   },
->>>>>>> 7aa1c8eca7d89582a42424ed0c5b26eefb5c83d1
 );
 
 export default api;

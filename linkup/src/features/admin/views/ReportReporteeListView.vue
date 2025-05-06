@@ -20,7 +20,7 @@ const fetchList = async ({ page, reporteeId }) => {
   try {
     const res = await fetchReporteeUserList({ reporteeId, page })
     return {
-      data: res.data.users || [],
+      data: res.data.userList || [],
       totalPages: res.data.pagination?.totalPage || 1
     }
   } catch (e) {

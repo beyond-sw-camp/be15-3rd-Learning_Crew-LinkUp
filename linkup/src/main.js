@@ -1,30 +1,44 @@
-<<<<<<< HEAD
-import './assets/css/index.css'
-import 'pretendard/dist/web/static/pretendard.css'
-import Toast from 'vue-toastification'
-=======
 import './assets/css/index.css';
 import 'pretendard/dist/web/static/pretendard.css';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css'; // 스타일도 꼭 가져와야 합니다
->>>>>>> 7aa1c8eca7d89582a42424ed0c5b26eefb5c83d1
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-<<<<<<< HEAD
-import App from './App.vue'
-import router from './router'
+import App from './App.vue';
+import router from './router';
+import { useAuthStore } from '@/stores/auth.js';
+import { refreshUserToken } from '@/api/user.js';
 
-const app = createApp(App)
-const pinia = createPinia()
+async function bootstrap() {
+  const app = createApp(App);
+  app.use(createPinia());
 
-app.use(pinia)
-app.use(router)
-app.use(Toast, {
-  position: 'top-left',
-  timeout: 1000,
-})
+  /* 새로고침시 accessToken 재할당 */
+  const authStore = useAuthStore();
+  try {
+    const resp = await refreshUserToken();
+    const { accessToken, userName, profileImageUrl } = resp.data.data;
+    authStore.setAuth(accessToken, userName, profileImageUrl);
+  } catch (e) {}
+  app.use(router);
+  app.use(Toast, {
+    position: 'top-left',
+    timeout: 3000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: false,
+    hideProgressBar: false,
+    closeButton: 'button',
+    icon: true,
+    rtl: false,
+  });
 
+  app.mount('#app');
+}
 
-app.mount('#app')
+bootstrap();
