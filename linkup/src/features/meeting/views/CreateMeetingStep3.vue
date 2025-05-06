@@ -1,12 +1,12 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
 
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
 import lv1Icon from '@/assets/icons/meeting_and_place/lv1.svg';
 import lv2Icon from '@/assets/icons/meeting_and_place/lv2.svg';
 import lv3Icon from '@/assets/icons/meeting_and_place/lv3.svg';
+import api from '@/api/axios.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -54,7 +54,7 @@ const createMeeting = async () => {
   }
 
   try {
-    await axios.post('/meetings/create', payload);
+    api.post('/meetings/create', payload);
     alert('모임 개설이 완료되었습니다.');
     router.push('/meetings');
   } catch (e) {

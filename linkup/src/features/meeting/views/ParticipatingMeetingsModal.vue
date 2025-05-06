@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue';
 const meetings = ref([]);
 
 meetings.value = [{
+  meetingId: 1,
   meetingTitle: "제목",
   placeName: "종합운동장",
   statusId: 1
@@ -14,7 +15,7 @@ meetings.value = [{
 // onMounted(async() => {
 //   try {
 //     const response = await axios.get(`/meetings/user/${userId}`)
-//     meetings.value = response.data
+//     meetings.value = response.data.data.meetings
 //   } catch (e) {
 //     console.error('개설 모임 조회 실패', e);
 //   }

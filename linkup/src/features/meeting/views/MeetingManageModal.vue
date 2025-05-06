@@ -52,8 +52,8 @@ s
             <p>{{ applicant.comment }}</p>
           </div>
           <div class="applicant-actions">
-            <button class="btn accept">수락</button>
-            <button class="btn reject">거절</button>
+            <button class="btn accept" @click="acceptParticipation(applicant)">수락</button>
+            <button class="btn reject" @click="rejectParticipation(applicant)">거절</button>
           </div>
         </div>
       </div>
@@ -66,7 +66,8 @@ s
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue';
+import api from '@/api/axios.js';
 
 const creatorNickname = '방구석메시';
 
@@ -85,6 +86,7 @@ const participants = ref([
 
 const applicants = ref([
   {
+    memberId: 23,
     nickname: '열정파워',
     gender: '남자',
     age: 30,
@@ -94,12 +96,36 @@ const applicants = ref([
   },
 ])
 
-defineProps({
-  visible: Boolean
+const props = defineProps({
+  visible: Boolean,
+  meeting: Object
 });
+
+const meetingId = computed(() => props.meeting?.meetingId);
+
 const emit = defineEmits(['close']);
 function closeModal() {
   emit('close');
+}
+
+async function acceptParticipation(applicant) {
+  try {
+    const memberId = applicant.memberId;
+    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/accept`);
+  } catch (error) {
+    console.error('참가 수락 실패:', error);
+    alert('참가 수락에 실패했습니다.');
+  }
+}
+
+async function rejectParticipation(applicant) {
+  try {
+    const memberId = applicant.memberId;
+    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/reject`);
+  } catch (error) {
+    console.error('참가 거절 실패:', error);
+    alert('참가 거절에 실패했습니다.');
+  }
 }
 </script>
 

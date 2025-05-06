@@ -1,10 +1,17 @@
 <script setup>
+import { defineProps, defineEmits } from 'vue'
 const props = defineProps({
   meeting: {
     type: Object,
     required: true
   }
 })
+
+const emit = defineEmits(['click'])
+
+function handleClick() {
+  emit('click', props.meeting.id)
+}
 
 const defaultImg = 'https://cdn.pixabay.com/photo/2016/03/27/21/59/soccer-1284666_640.jpg'
 
@@ -16,7 +23,7 @@ function formatDate(iso) {
 </script>
 
 <template>
-  <article class="meeting-card">
+  <article class="meeting-card" @click="handleClick">
     <!-- 썸네일 이미지 -->
     <figure class="meeting-img-wrapper">
       <img
@@ -39,17 +46,17 @@ function formatDate(iso) {
       </header>
 
 
-      <h3 class="title">{{ meeting.title }}</h3>
+      <h3 class="title">{{ meeting.meetingTitle }}</h3>
 
       <p class="location">
         <img src="@/assets/icons/meeting_and_place/place.svg" alt="주소" class="search-icon" />
-        {{ meeting.address }}
+        {{ meeting.placeAddress }}
       </p>
 
-      <p class="likes">
-        <img src="@/assets/icons/meeting_and_place/heart.svg" alt="찜인원" class="search-icon" />
-        {{ meeting.likes || 0 }}명 찜
-      </p>
+<!--      <p class="likes">-->
+<!--        <img src="@/assets/icons/meeting_and_place/heart.svg" alt="찜인원" class="search-icon" />-->
+<!--        {{ meeting.likes || 0 }}명 찜-->
+<!--      </p>-->
 
       <p class="price" v-if="meeting.price !== undefined">
         <span class="material-symbols-outlined card">attach_money</span>

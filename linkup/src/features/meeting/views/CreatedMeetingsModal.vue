@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue';
 const meetings = ref([]);
 
 meetings.value = [{
+  meetingId: 1,
   meetingTitle: "제목",
   placeName: "종합운동장",
   statusId: 1

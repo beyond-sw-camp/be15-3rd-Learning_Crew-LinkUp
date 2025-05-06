@@ -39,6 +39,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import api from '@/api/axios.js';
 
 const creatorNickname = '방구석메시';
 
@@ -56,7 +57,8 @@ const participants = ref([
 ])
 
 defineProps({
-  visible: Boolean
+  visible: Boolean,
+  meeting: Object
 });
 const emit = defineEmits(['close']);
 function closeModal() {
