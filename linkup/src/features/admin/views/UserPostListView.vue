@@ -1,124 +1,90 @@
+<!-- src/features/admin/views/UserPostListView.vue -->
 <script setup>
-import { ref, onMounted } from 'vue'
-import AdminFilter from '@/features/admin/components/AdminFilter.vue'
-import AdminTable from '@/features/admin/components/AdminTable.vue'
-import Pagination from '@/features/admin/components/Pagination.vue'
-import { fetchPostList } from '@/api/admin.js'
-import '@/assets/css/admin-styles.css'
+import { ref } from 'vue'
+import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 
 const props = defineProps({ pageTitle: String })
 
-const filters = ref({ writerId: '', isDeleted: '' })
-const requests = ref([])
-const page = ref(1)
-const totalPages = ref(1)
-const loading = ref(false)
-const error = ref(null)
+// 게시글 조회 API (실제 연결 시 사용)
+/*
+import { fetchPostList } from '@/api/admin.js'
+function fetchPostList(params) {
+  return api.get('/api/v1/common-service/posts/list', { params })
+}
+*/
 
-const fetchData = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const { data } = await fetchPostList({
-      writerId: filters.value.writerId,
-      isDeleted: filters.value.isDeleted,
-      page: page.value
+// 더미 데이터 (Mock)
+function fetchPostList({ writerId = '', isDeleted = '', page = 1 }) {
+  const dummy = Array.from({ length: 10 }, (_, i) => ({
+    postId: `POST00${i + 1}`,
+    writerId: `writer${i + 1}`,
+    writerName: `작성자${i + 1}`,
+    title: `게시글 제목 ${i + 1}`,
+    createdAt: '2024-05-01',
+    deletedAt: i % 3 === 0 ? '2024-05-02' : null,
+    isDeleted: i % 3 === 0 ? 'Y' : 'N'
+  }))
+
+  const filtered = dummy.filter((item) => {
+    const matchWriter = !writerId || item.writerId.includes(writerId)
+    const matchDeleted = !isDeleted || item.isDeleted === isDeleted
+    return matchWriter && matchDeleted
+  })
+
+  return Promise.resolve({
+    data: filtered,
+    totalPages: 1
+  })
+}
+
+// 컬럼 정의
+const columns = [
+  { key: 'postId', label: '게시글 ID' },
+  { key: 'writerId', label: '작성자 ID' },
+  { key: 'writerName', label: '작성자 이름' },
+  { key: 'title', label: '제목' },
+  { key: 'createdAt', label: '생성일' },
+  { key: 'deletedAt', label: '삭제일', format: v => v || '-' },
+  { key: 'isDeleted', label: '공개 여부', format: v => (v === 'Y' ? '비공개' : '공개') },
+  {
+    key: 'detail',
+    label: '상세보기',
+    format: (_, row) => ({
+      type: 'button',
+      label: '보기',
+      onClick: () => alert(`게시글 ${row.postId} 상세보기`)
     })
-    requests.value = data.data
-    totalPages.value = data.totalPages || 1
-  } catch (e) {
-    error.value = '데이터를 불러오는 데 실패했습니다.'
-    requests.value = []
-  } finally {
-    loading.value = false
   }
-}
+]
 
-const onSearch = () => {
-  page.value = 1
-  fetchData()
+// 필터 초기값
+const initFilters = {
+  writerId: '',
+  isDeleted: ''
 }
-
-const changePage = (p) => {
-  page.value = p
-  fetchData()
-}
-
-onMounted(fetchData)
 </script>
 
 <template>
-  <main>
-    <!-- 필터 영역 -->
-    <section aria-label="게시글 필터">
-      <AdminFilter @search="onSearch" :title="pageTitle">
-        <label class="filter-label">
-          작성자 ID:
-          <input
-              type="text"
-              v-model="filters.writerId"
-              class="select-box id-input"
-              placeholder="ID"
-          />
-        </label>
-        <label class="filter-label">
-          공개 여부:
-          <select v-model="filters.isDeleted" class="select-box">
-            <option value="">전체</option>
-            <option value="N">공개</option>
-            <option value="Y">비공개</option>
-          </select>
-        </label>
-      </AdminFilter>
-    </section>
-
-    <!-- 게시글 목록 영역 -->
-    <section aria-label="게시글 목록">
-      <div v-if="loading">로딩 중...</div>
-      <div v-else-if="error">{{ error }}</div>
-      <div v-else-if="requests.length === 0">불러올 데이터가 없습니다.</div>
-
-      <article v-else>
-        <AdminTable>
-          <template #thead>
-            <tr>
-              <th>게시글 ID</th>
-              <th>작성자 ID</th>
-              <th>작성자 이름</th>
-              <th>제목</th>
-              <th>생성일</th>
-              <th>삭제일</th>
-              <th>공개 여부</th>
-              <th>상세보기</th>
-            </tr>
-          </template>
-          <template #tbody>
-            <tr v-for="req in requests" :key="req.postId">
-              <td>{{ req.postId }}</td>
-              <td>{{ req.writerId }}</td>
-              <td>{{ req.writerName }}</td>
-              <td>{{ req.title }}</td>
-              <td>{{ req.createdAt }}</td>
-              <td>{{ req.deletedAt || '-' }}</td>
-              <td>{{ req.isDeleted === 'Y' ? '비공개' : '공개' }}</td>
-              <td><a href="#">보기</a></td>
-            </tr>
-          </template>
-        </AdminTable>
-
-        <footer>
-          <Pagination
-              :current-page="page"
-              :total-pages="totalPages"
-              @update:page="changePage"
-          />
-        </footer>
-      </article>
-    </section>
-  </main>
+  <AdminListTemplate
+    :fetchFn="fetchPostList"
+    :columns="columns"
+    :initFilters="initFilters"
+    :pageTitle="props.pageTitle"
+    :enableModal="false"
+  >
+    <template #filters>
+      <label class="filter-label">
+        작성자 ID:
+        <input v-model="initFilters.writerId" class="select-box id-input" placeholder="ID" />
+      </label>
+      <label class="filter-label">
+        공개 여부:
+        <select v-model="initFilters.isDeleted" class="select-box">
+          <option value="">전체</option>
+          <option value="N">공개</option>
+          <option value="Y">비공개</option>
+        </select>
+      </label>
+    </template>
+  </AdminListTemplate>
 </template>
-
-
-<style scoped>
-
-</style>
