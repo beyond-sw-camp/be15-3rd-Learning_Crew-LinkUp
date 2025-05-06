@@ -1,3 +1,4 @@
+<!-- src/features/place/components/PlaceList.vue -->
 <template>
   <div class="place-list">
     <PlaceCard
@@ -14,12 +15,18 @@
 
 <script setup>
 import PlaceCard from './PlaceCard.vue';
-defineProps({ places: Array });
+
+defineProps({
+  places: {
+    type: Array,
+    required: true
+  }
+});
 defineEmits(['select']);
 </script>
 
 <style scoped>
 .place-list {
-  @apply flex flex-col gap-4 p-4 bg-white rounded-md shadow-sm h-full overflow-y-auto;
+  @apply flex flex-col gap-4 p-4 overflow-y-auto h-full;
 }
 </style>

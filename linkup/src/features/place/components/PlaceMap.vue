@@ -1,4 +1,7 @@
-<!-- src/features/place/components/PlaceMap.vue -->
+<template>
+  <div ref="mapContainer" class="map-container" />
+</template>
+
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 
@@ -13,7 +16,8 @@ let overlays = [];
 
 onMounted(() => {
   const script = document.createElement('script');
-  script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=12dbd011a1ea44fdcaf77a5d5bdb81bc&libraries=services&autoload=false';
+  script.src =
+    'https://dapi.kakao.com/v2/maps/sdk.js?appkey=12dbd011a1ea44fdcaf77a5d5bdb81bc&libraries=services&autoload=false';
   document.head.appendChild(script);
 
   script.onload = () => {
@@ -29,44 +33,58 @@ onMounted(() => {
   };
 });
 
+watch(
+  () => props.places,
+  () => {
+    if (map) {
+      clearOverlays();
+      drawOverlays();
+    }
+  },
+  { deep: true }
+);
+
+function clearOverlays() {
+  overlays.forEach(({ overlay }) => overlay.setMap(null));
+  overlays = [];
+}
+
 function drawOverlays() {
-  const geocoder = new kakao.maps.services.Geocoder();
+  console.log('[마커 생성 시작]', props.places);
 
   props.places.forEach((place) => {
-    geocoder.addressSearch(place.address, (result, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+    console.log(`[마커 대상] ${place.name}`, place.latitude, place.longitude);
+    if (!place.latitude || !place.longitude) return;
 
-        const overlayContent = document.createElement('div');
-        overlayContent.textContent = place.name;
-        overlayContent.style.cssText = `
-          padding: 8px 16px;
-          background: white;
-          border: 2px solid #5C7AEA;
-          border-radius: 20px;
-          font-size: 16px;
-          font-weight: bold;
-          white-space: nowrap;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-          transform-origin: bottom center;
-          cursor: pointer;
-        `;
+    const coords = new kakao.maps.LatLng(place.latitude, place.longitude);
 
-        overlayContent.addEventListener('click', () => {
-          console.log('[MAP] Overlay clicked:', place.name);
-          emit('select', place);
-        });
+    const overlayContent = document.createElement('div');
+    overlayContent.textContent = place.name;
+    overlayContent.style.cssText = `
+      padding: 8px 16px;
+      background: white;
+      border: 2px solid #5C7AEA;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      transform-origin: bottom center;
+      cursor: pointer;
+    `;
 
-        const overlay = new kakao.maps.CustomOverlay({
-          position: coords,
-          yAnchor: 1.6,
-          content: overlayContent,
-        });
-
-        overlay.setMap(map);
-        overlays.push({ overlay, content: overlayContent });
-      }
+    overlayContent.addEventListener('click', () => {
+      emit('select', place);
     });
+
+    const overlay = new kakao.maps.CustomOverlay({
+      position: coords,
+      yAnchor: 1.6,
+      content: overlayContent,
+    });
+
+    overlay.setMap(map);
+    overlays.push({ overlay, content: overlayContent });
   });
 }
 
@@ -78,10 +96,6 @@ function adjustOverlayScale() {
   });
 }
 </script>
-
-<template>
-  <div ref="mapContainer" class="map-container" />
-</template>
 
 <style scoped>
 .map-container {
