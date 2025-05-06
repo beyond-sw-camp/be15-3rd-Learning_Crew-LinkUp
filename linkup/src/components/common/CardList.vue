@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps } from 'vue';
 import CardItem from './CardItem.vue';
 
 const props = defineProps({
