@@ -4,6 +4,12 @@ import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import DetailViewer from '@/features/admin/components/DetailViewer.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
+import {
+  fetchPenaltyList,
+  fetchPenaltyDetail,
+  withdrawPenalty,
+  confirmReviewPenalty
+} from '@/api/admin.js'
 
 const pageTitle = '제재 내역 조회'
 
@@ -21,37 +27,54 @@ const statusMap = {
   3: '거절'
 }
 
+// 목록 API
 const fetchList = async ({ page, userId, penaltyType, statusId }) => {
-  const dummy = [
-    {
-      penaltyId: 7,
-      userId: 13,
-      userName: '배은우',
-      penaltyType: 'REVIEW',
-      reason: '부적절한 내용 포함된 리뷰',
-      createdAt: '2025-04-10 11:54:00',
-      reviewId: 22,
-      statusId: 1
-    },
-    {
-      penaltyId: 6,
-      userId: 53,
-      userName: '차민규',
-      penaltyType: 'COMMENT',
-      reason: '협박성 표현이 포함된 댓글로 제재됨',
-      createdAt: '2025-04-09 11:54:00',
-      commentId: 3,
-      statusId: 3
+  try {
+    const res = await fetchPenaltyList({ userId, penaltyType, statusId, page })
+    return {
+      data: res.data.penalties || [],
+      totalPages: res.data.pagination?.totalPage || 1
     }
-  ]
+  } catch (e) {
+    console.error('🚨 제재 목록 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
+}
 
-  const filtered = dummy.filter(p =>
-    (!userId || String(p.userId).includes(userId)) &&
-    (!penaltyType || p.penaltyType === penaltyType) &&
-    (!statusId || String(p.statusId) === String(statusId))
-  )
+// 상세 API
+const openDetail = async (row) => {
+  try {
+    const res = await fetchPenaltyDetail(row.penaltyId)
+    selected.value = res.data
+  } catch (e) {
+    console.error('🚨 제재 상세 조회 실패:', e)
+  }
+}
 
-  return { data: filtered, totalPages: 1 }
+function close() {
+  selected.value = null
+}
+
+async function handleWithdraw() {
+  try {
+    await withdrawPenalty(selected.value.penaltyId)
+    alert('제재 철회 처리되었습니다.')
+    close()
+  } catch (e) {
+    console.error('🚨 제재 철회 실패:', e)
+    alert('제재 철회 실패')
+  }
+}
+
+async function handleConfirmPenalty() {
+  try {
+    await confirmReviewPenalty(selected.value.reviewId)
+    alert('제재 확정 처리되었습니다.')
+    close()
+  } catch (e) {
+    console.error('🚨 제재 확정 실패:', e)
+    alert('제재 확정 실패')
+  }
 }
 
 const columns = [
@@ -76,24 +99,10 @@ const columns = [
     format: (_, row) => ({
       type: 'button',
       label: '보기',
-      onClick: () => selected.value = row
+      onClick: () => openDetail(row)
     })
   }
 ]
-
-function close() {
-  selected.value = null
-}
-
-function handleWithdraw() {
-  alert('제재 철회 처리되었습니다.')
-  close()
-}
-
-function handleConfirmPenalty() {
-  alert('제재 확정 처리되었습니다.')
-  close()
-}
 </script>
 
 <template>

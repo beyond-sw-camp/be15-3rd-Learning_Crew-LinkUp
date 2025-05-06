@@ -210,21 +210,80 @@ export function reportComment(payload) {
 
 
 
+/* ----------------------------- 제재 관련 API ----------------------------- */
 
-/* ------------------------------------ 제재 관리 ------------------------------------ */
-export function fetchPenaltyList(params) {
-    return api.get('/admin/penalties', { params })
-}
-
-export function fetchPenaltyDetail(penaltyId) {
-    return api.get(`/api/v1/common-service/penalty/${penaltyId}`)
-}
-
-export function confirmReviewPenalty(reviewId) {
-    return api.post(`/api/v1/common-service/penalty/placeReview/${reviewId}/done`, {
-        reviewId
+/**
+ * 제재 목록 조회
+ * @param {Object} params - 필터링 조건
+ * @param {string|number} [params.userId]
+ * @param {string} [params.penaltyType] - POST | COMMENT | REVIEW
+ * @param {number|string} [params.statusId] - 1: 대기, 2: 승인, 3: 거절
+ * @param {number} [params.page]
+ * @returns {Promise<Object>} 제재 목록 + pagination
+ */
+export function fetchPenaltyList({ userId = '', penaltyType = '', statusId = '', page = 1 }) {
+    return api.get('/common-service/penalty', {
+        params: { userId, penaltyType, statusId, page }
     })
 }
+
+/**
+ * 제재 상세 조회
+ * @param {number|string} penaltyId
+ * @returns {Promise<Object>}
+ */
+export function fetchPenaltyDetail(penaltyId) {
+    return api.get(`/common-service/penalty/${penaltyId}`)
+}
+
+/**
+ * 게시글 제재 등록
+ * @param {number|string} postId
+ * @param {string} reason
+ * @returns {Promise<Object>}
+ */
+export function penalizePost(postId, reason) {
+    return api.put(`/common-service/penalty/post/${postId}`, { reason })
+}
+
+/**
+ * 댓글 제재 등록
+ * @param {number|string} commentId
+ * @param {string} reason
+ * @returns {Promise<Object>}
+ */
+export function penalizeComment(commentId, reason) {
+    return api.put(`/common-service/penalty/comment/${commentId}`, { reason })
+}
+
+/**
+ * 장소 후기 제재 등록
+ * @param {number|string} reviewId
+ * @param {string} reason
+ * @returns {Promise<Object>}
+ */
+export function penalizePlaceReview(reviewId, reason) {
+    return api.put(`/common-service/penalty/placeReview/${reviewId}`, { reason })
+}
+
+/**
+ * 장소 후기 제재 확정 (REVIEW + PENDING 상태에서만)
+ * @param {number|string} reviewId
+ * @returns {Promise<Object>}
+ */
+export function confirmReviewPenalty(reviewId) {
+    return api.put(`/common-service/penalty/placeReview/${reviewId}/done`)
+}
+
+/**
+ * 제재 철회
+ * @param {number|string} penaltyId
+ * @returns {Promise<Object>}
+ */
+export function withdrawPenalty(penaltyId) {
+    return api.put(`/common-service/penalty/${penaltyId}`)
+}
+
 
 /* ------------------------------------ 이의 제기 ------------------------------------ */
 export function fetchObjectionList(params) {
