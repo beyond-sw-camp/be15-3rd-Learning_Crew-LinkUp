@@ -65,18 +65,29 @@ export function fetchPlaceReviewList(params) {
 /* ----------------------------- 신고 관련 API ----------------------------- */
 
 /**
- * 신고 목록 조회
+ * 전체 신고 내역 조회
  * @param {Object} params
- * @param {number} [params.statusId] - 처리 상태 ID (1: 처리중, 2: 완료, 3: 기각)
- * @param {number} [params.reportTypeId] - 신고 유형 ID
- * @param {number} [params.page] - 페이지 번호
- * @returns {Promise<Object>} 신고 목록 + pagination 정보
+ * @param {number|string} [params.reporterMemberId]
+ * @param {number|string} [params.targetMemberId]
+ * @param {number|string} [params.reportTypeId]
+ * @param {number|string} [params.statusId]
+ * @param {number} [params.page]
+ * @returns {Promise<Object>} 신고 목록 및 페이징 정보
  */
-export function fetchReportList({ statusId = null, reportTypeId = null, page = 1 }) {
+export function fetchReportList({
+                                    reporterMemberId = null,
+                                    targetMemberId = null,
+                                    reportTypeId = null,
+                                    statusId = null,
+                                    page = 1
+                                }) {
     return api.get('/common-service/report', {
-        params: { statusId, reportTypeId, page }
+        params: {
+            reporterMemberId, targetMemberId, reportTypeId, statusId, page
+        }
     })
 }
+
 
 /**
  * 신고 상세 정보 조회
@@ -88,7 +99,7 @@ export function fetchReportDetail(reportId) {
 }
 
 /**
- * 신고 유형 목록 조회
+ * 신고 종류 목록 조회
  * @returns {Promise<Object>} 신고 유형 배열 (id, name)
  */
 export function fetchReportTypes() {
@@ -124,7 +135,7 @@ export function acceptReport(reportId, message = '신고가 처리되고 제재�
 }
 
 /**
- * 신고 대상 목록 조회 (피신고자)
+ * 신고 대상별 목록 조회
  * @param {Object} params
  * @param {string} [params.isActive] - 'Y' | 'N'
  * @param {string} [params.searchType] - 'targetId'만 지원
@@ -183,7 +194,7 @@ export function fetchReporterUserDetail(reporterId) {
  */
 export function fetchReporteeUserList({ reporteeId = null, page = 1 }) {
     return api.get('/common-service/report/reportee-user', {
-        params: { reporteed: reporteeId, page }
+        params: { reporteeId, page }
     })
 }
 
@@ -261,7 +272,7 @@ export function penalizeComment(commentId, reason) {
 }
 
 /**
- * 장소 후기 제재 등록
+ * 장소 후기 제재 요청
  * @param {number|string} reviewId
  * @param {string} reason
  * @returns {Promise<Object>}
@@ -312,6 +323,37 @@ export function fetchObjectionList({ memberId = '', statusId = '', page = 1 }) {
 export function fetchObjectionDetail(objectionId) {
     return api.get(`/common-service/objections/${objectionId}`)
 }
+
+/**
+ * 장소 후기 제재에 대한 이의 신청
+ * @param {number|string} reviewId
+ * @param {Object} payload - { memberId, reason }
+ * @returns {Promise<Object>}
+ */
+export function objectToPlaceReview(reviewId, payload) {
+    return api.post(`/common-service/objections/review/${reviewId}`, payload)
+}
+
+/**
+ * 게시글 제재에 대한 이의 신청
+ * @param {number|string} postId
+ * @param {Object} payload - { memberId, reason }
+ * @returns {Promise<Object>}
+ */
+export function objectToPost(postId, payload) {
+    return api.post(`/common-service/objections/post/${postId}`, payload)
+}
+
+/**
+ * 댓글 제재에 대한 이의 신청
+ * @param {number|string} commentId
+ * @param {Object} payload - { memberId, reason }
+ * @returns {Promise<Object>}
+ */
+export function objectToComment(commentId, payload) {
+    return api.post(`/common-service/objections/comment/${commentId}`, payload)
+}
+
 
 /**
  * 이의 제기 승인 (관리자용)
