@@ -175,6 +175,40 @@ export function fetchReporterUserDetail(reporterId) {
     return api.get(`/common-service/report/reporter-user/${reporterId}`)
 }
 
+/**
+ * 피신고자 목록 조회 (누적 점수 기준)
+ * @param {Object} params
+ * @param {string|number} [params.reporteeId]
+ * @param {number} [params.page]
+ */
+export function fetchReporteeUserList({ reporteeId = null, page = 1 }) {
+    return api.get('/common-service/report/reportee-user', {
+        params: { reporteed: reporteeId, page }
+    })
+}
+
+/**
+ * 피신고자 상세 신고 이력 조회
+ * @param {number|string} reporteeId
+ */
+export function fetchReporteeUserDetail(reporteeId) {
+    return api.get(`/common-service/report/reportee-user/${reporteeId}`)
+}
+
+// 신고 API
+export function reportUser(payload) {
+    return api.post('/common-service/report/user', payload)
+}
+
+export function reportPost(payload) {
+    return api.post('/common-service/report/post', payload)
+}
+
+export function reportComment(payload) {
+    return api.post('/common-service/report/comment', payload)
+}
+
+
 
 
 /* ------------------------------------ 제재 관리 ------------------------------------ */

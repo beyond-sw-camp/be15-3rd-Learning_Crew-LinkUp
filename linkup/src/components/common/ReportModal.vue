@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { fetchReportTypes } from '@/api/admin.js'
 import '@/assets/css/report-styles.css'
 
 const props = defineProps({
@@ -11,7 +12,22 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'submit'])
 
 const reason = ref('')
-const reportType = ref('spam')
+const reportTypeId = ref(null)
+const reportTypes = ref([]) // 신고 유형 목록
+
+// 신고 유형 API 호출
+onMounted(async () => {
+  try {
+    const res = await fetchReportTypes()
+    reportTypes.value = res.data
+    if (reportTypes.value.length > 0) {
+      reportTypeId.value = reportTypes.value[0].id
+    }
+  } catch (e) {
+    console.error('🚨 신고 유형 로딩 실패:', e)
+    reportTypes.value = []
+  }
+})
 
 const title = computed(() => {
   return props.type === 'user'
@@ -28,13 +44,14 @@ const contentLabel = computed(() => {
 })
 
 const handleSubmit = () => {
-  if (!reportType.value || !reason.value.trim()) {
+  if (!reportTypeId.value || !reason.value.trim()) {
     alert('신고 유형과 신고 사유를 모두 입력해주세요.')
     return
   }
+
   emit('submit', {
     type: props.type,
-    reportType: reportType.value,
+    reportTypeId: reportTypeId.value,
     reason: reason.value
   })
   emit('update:modelValue', false)
@@ -44,10 +61,9 @@ const handleSubmit = () => {
 <template>
   <div class="modal" @click.self="$emit('update:modelValue', false)">
     <div class="report-modal">
-      <!-- 제목 -->
       <h2 class="modal-report-title">{{ title }}</h2>
 
-      <!-- 대상 정보 섹션 -->
+      <!-- 대상 정보 -->
       <div class="modal-report-section">
         <div class="info-grid-user">
           <div class="section-title">
@@ -60,7 +76,7 @@ const handleSubmit = () => {
         </div>
       </div>
 
-      <!-- 신고자 정보 섹션 -->
+      <!-- 신고자 정보 -->
       <div class="modal-report-section">
         <div class="info-grid-user">
           <div class="section-title">신고자 정보</div>
@@ -71,18 +87,17 @@ const handleSubmit = () => {
         </div>
       </div>
 
-      <!-- 신고 유형 선택 -->
+      <!-- 신고 유형 -->
       <div class="modal-report-section">
         <div class="section-title">신고 내용</div>
         <div class="info-grid-input">
           <div class="info-item">
             <div class="label">신고 유형</div>
             <div class="value">
-              <select v-model="reportType" class="modal-select">
-                <option value="spam">스팸</option>
-                <option value="inappropriate">부적절한 콘텐츠</option>
-                <option value="abusive">욕설/폭언</option>
-                <option value="other">기타</option>
+              <select v-model.number="reportTypeId" class="modal-select">
+                <option v-for="type in reportTypes" :key="type.id" :value="type.id">
+                  {{ type.name }}
+                </option>
               </select>
             </div>
           </div>

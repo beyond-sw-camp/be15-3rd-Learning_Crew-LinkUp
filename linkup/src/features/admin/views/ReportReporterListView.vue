@@ -37,7 +37,7 @@ async function fetchReporterList({ page, reporterId }) {
   try {
     const res = await fetchReporterUserList({ reporterId, page })
     return {
-      data: res.data.users || [],
+      data: res.data.userList || [],
       totalPages: res.data.pagination?.totalPage || 1
     }
   } catch (e) {
