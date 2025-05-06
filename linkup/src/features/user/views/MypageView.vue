@@ -1,17 +1,19 @@
 <script setup>
 import SidebarMainLayout from '@/components/layout/SidebarMainLayout.vue';
-import SidebarMenu from '@/features/user/components/SidebarMenu.vue';
-const isLoading = ref(true);
+import SidebarMenuUser from '@/features/user/components/SidebarMenuUser.vue';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 </script>
 
 <template>
-  <SidebarMainLayout width="350px" mainClass="h-[calc(100vh-100px)]">
+  <SidebarMainLayout width="350px">
     <template #sidebar>
-      <SidebarMenu />
+      <SidebarMenuUser />
     </template>
 
     <template #main>
-      <RouterView />
+      <DefaultMainLayout main-class="w-[500px]">
+        <RouterView />
+      </DefaultMainLayout>
     </template>
   </SidebarMainLayout>
 </template>

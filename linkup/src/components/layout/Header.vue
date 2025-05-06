@@ -11,20 +11,19 @@ import Navigation from '@/components/layout/Navigation.vue';
         </RouterLink>
       </h1>
       <Navigation />
-
     </div>
   </header>
 </template>
 
 <style scoped>
 .header {
-  @apply h-[80px] bg-indigo-100 shadow-sm flex-shrink-0 px-8;
+  @apply h-[80px] bg-indigo-100 shadow-sm flex-shrink-0 px-4;
 }
 .header-inner {
   @apply h-full flex justify-between items-center max-w-full mx-auto;
 }
 .logo-container {
-  @apply flex items-center p-12;
+  @apply flex items-center p-4;
 }
 .logo {
   @apply w-[48px] h-[48px];

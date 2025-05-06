@@ -3,8 +3,6 @@ import 'pretendard/dist/web/static/pretendard.css';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css'; // 스타일도 꼭 가져와야 합니다
 
-
-
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
@@ -19,10 +17,10 @@ async function bootstrap() {
 
   /* 새로고침시 accessToken 재할당 */
   const authStore = useAuthStore();
+  authStore.clearAuth();
+
   try {
-    const resp = await refreshUserToken();
-    const { accessToken, userName, profileImageUrl } = resp.data.data;
-    authStore.setAuth(accessToken, userName, profileImageUrl);
+    await authStore.refresh();
   } catch (e) {}
   app.use(router);
   app.use(Toast, {
