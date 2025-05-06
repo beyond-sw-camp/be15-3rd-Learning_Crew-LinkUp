@@ -27,7 +27,11 @@
           <p class="score">⭐ {{ review.reviewScore }}</p>
           <p class="date">{{ review.reviewDate }}</p>
           <p class="text">{{ review.reviewContent }}</p>
-          <img v-if="review.reviewImageUrl" :src="review.reviewImageUrl" class="review-img" />
+          <img
+            v-if="review.reviewImageUrl"
+            :src="review.reviewImageUrl"
+            class="review-img"
+          />
         </div>
       </section>
 
@@ -47,8 +51,12 @@ watch(
   () => props.place?.placeId,
   async (id) => {
     if (!id) return;
-    const { data } = await getPlaceDetail(id);
-    detail.value = data.data;
+    try {
+      const { data } = await getPlaceDetail(id);
+      detail.value = data.data;
+    } catch (error) {
+      console.error('[장소 상세 조회 실패]', error);
+    }
   },
   { immediate: true }
 );
@@ -64,10 +72,13 @@ watch(
 .main-image {
   @apply w-full h-60 object-cover rounded-md mb-4;
 }
-.address, .description, .equipment {
+.address,
+.description,
+.equipment {
   @apply mb-2 text-gray-700;
 }
-.operation, .reviews {
+.operation,
+.reviews {
   @apply mt-6;
 }
 .review {
