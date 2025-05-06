@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import ObjectionModal from '@/features/user/components/ObjectionModal.vue'
-import '@/assets/css/report-styles.css'
+
 import {
   objectToPlaceReview,
   objectToPost,

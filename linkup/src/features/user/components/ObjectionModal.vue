@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import '@/assets/css/report-styles.css'
+
 const props = defineProps({
   modelValue: Boolean,
   type: String, // 'post' | 'comment' | 'review'
