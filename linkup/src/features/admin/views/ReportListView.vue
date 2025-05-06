@@ -44,7 +44,7 @@ onMounted(async () => {
       reportType: type.name
     }))
   } catch (e) {
-    toast.error('신고 유형 목록을 불러오지 못했습니다.')
+    // toast.error('신고 유형 목록을 불러오지 못했습니다.')
     reportTypes.value = []
   }
 })
@@ -65,7 +65,7 @@ async function loadReportList({ status, reportTypeId, page }) {
     }
   } catch (error) {
     console.error('🚨 신고 목록 로딩 실패:', error)
-    toast.error('신고 목록을 불러오지 못했습니다.')
+    // toast.error('신고 목록을 불러오지 못했습니다.')
     return { data: [], totalPages: 1 }
   }
 }
@@ -79,7 +79,7 @@ async function openDetail(row) {
     const res = await fetchReportDetail(row.reportId)
     selected.value = res.data
   } catch (e) {
-    toast.error('상세 정보를 불러오지 못했습니다.')
+    // toast.error('상세 정보를 불러오지 못했습니다.')
   }
 }
 
@@ -91,16 +91,16 @@ async function handleSanction(action) {
     const reportId = selected.value.reportId
     if (action === 'APPROVED') {
       await rejectReport(reportId)
-      toast.success('허위 신고로 처리되었습니다.')
+      // toast.success('허위 신고로 처리되었습니다.')
     } else if (action === 'REJECTED') {
       await acceptReport(reportId)
-      toast.success('정상 신고로 제재가 등록되었습니다.')
+      // toast.success('정상 신고로 제재가 등록되었습니다.')
     }
 
     selected.value = null
     reloadKey.value++ // 리스트 갱신
   } catch (e) {
-    toast.error('신고 처리 중 오류가 발생했습니다.')
+    // toast.error('신고 처리 중 오류가 발생했습니다.')
   }
 }
 

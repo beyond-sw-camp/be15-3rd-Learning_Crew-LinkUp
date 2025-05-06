@@ -15,7 +15,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:page'])
 
-const filters = reactive({ ...props.initFilters })
+const filters = props.initFilters
+
 const rows = ref([])
 const page = ref(1)
 const totalPages = ref(1)
