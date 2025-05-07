@@ -52,9 +52,8 @@ const searchItems = [
 
 <template>
   <SidebarMainLayout width="500px" sidebarClass="h-[calc(100vh-100px)]">
-    <SearchBar :items="searchItems" />
-
     <template #sidebar>
+      <SearchBar :items="searchItems" />
       <section class="sidebar-content" aria-label="모임 리스트 영역">
         <CardList :items="filteredCards" />
       </section>

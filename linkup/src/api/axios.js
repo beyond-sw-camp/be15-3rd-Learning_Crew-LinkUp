@@ -1,8 +1,9 @@
 /* 요청, 응답에 공통적으로 적용 될 부분을 axios 객체로 정의 */
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth.js';
-import { refreshUserToken } from '@/api/user.js';
-import { showErrorToast } from '@/utill/toast.js';
+import { logoutUser, refreshUserToken } from '@/api/user.js';
+import { showErrorToast, showSuccessToast } from '@/utill/toast.js';
+import { stopLoading } from '@/composables/useLoadingBar.js';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -19,7 +20,15 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    stopLoading();
+    console.log(response.data);
+    // 성공한 경우에도 메시지 띄워줄 수 있음
+    if (response.config.method !== 'get') {
+      showSuccessToast(response.data.message);
+    }
+    return response;
+  },
   async (error) => {
     const authStore = useAuthStore();
     const { config, response } = error;
@@ -33,6 +42,8 @@ api.interceptors.response.use(
     const status = response.status;
     const errorCode = response.data?.errorCode || null;
     const message = response.data?.message || '알 수 없는 오류가 발생했습니다.';
+
+    console.log(status, errorCode, message);
 
     // 1. 리프레시 요청 중 401 발생 → 바로 로그아웃
     if (config.url.includes('/auth/refresh')) {
@@ -48,24 +59,26 @@ api.interceptors.response.use(
         showErrorToast('인증이 만료되었습니다. 다시 로그인해주세요.');
         return Promise.reject(error);
       }
+
+      //시도한 것을 카운트
       config._retry = true;
 
       // 에러코드별로 분기
       if (errorCode === 'EXPIRED_JWT') {
         try {
           const refreshRes = await refreshUserToken();
-          const newToken = refreshRes.data.data.accessToken;
-          authStore.setAuth(newToken);
-          config.headers.Authorization = `Bearer ${newToken}`;
+          const { accessToken, userName, profileImageUrl } = refreshRes.data.data;
+          authStore.setAuth(accessToken, userName, profileImageUrl);
+          config.headers.Authorization = `Bearer ${accessToken}`;
           return api(config); // 원래 요청 재시도
         } catch (refreshErr) {
-          await authStore.clearAuth();
+          await authStore.logout();
           showErrorToast('세션이 만료되었습니다. 다시 로그인해주세요.');
           return Promise.reject(refreshErr);
         }
       } else if (['INVALID_JWT', 'EMPTY_JWT', 'UNAUTHORIZED_USER'].includes(errorCode)) {
-        await authStore.clearAuth();
-        showErrorToast('로그인이 필요합니다.');
+        await authStore.logout();
+        showErrorToast(message);
         return Promise.reject(error);
       } else {
         // 기타 401 에러
