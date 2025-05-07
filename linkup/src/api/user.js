@@ -66,3 +66,37 @@ export function getUserMypage() {
 export function getBusinessMypage() {
   return api.get('/user-service/users/me/mypage/business');
 }
+
+/* 9. 포인트 조회 */
+export function getUserPointTransactions(params) {
+  return api.get('/common-service/user/point/transaction', { params: params });
+}
+
+/* 10. 비밀번호 재설정 링크 전송 */
+export function postResetPassword(data) {
+  return api.post('/user-service/auth/password/reset-link', data);
+}
+
+/* 11. 비밀번호 재설정 */
+export function postResetPasswordConfirm(data) {
+  return api.post('/user-service/auth/password/reset', data);
+}
+
+/* 12. 계정 복구 신청 */
+export function postRecoverAccount(data) {
+  return api.post('/user-service/users/recover', data);
+}
+
+/**
+ * [모임 이력 조회 API]
+ * @param {Object} params - 조회 조건
+ * @param {string|null} params.status - 모임 상태 (COMPLETED, CANCELLED, UPCOMING)
+ * @param {number} params.page - 페이지 번호 (0부터 시작)
+ * @param {number} params.size - 페이지 크기
+ * @returns {Promise<ApiResponse<PageResponse<MeetingHistoryResponse>>>}
+ */
+export function getUserMeetingHistory({ status, page, size }) {
+  return api.get('/common-service/user/meetings/history', {
+    params: { status, page, size },
+  });
+}

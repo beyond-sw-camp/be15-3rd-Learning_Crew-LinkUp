@@ -8,3 +8,10 @@ export function showErrorToast(message) {
     position: 'top-right',
   });
 }
+
+export function showSuccessToast(message) {
+  toast.success(message, {
+    timeout: 3000,
+    position: 'top-right',
+  });
+}

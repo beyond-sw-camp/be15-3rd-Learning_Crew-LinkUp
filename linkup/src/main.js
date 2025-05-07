@@ -24,7 +24,7 @@ async function bootstrap() {
   } catch (e) {}
   app.use(router);
   app.use(Toast, {
-    position: 'top-left',
+    position: 'top-right',
     timeout: 3000,
     closeOnClick: true,
     pauseOnFocusLoss: true,

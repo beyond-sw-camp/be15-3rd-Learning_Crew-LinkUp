@@ -47,10 +47,10 @@ function onSubmit() {
 
     <nav class="login-links" aria-label="로그인 관련 링크">
       <div class="login-link-group">
-        <a href="#" class="login-link">비밀번호 찾기</a>
-        <a href="#" class="login-link recovery-link">계정 복구 신청</a>
+        <RouterLink to="/password/reset" class="login-link"> 비밀번호 찾기 </RouterLink>
+        <RouterLink to="/recover" class="recovery-link"> 계정 복구 신청 </RouterLink>
       </div>
-      <a href="#" class="login-link">회원가입</a>
+      <RouterLink to="/signup" class="login-link"> 회원가입 </RouterLink>
     </nav>
   </section>
 </template>

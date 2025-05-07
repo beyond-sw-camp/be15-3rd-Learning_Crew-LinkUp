@@ -1,15 +1,12 @@
 <script setup>
+import FullVertialCenterLayout from '@/components/layout/FullVertialCenterLayout.vue';
 import PasswordResetRequestForm from '@/features/user/components/PasswordResetRequestForm.vue';
 </script>
 
 <template>
-  <section class="main-content-area">
+  <FullVertialCenterLayout>
     <PasswordResetRequestForm />
-  </section>
+  </FullVertialCenterLayout>
 </template>
 
-<style scoped>
-.main-content-area {
-  @apply flex justify-center items-start p-8;
-}
-</style>
+<style scoped></style>
