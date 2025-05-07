@@ -3,6 +3,8 @@ import { getUserMypage } from '@/api/user.js';
 import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { RouterLink, useRouter } from 'vue-router';
+import TossPaymentModal from '@/features/point/components/TossPaymentModal.vue';
+import { usePointPayment } from "@/features/point/composables/usePointPayment.js";
 
 const userInfo = ref(null);
 const isLoading = ref(true);
@@ -10,6 +12,12 @@ const isError = ref(false);
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+const showPaymentModal = ref(false); // 추가
+
+const { confirmPointPayment } = usePointPayment();
+
+
 
 onMounted(async () => {
   try {
@@ -45,6 +53,35 @@ const navigationItems = computed(() => [
   { name: 'friend-meetings', label: '친구 개설 모임', path: '/mypage/friend-meetings' },
   { name: 'password', label: '비밀번호 변경', path: '/mypage/password' },
 ]);
+
+// const handlePaymentComplete = async ({ amount, orderId, paymentKey }) => {
+//   console.log('🧾 결제 완료 후 받은 데이터:', { amount, orderId, paymentKey });
+//   const success = await confirmPointPayment({ amount, orderId, paymentKey });
+//   if (success) {
+//     console.log('✅ 결제 확인 및 포인트 증가 완료');
+//     await fetchPoint(); // 서버 기준 포인트 다시 반영
+//     showPaymentModal.value = false;
+//   } else {
+//     console.error('❌ 결제 확인 실패');
+//     alert('포인트 충전에 실패했어요. 다시 시도해주세요.');
+//   }
+// };
+const handlePaymentComplete = async ({ amount, orderId, paymentKey }) => {
+  console.log('🧾 결제 완료 후 받은 데이터:', { amount, orderId, paymentKey });
+  const success = await confirmPointPayment({ amount, orderId, paymentKey });
+  if (success) {
+    try {
+      const { data } = await getUserMypage();
+      userInfo.value = data.data;
+      console.log('✅ 포인트 최신화 성공');
+    } catch (err) {
+      console.error('❌ 포인트 재조회 실패', err);
+    }
+    showPaymentModal.value = false;
+  } else {
+    alert('포인트 충전에 실패했어요. 다시 시도해주세요.');
+  }
+};
 </script>
 
 <template>
@@ -70,7 +107,10 @@ const navigationItems = computed(() => [
           <div class="status-card point">
             <div class="label">나의 포인트</div>
             <div class="value">{{ userInfo.point }}P</div>
-            <button type="button" class="charge-btn">충전하기</button>
+<!--            <button type="button" class="charge-btn">충전하기</button>-->
+            <button type="button" class="charge-btn" @click="showPaymentModal = true">
+              충전하기
+            </button>
           </div>
         </div>
       </section>
@@ -88,6 +128,11 @@ const navigationItems = computed(() => [
       <button class="logout-btn" @click="logout">로그아웃</button>
     </template>
   </aside>
+  <TossPaymentModal
+      :visible="showPaymentModal"
+      @close="showPaymentModal = false"
+      @complete="handlePaymentComplete"
+  />
 </template>
 
 <style scoped>
