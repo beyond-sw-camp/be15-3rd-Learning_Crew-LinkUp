@@ -2,25 +2,32 @@
 
 import { onMounted, ref } from 'vue';
 import api from '@/api/axios.js';
+import { useAuthStore } from '@/stores/auth.js';
 
+const auth = useAuthStore();
 const meetings = ref([]);
 
-meetings.value = [{
-  meetingId: 1,
-  meetingTitle: "제목",
-  placeName: "종합운동장",
-  statusId: 1
-}
-];
+// meetings.value = [{
+//   meetingId: 1,
+//   meetingTitle: "제목",
+//   placeName: "종합운동장",
+//   statusId: 1
+// }
+// ];
 
-// onMounted(async() => {
-//   try {
-//     const response = api.get(`/meetings/user/${userId}`)
-//     meetings.value = response.data.data.meetings
-//   } catch (e) {
-//     console.error('참가 모임 조회 실패', e);
-//   }
-// })
+const isLoading = ref(true);
+
+onMounted(async() => {
+  try {
+    const userId = auth.userId;
+    const response = await api.get(`/common-service/meetings/user/${userId}`)
+    meetings.value = response.data.data.meetings;
+  } catch (e) {
+    console.error('참가 모임 조회 실패', e);
+  } finally {
+    isLoading.value = false;
+  }
+})
 
 const statusName = (id) => {
   switch(id) {
@@ -36,9 +43,15 @@ const statusName = (id) => {
       return '모임 진행 완료';
   }
 }
+
+const emits = defineEmits(['close', 'select']);
 </script>
 
 <template>
+  <template v-if="isLoading">
+    로딩중
+  </template>
+  <template v-else>
   <div class="assignment-modal">
     <div class="modal-box">
       <!-- 모달 헤더 -->
@@ -67,6 +80,7 @@ const statusName = (id) => {
 
     </div>
   </div>
+  </template>
 </template>
 
 <style scoped>

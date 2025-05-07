@@ -68,6 +68,9 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import api from '@/api/axios.js';
+import { useAuthStore } from '@/stores/auth.js';
+
+const auth = useAuthStore();
 
 const leaderNickname = ref([]);
 
@@ -84,7 +87,7 @@ const meetingId = computed(() => props.meeting?.meetingId);
 const fetchParticipants = async () => {
   try {
     const response = await api.get(`common-service/my/meetings/${meetingId.value}/participation`, {
-      params: { memberId: 55, requesterId: 55 }
+      params: { memberId: auth.userId, requesterId: auth.userId }
     });
     participants.value = response.data.data.participants;
     const meetingResponse = await api.get(`common-service/meetings/${meetingId.value}`);
@@ -97,7 +100,7 @@ const fetchParticipants = async () => {
 const fetchApplicants = async () => {
   try {
     const response = await api.get(`common-service/meetings/${meetingId.value}/participation_request`, {
-      params: { requesterId: 55 }
+      params: { requesterId: auth.userId }
     });
     applicants.value = response.data.data.participants; // API 응답에 맞게 수정
   } catch (error) {
@@ -123,7 +126,7 @@ async function acceptParticipation(applicant) {
     const memberId = applicant.memberId;
     return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/accept`
     ,  { // 여기에 body 데이터 작성
-        requesterId: 55,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        requesterId: auth.userId,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
         // 필요한 다른 데이터들을 여기에 추가
       });
   } catch (error) {
@@ -137,7 +140,7 @@ async function rejectParticipation(applicant) {
     const memberId = applicant.memberId;
     return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/reject`,
       { // 여기에 body 데이터 작성
-        requesterId: 55,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        requesterId: auth.userId,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
         // 필요한 다른 데이터들을 여기에 추가
       });
   } catch (error) {
@@ -150,15 +153,16 @@ const cancelMeeting = async () => {
   try {
     const result = confirm('정말 모집을 취소하시겠습니까?');
     if (result) {
-      return api.delete(`common-service/meetings/${meetingId.value}/cancel`, {
+      api.delete(`common-service/meetings/${meetingId.value}/cancel`, {
           params: {
-            memberId: 55,  // 요청자 ID 등 필요한 파라미터
+            memberId: auth.userId,  // 요청자 ID 등 필요한 파라미터
             // 다른 필요한 파라미터들 추가
           }
         }
       );
+      alert('모집 취소에 성공했습니다.');
+      return;
     }
-    alert('모집 취소에 성공했습니다.');
   } catch (e) {
     console.error('모임 취소 실패', e);
     alert('모임 취소에 실패했습니다.');

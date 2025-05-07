@@ -2,6 +2,9 @@
 
 import { onMounted, ref } from 'vue';
 import api from '@/api/axios.js';
+import { useAuthStore } from '@/stores/auth.js';
+
+const auth = useAuthStore();
 
 const meetings = ref([]);
 
@@ -17,7 +20,7 @@ const isLoading = ref(true);
 
 onMounted(async() => {
   try {
-    const userId = 55;
+    const userId = auth.userId;
     const response = await api.get(`common-service/meetings/user/${userId}/created`)
     meetings.value = response.data.data.meetings;
   } catch (e) {
