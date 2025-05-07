@@ -2,26 +2,35 @@ import api from './axios.js'
 import qs from 'qs'
 
 /* ------------------------------------ 회원 관리 ------------------------------------ */
-export function fetchUserList(params) {
-    return api.get('/admin/users', { params })
+/**
+ * 전체 회원 목록을 조회하는 API
+ * @param {Object} params - 요청 파라미터
+ * @param {string} [params.roleName] - 필터링할 역할 이름 (optional)
+ * @param {string} [params.statusName] - 필터링할 상태 이름 (optional)
+ * @param {number} [params.page=1] - 조회할 페이지 번호 (default: 1)
+ * @param {number} [params.size=10] - 페이지당 아이템 개수 (default: 10)
+ * @returns {Promise<Object>} - 전체 회원 목록 및 페이징 정보
+ */
+export function fetchUserList({ roleName = '', statusName = '', page = 1, size = 10 }) {
+  return api.get('/users', {
+    params: { roleName, statusName, page, size }
+  });
 }
 
-export function fetchUserAuthorityRequests(params) {
-    return api.get('/api/v1/common-service/admin/businesses/pending', { params })
+/**
+ * 모든 사업자 목록을 조회하는 API
+ * @param {Object} params - 요청 파라미터
+ * @param {string} [params.statusName] - 필터링할 상태 이름 (optional)
+ * @param {number} [params.page=1] - 조회할 페이지 번호 (default: 1)
+ * @param {number} [params.size=10] - 페이지당 아이템 개수 (default: 10)
+ * @returns {Promise<Object>} - 모든 사업자 목록 및 페이징 정보
+ */
+export function fetchAllOwners({ statusName = '', page = 1, size = 10 }) {
+  return api.get('/businesses', {
+    params: { statusName, page, size }
+  });
 }
 
-export function updateUserAuthorityStatus(id, decision, reason = '') {
-    if (decision === '승인') {
-        return api.put(`/api/v1/common-service/admin/businesses/${id}/approve`)
-    } else if (decision === '거절') {
-        return api.put(`/api/v1/common-service/owners/reject`, {
-            userId: id,
-            reason: reason
-        })
-    } else {
-        throw new Error('결정 값은 "승인" 또는 "거절"이어야 합니다.')
-    }
-}
 
 /* ------------------------------------ 게시글/댓글 ------------------------------------ */
 /**
@@ -68,42 +77,98 @@ export function fetchAllComments({
 
 
 /* ------------------------------------ 포인트 관리 ------------------------------------ */
+/**
+ * 포인트 트랜잭션 내역 조회
+ * @param {Object} params
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size] - 페이지 크기 (기본값: 10)
+ * @param {number} [params.userId] - 사용자 ID
+ * @param {string} [params.roleName] - 권한 이름 (ex: USER, ADMIN, BUSINESS)
+ * @param {string} [params.transactionType] - 거래 유형 (ex: CHARGE, PAYMENT, REFUND, WITHDRAW)
+ * @param {string} [params.startDate] - 조회 시작일 (YYYY-MM-DD)
+ * @param {string} [params.endDate] - 조회 종료일 (YYYY-MM-DD)
+ * @returns {Promise<Object>} 포인트 트랜잭션 내역 목록 및 페이징 정보
+ */
+export function fetchPointTransactionList({
+                                            page = 1, size = 10,
+                                            userId = null, roleName = null,
+                                            transactionType = null, startDate = null, endDate = null
+                                          }) {
+  const params = {
+    page, size, userId, roleName, transactionType, startDate, endDate
+  };
+
+  // null, undefined, 빈 문자열을 제외한 파라미터만 포함시키기
+  Object.keys(params).forEach(key => {
+    if (params[key] === null || params[key] === undefined || params[key] === '') {
+      delete params[key];
+    }
+  });
+
+  return api.get('/common-service/admin/users/point/transaction', {
+    params
+  });
+}
 
 /**
- * 포인트 거래 내역 조회
- * @param {Object} params - 요청에 사용될 파라미터
- * @param {string} [params.startDate] - 시작 날짜 (yyyy-MM-dd 형식), 필수 아님
- * @param {string} [params.endDate] - 종료 날짜 (yyyy-MM-dd 형식), 필수 아님
- * @param {string} [params.roleName] - 사용자 역할 (예: USER, BUSINESS), 필수 아님
- * @param {string} [params.transactionType] - 거래 유형 (예: PAYMENT, CHARGE), 필수 아님
- * @param {number} [params.userId] - 사용자 ID, 필수 아님
- * @param {number} [params.page=1] - 페이지 번호, 기본값은 1
- * @returns {Promise<Object>} - 포인트 거래 내역과 페이징 정보를 포함하는 응답 객체
+ * 사업자 정산 내역 목록 조회
+ * @param {Object} params
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size] - 페이지 크기 (기본값: 10)
+ * @param {number} [params.userId] - 사업자 ID
+ * @param {string} [params.startDate] - 조회 시작일 (YYYY-MM-DD)
+ * @param {string} [params.endDate] - 조회 종료일 (YYYY-MM-DD)
+ * @returns {Promise<Object>} 사업자 정산 내역 목록 및 페이징 정보
  */
-export function fetchPointTransactionHistory({
-                                                 startDate, endDate, roleName, transactionType, userId, page = 1
-                                             }) {
-    // 필수 파라미터에 null, undefined 또는 빈 값이 있을 경우 제외
-    const params = {
-        ...(startDate && { startDate }),
-        ...(endDate && { endDate }),
-        ...(roleName && { roleName }),
-        ...(transactionType && { transactionType }),
-        ...(userId && { userId }),
-        page // page는 항상 포함
-    };
+export function fetchSettlementList({
+                                      page = 1, size = 10, userId = null, startDate = null, endDate = null
+                                    }) {
+  const params = {
+    page, size, userId, startDate, endDate
+  };
 
-    return api.get('/common-service/admin/users/point/transaction', {
-        params: params
-    });
+  // null, undefined, 빈 문자열을 제외한 파라미터만 포함시키기
+  Object.keys(params).forEach(key => {
+    if (params[key] === null || params[key] === undefined || params[key] === '') {
+      delete params[key];
+    }
+  });
+
+  return api.get('/common-service/settlements/users', {
+    params
+  });
+}
+
+/**
+ * 계좌 목록 조회
+ * @param {Object} params
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size] - 페이지 크기 (기본값: 10)
+ * @param {string} [params.roleName] - 권한 이름 (ex: USER, ADMIN, BUSINESS)
+ * @param {string} [params.statusType] - 상태 타입 (ex: PENDING, ACCEPTED, DELETED, REJECTED)
+ * @returns {Promise<Object>} 계좌 목록 및 페이징 정보
+ */
+export function fetchAccount({
+                               page = 1, size = 10, roleName = null, statusType = null
+                             }) {
+  const params = {
+    page, size, roleName, statusType
+  };
+
+  // null, undefined, 빈 문자열을 제외한 파라미터만 포함시키기
+  Object.keys(params).forEach(key => {
+    if (params[key] === null || params[key] === undefined || params[key] === '') {
+      delete params[key];
+    }
+  });
+
+  return api.get('/common-service/users/accounts', {
+    params
+  });
 }
 
 
 
-
-export function fetchAccountList(params) {
-    return api.get('/api/v1/common-service/accounts', { params })
-}
 
 /* ------------------------------------ 모임 관리 ------------------------------------ */
 /**

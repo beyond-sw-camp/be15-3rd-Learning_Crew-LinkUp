@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
-import { format } from 'date-fns';
-import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue';
-import { fetchPointTransactionHistory } from '@/api/admin.js';
+import { ref } from 'vue'
+import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
+import { fetchPointTransactionList } from '@/api/admin.js'  // 실제 API 연동
+import { format } from 'date-fns'
 
 const pageTitle = '포인트 내역 조회';
 
@@ -42,7 +42,7 @@ const fetchList = async () => {
     console.log('필터링된 파라미터:', params); // 필터링된 파라미터 확인
 
     // API 호출
-    const res = await fetchPointTransactionHistory(params);
+    const res = await fetchPointTransactionList(params);
 
     // 응답 데이터 구조 점검
     console.log('응답 데이터:', res); // 응답 데이터 확인
@@ -82,7 +82,6 @@ const columns = [
     format: v => v ? format(new Date(v), 'yyyy-MM-dd HH:mm') : '-'
   }
 ];
-
 </script>
 
 <template>
