@@ -7,6 +7,7 @@ import {
   fetchBlacklistDetail,
   unblockBlacklist
 } from '@/api/admin.js'
+import AdminButton from '@/features/admin/components/AdminButton.vue';
 
 // DetailViewer lazy import
 const DetailViewer = defineAsyncComponent(() =>
@@ -15,18 +16,18 @@ const DetailViewer = defineAsyncComponent(() =>
 
 const pageTitle = '블랙리스트 조회'
 
-// 필터 상태
+// 필터 상태 (v-model 바인딩 대상)
 const filters = ref({ userId: '' })
 
-// 선택된 사용자 상세 정보
+// 상세 정보
 const selected = ref(null)
 
-// 등록 일시 포맷
+// 날짜 포맷
 const createdAtFormatted = computed(() =>
   selected.value?.createdAt ? format(new Date(selected.value.createdAt), 'yyyy-MM-dd HH:mm') : ''
 )
 
-// 목록 API 호출
+// 목록 API
 const fetchList = async ({ page, userId }) => {
   try {
     const res = await fetchBlacklist({ memberId: userId, page })
@@ -39,32 +40,30 @@ const fetchList = async ({ page, userId }) => {
   }
 }
 
-// 상세 보기 열기
-async function openModal(row) {
+// 상세 조회
+const openModal = async (row) => {
   try {
     const res = await fetchBlacklistDetail(row.memberId)
     selected.value = res.data
   } catch {
-    // 오류 무시
+    selected.value = null
   }
 }
 
-// 블랙리스트 해제 처리
-async function handleUnblock() {
+// 해제
+const handleUnblock = async () => {
   try {
     await unblockBlacklist(selected.value.memberId)
     selected.value = null
-  } catch {
-    // 오류 무시
-  }
+  } catch {}
 }
 
 // 모달 닫기
-function closeModal() {
+const closeModal = () => {
   selected.value = null
 }
 
-// 테이블 컬럼 정의
+// 테이블 컬럼
 const columns = [
   { key: 'memberId', label: '사용자 ID' },
   { key: 'userName', label: '사용자 이름' },
@@ -94,9 +93,14 @@ const columns = [
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <template #filters>
-      <label class="filter-label">사용자 ID:
-        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" />
+    <template #filters="{ filters }">
+      <label class="filter-label">
+        사용자 ID:
+        <input
+          v-model="filters.userId"
+          class="select-box id-input"
+          placeholder="ID"
+        />
       </label>
     </template>
 
@@ -140,8 +144,8 @@ const columns = [
         </template>
 
         <template #footer>
-          <button class="admin-button reject" @click="handleUnblock">블랙리스트 해제</button>
-          <button class="admin-button secondary" @click="closeModal">닫기</button>
+          <AdminButton type="reject" @click="handleUnblock">블랙리스트 해제</AdminButton>
+          <AdminButton type="secondary" @click="closeModal">닫기</AdminButton>
         </template>
       </DetailViewer>
     </template>

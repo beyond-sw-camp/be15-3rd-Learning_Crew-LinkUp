@@ -1,7 +1,4 @@
 <script setup>
-import '@/assets/css/admin-styles.css'
-
-// 명시적인 타입 제한과 aria-label 처리
 const props = defineProps({
   type: {
     type: String,
@@ -11,23 +8,20 @@ const props = defineProps({
   ariaLabel: {
     type: String,
     default: ''
+  },
+  nativeType: {
+    type: String,
+    default: 'button' // ← 기본값은 그대로 유지
   }
 })
-
-// aria-label이 빈 문자열일 경우 속성 제외
-const computedAriaLabel = props.ariaLabel || undefined
 </script>
 
 <template>
   <button
-    type="button"
-    :class="['btn', `btn-${props.type}`]"
-    :aria-label="computedAriaLabel"
+    :type="props.nativeType"
+  :class="['btn', `btn-${props.type}`]"
+  :aria-label="props.ariaLabel || undefined"
   >
-    <slot />
+  <slot />
   </button>
 </template>
-
-<style scoped>
-
-</style>

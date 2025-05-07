@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import AdminFilter from './AdminFilter.vue'
 import AdminTable from './AdminTable.vue'
 import Pagination from './Pagination.vue'
@@ -15,62 +15,93 @@ const props = defineProps({
 
 const emit = defineEmits(['update:page'])
 
-// 내부 상태 관리
 const filters = ref({ ...props.initFilters })
 const rows = ref([])
 const page = ref(1)
 const totalPages = ref(1)
 const selected = ref(null)
 
-// 리스트 API 호출
-const fetchList = async (newPage = 1) => {
-  page.value = newPage
+// 필터를 사용할 수 있게 두 가지 방식으로 처리 (파라미터와 JSON 방식)
+const formatFilters = (filters) => {
+  const formatted = { ...filters }
+
+  // JSON 처리 및 undefined, 빈 문자열 제거
+  Object.keys(formatted).forEach(key => {
+    if (formatted[key] === undefined || formatted[key] === '') {
+      delete formatted[key]
+    }
+  })
+
+  return formatted
+}
+
+
+// 데이터를 처리하는 범용 함수 (재사용성 고려)
+const processResponseData = (response) => {
+  // 데이터가 예상하는 형태인지 확인
+  const rows = response?.data?.data?.content || response?.data || response?.list || []
+  const totalPages = response?.data?.data?.totalPages || 1
+  const currentPage = response?.data?.data?.currentPage || 1
+  return { rows, totalPages, currentPage }
+}
+
+// fetchList 함수에서 호출
+const fetchList = async (params = {}) => {
+  page.value = params.page || 1
   try {
-    const res = await props.fetchFn({ ...filters.value, page: newPage })
-    rows.value = res.data || res.list || []
-    totalPages.value = res.totalPages || 1
-    emit('update:page', newPage)
-  } catch {
+    const formattedParams = formatFilters(params) // 필터링
+    const res = await props.fetchFn(formattedParams)
+
+    // 응답 처리
+    const { rows: fetchedRows, totalPages: fetchedTotalPages } = processResponseData(res)
+
+    rows.value = fetchedRows  // 포인트 거래 내역을 rows에 할당
+    totalPages.value = fetchedTotalPages  // 총 페이지 수 할당
+    emit('update:page', page.value)
+  } catch (e) {
+    console.error('🔴 fetchList error:', e)
     rows.value = []
     totalPages.value = 1
   }
 }
 
-// 행 클릭 시 모달 열기
+
+
 const handleRowClick = (row) => {
   if (props.enableModal) selected.value = row
 }
 
-// 모달 닫기
 const closeModal = () => {
   selected.value = null
 }
 
-// 셀 포맷 처리
 const format = (value, formatter, row) =>
-  typeof formatter === 'function' ? formatter(value, row) : value
+  typeof formatter === 'function' ? formatter(value, null, row) : value
 
-// 최초 로딩
-onMounted(() => fetchList(1))
+
+//초기 로드
+onMounted(() => fetchList({ ...filters.value, page: 1 }))
 </script>
 
 <template>
   <div class="main-admin">
-    <!-- 제목 및 필터 영역 -->
+    <!-- 필터 영역 -->
     <section class="filter-wrapper" aria-label="필터 섹션">
       <h2 class="page-title">{{ pageTitle || '관리 목록' }}</h2>
+
       <AdminFilter
         v-if="showFilter"
-        :title="null"
-        @search="fetchList(1)"
+        :filters="filters"
+        @update:filters="v => (filters.value = v)"
+        @search="() => fetchList({ ...filters.value, page: 1 })"
       >
-        <template #filters>
-          <slot name="filters" />
+        <template #filters="{ filters }">
+          <slot name="filters" :filters="filters" />
         </template>
       </AdminFilter>
     </section>
 
-    <!-- 데이터 테이블 -->
+    <!-- 테이블 -->
     <section aria-label="데이터 테이블">
       <AdminTable @row-click="handleRowClick">
         <template #thead>
@@ -111,11 +142,11 @@ onMounted(() => fetchList(1))
       <Pagination
         :current-page="page"
         :total-pages="totalPages"
-        @update:page="fetchList"
+        @update:page="newPage => fetchList({ ...filters.value, page: newPage })"
       />
     </nav>
 
-    <!-- 상세 모달 -->
+    <!-- 상세 모달 영역 -->
     <slot name="modal" />
   </div>
 </template>

@@ -1,32 +1,61 @@
 <script setup>
-import AdminButton from "@/features/admin/components/AdminButton.vue"
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue'
+import AdminButton from '@/features/admin/components/AdminButton.vue'
 
-const props = defineProps({ title: String })
-const emit = defineEmits(['search'])
+// Props
+const props = defineProps({
+  title: String,
+  filters: Object
+})
 
-// title 유효성 확인을 computed로 추출
+const emit = defineEmits(['search', 'update:filters'])
+
+// 제목 여부 확인
 const hasTitle = computed(() => props.title?.trim())
 
-const triggerSearch = () => emit('search')
+// 로컬 복사본 생성 (props.filters는 반응형 아님)
+const localFilters = ref({ ...props.filters })
+
+// localFilters 변경 시 부모로 emit
+watch(localFilters, (newVal) => {
+  emit('update:filters', newVal)
+}, { deep: true })
+
+// 검색 버튼 클릭 시 emit
+const triggerSearch = () => {
+  console.log('[AdminFilter] 검색 버튼 눌림', localFilters.value)  // 디버깅용
+  emit('search', localFilters.value)  // localFilters 값을 emit하여 부모에서 처리하도록 함
+}
 </script>
 
 <template>
   <section class="filter-wrapper" role="search" aria-labelledby="filter-title">
-    <!-- 조건부 타이틀 렌더링 -->
-    <h1 v-if="hasTitle" class="page-title" id="filter-title">{{ props.title }}</h1>
+    <!-- 제목 -->
+    <h1 v-if="hasTitle" id="filter-title" class="page-title">
+      {{ props.title }}
+    </h1>
 
-    <!-- 검색 필터 폼 -->
+    <!-- 필터 form -->
     <form class="filter-box" @submit.prevent="triggerSearch">
       <fieldset class="filter-fields">
         <legend class="sr-only">필터 조건 입력 영역</legend>
-        <slot name="filters" />
+
+        <!-- scoped slot: 로컬 filters 전달 -->
+        <slot name="filters" :filters="localFilters" />
       </fieldset>
-      <AdminButton type="primary" aria-label="검색 버튼">검색</AdminButton>
+
+      <!-- 검색 버튼 -->
+      <AdminButton
+        type="primary"
+        aria-label="검색 버튼"
+        native-type="submit"
+      >
+        검색
+      </AdminButton>
     </form>
   </section>
 </template>
 
 <style scoped>
-
+/* 외부 admin-styles.css 사용 */
 </style>
