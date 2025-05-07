@@ -44,6 +44,11 @@ export const adminRoutes = [
                 component: () => import('@/features/admin/views/PointHistoryListView.vue'),
               },
               {
+                path: 'points/settlement',
+                name: 'PointSettlementList',
+                component: () => import('@/features/admin/views/PointSettlementListView.vue'),
+              },
+              {
                 path: 'points/accounts',
                 name: 'PointAccountList',
                 component: () => import('@/features/admin/views/PointAccountListView.vue'),

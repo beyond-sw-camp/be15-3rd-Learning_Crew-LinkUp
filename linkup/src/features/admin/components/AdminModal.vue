@@ -1,7 +1,7 @@
 <!-- src/features/admin/components/AdminModal.vue -->
 <script setup>
 import AdminButton from '@/features/admin/components/AdminButton.vue'
-import '@/assets/css/admin-styles.css'
+impor '@/assets/css/admin-styles.css'
 
 const props = defineProps({
   modelValue: {
@@ -12,34 +12,34 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-function close() {
-  emit('update:modelValue', false)
-}
+// 닫기 동작 실행
+const close = () => emit('update:modelValue', false)
 </script>
 
 <template>
+  <!-- 모달 외부 클릭 시 닫기 -->
   <div
     v-if="modelValue"
-    class="modal user-authority-modal"
+    class="modal"
     role="dialog"
     aria-modal="true"
     aria-labelledby="modalTitle"
     @click.self="close"
   >
-    <section class="modal-content user-authority-modal-content">
-      <!-- 헤더 영역 -->
-      <header>
+    <section class="modal-content" aria-describedby="modalContent">
+      <!-- 모달 헤더 -->
+      <header class="modal-header">
         <slot name="title">
           <h2 class="modal-title" id="modalTitle">상세 보기</h2>
         </slot>
       </header>
 
-      <!-- 본문 영역 -->
-      <section class="modal-body" aria-label="모달 본문">
+      <!-- 모달 본문 -->
+      <section id="modalContent" class="modal-body" aria-label="상세 정보">
         <slot />
       </section>
 
-      <!-- 푸터 영역 -->
+      <!-- 모달 푸터 -->
       <footer class="modal-footer">
         <slot name="footer">
           <AdminButton type="secondary" @click="close">닫기</AdminButton>
@@ -50,5 +50,7 @@ function close() {
 </template>
 
 <style scoped>
-/* 실제 스타일은 admin-styles.css에 포함됨 */
+.modal-header {
+  margin-bottom: 16px;
+}
 </style>

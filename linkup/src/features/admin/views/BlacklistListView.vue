@@ -1,24 +1,32 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, defineAsyncComponent } from 'vue'
 import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
-import DetailViewer from '@/features/admin/components/DetailViewer.vue'
-import AdminButton from '@/features/admin/components/AdminButton.vue'
 import {
   fetchBlacklist,
   fetchBlacklistDetail,
   unblockBlacklist
 } from '@/api/admin.js'
 
+// DetailViewer lazy import
+const DetailViewer = defineAsyncComponent(() =>
+  import('@/features/admin/components/DetailViewer.vue')
+)
+
 const pageTitle = '블랙리스트 조회'
 
-const filters = ref({
-  userId: ''
-})
+// 필터 상태
+const filters = ref({ userId: '' })
 
+// 선택된 사용자 상세 정보
 const selected = ref(null)
 
-// 📌 목록 API
+// 등록 일시 포맷
+const createdAtFormatted = computed(() =>
+  selected.value?.createdAt ? format(new Date(selected.value.createdAt), 'yyyy-MM-dd HH:mm') : ''
+)
+
+// 목록 API 호출
 const fetchList = async ({ page, userId }) => {
   try {
     const res = await fetchBlacklist({ memberId: userId, page })
@@ -26,39 +34,37 @@ const fetchList = async ({ page, userId }) => {
       data: res.data.blacklists || [],
       totalPages: res.data.pagination?.totalPage || 1
     }
-  } catch (e) {
-    console.error('🚨 블랙리스트 목록 조회 실패:', e)
+  } catch {
     return { data: [], totalPages: 1 }
   }
 }
 
-// 📌 상세 API
+// 상세 보기 열기
 async function openModal(row) {
   try {
     const res = await fetchBlacklistDetail(row.memberId)
     selected.value = res.data
-  } catch (e) {
-    console.error('🚨 블랙리스트 상세 조회 실패:', e)
-    alert('상세 정보를 불러오지 못했습니다.')
+  } catch {
+    // 오류 무시
   }
 }
 
-// 📌 해제 API
+// 블랙리스트 해제 처리
 async function handleUnblock() {
   try {
     await unblockBlacklist(selected.value.memberId)
-    alert('블랙리스트 해제 처리되었습니다.')
     selected.value = null
-  } catch (e) {
-    console.error('🚨 블랙리스트 해제 실패:', e)
-    alert('해제 처리 중 오류가 발생했습니다.')
+  } catch {
+    // 오류 무시
   }
 }
 
+// 모달 닫기
 function closeModal() {
   selected.value = null
 }
 
+// 테이블 컬럼 정의
 const columns = [
   { key: 'memberId', label: '사용자 ID' },
   { key: 'userName', label: '사용자 이름' },
@@ -115,27 +121,27 @@ const columns = [
                 <span class="value">{{ selected.userName }}</span>
               </div>
             </div>
-          </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">블랙리스트 정보</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="label">등록 일시</span>
-                <span class="value">{{ format(new Date(selected.createdAt), 'yyyy-MM-dd HH:mm') }}</span>
+            <section class="modal-section">
+              <h3 class="section-title">블랙리스트 정보</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">등록 일시</span>
+                  <span class="value">{{ createdAtFormatted }}</span>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">사유</h3>
-            <div class="reason-box">{{ selected.reason }}</div>
+            <section class="modal-section">
+              <h3 class="section-title">사유</h3>
+              <div class="reason-box">{{ selected.reason }}</div>
+            </section>
           </section>
         </template>
 
         <template #footer>
-          <AdminButton type="reject" @click="handleUnblock">블랙리스트 해제</AdminButton>
-          <AdminButton type="secondary" @click="closeModal">닫기</AdminButton>
+          <button class="admin-button reject" @click="handleUnblock">블랙리스트 해제</button>
+          <button class="admin-button secondary" @click="closeModal">닫기</button>
         </template>
       </DetailViewer>
     </template>

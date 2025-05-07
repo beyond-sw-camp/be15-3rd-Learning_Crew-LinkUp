@@ -16,7 +16,6 @@ const STATUS_MAP = { 1: '대기', 2: '승인', 3: '거절' }
 const filters = ref({ userId: '', statusId: '' })
 const selected = ref(null)
 
-// 목록 조회
 const fetchList = async ({ page, userId, statusId }) => {
   try {
     const res = await fetchObjectionList({ memberId: userId, statusId, page })
@@ -30,7 +29,6 @@ const fetchList = async ({ page, userId, statusId }) => {
   }
 }
 
-// 상세 조회
 const openDetail = async (row) => {
   try {
     const res = await fetchObjectionDetail(row.objectionId)
@@ -50,7 +48,6 @@ async function handleAccept() {
     alert('이의 제기를 승인하였습니다.')
     close()
   } catch (e) {
-    console.error('🚨 승인 실패:', e)
     alert('이의 제기 승인 실패')
   }
 }
@@ -61,7 +58,6 @@ async function handleReject() {
     alert('이의 제기를 거절하였습니다.')
     close()
   } catch (e) {
-    console.error('🚨 거절 실패:', e)
     alert('이의 제기 거절 실패')
   }
 }
@@ -102,17 +98,25 @@ const columns = [
     :pageTitle="pageTitle"
     :enableModal="true"
   >
+    <!-- 접근성 개선: 필터 aria-label 추가 -->
     <template #filters>
-      <label class="filter-label">상태:
-        <select v-model="filters.statusId" class="select-box">
+      <label class="filter-label">
+        상태:
+        <select v-model="filters.statusId" class="select-box" aria-label="상태 선택">
           <option value="">전체</option>
           <option value="1">대기</option>
           <option value="2">승인</option>
           <option value="3">거절</option>
         </select>
       </label>
-      <label class="filter-label">사용자 ID:
-        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" />
+      <label class="filter-label">
+        사용자 ID:
+        <input
+          v-model="filters.userId"
+          class="select-box id-input"
+          placeholder="ID"
+          aria-label="사용자 ID 입력"
+        />
       </label>
     </template>
 
@@ -125,16 +129,16 @@ const columns = [
         description="이의 제기 사유와 제재 내역을 확인하고 후속 조치를 진행할 수 있습니다."
       >
         <template #default>
-          <section class="modal-section">
-            <h3 class="section-title">사용자 정보</h3>
+          <section class="modal-section" aria-labelledby="user-info">
+            <h3 class="section-title" id="user-info">사용자 정보</h3>
             <div class="info-grid">
               <div class="info-item"><span class="label">사용자 ID</span><span class="value">{{ selected.memberId }}</span></div>
               <div class="info-item"><span class="label">이름</span><span class="value">{{ selected.userName }}</span></div>
             </div>
           </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">제재 정보</h3>
+          <section class="modal-section" aria-labelledby="penalty-info">
+            <h3 class="section-title" id="penalty-info">제재 정보</h3>
             <div class="info-grid">
               <div class="info-item"><span class="label">제재 ID</span><span class="value">{{ selected.penaltyId }}</span></div>
               <div class="info-item"><span class="label">유형</span><span class="value">{{ selected.penaltyInfo.penaltyType }}</span></div>
@@ -147,8 +151,8 @@ const columns = [
             </div>
           </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">이의 제기 사유</h3>
+          <section class="modal-section" aria-labelledby="objection-reason">
+            <h3 class="section-title" id="objection-reason">이의 제기 사유</h3>
             <div class="reason-box">{{ selected.reason }}</div>
           </section>
         </template>
