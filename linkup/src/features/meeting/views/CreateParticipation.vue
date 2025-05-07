@@ -10,17 +10,16 @@ const meetingId = route.params.meetingId;
 
 const auth = useAuthStore();
 
-const currentPoints = ref(5000);  // 예시로 5000 포인트
-const participationFee = ref(2000); // 예시로 2000 포인트
-const balance = computed(() => currentPoints.value - participationFee.value);
+// const currentPoints = ref(5000);  // 예시로 5000 포인트
+// const participationFee = ref(2000); // 예시로 2000 포인트
+// const balance = computed(() => currentPoints.value - participationFee.value);
 
 const handleCreateParticipation = async () => {
   try {
-    const response = api.post(`/common-service/meetings/${meetingId}/participation`,
+    const response = await api.post(`/common-service/meetings/${meetingId}/participation`,
      { memberId: auth.userId }
     );
-
-    if (response.ok) {
+    if (response.data.success) {
       console.log('참가 신청 성공');
     } else {
       console.log('참가 신청 실패');
@@ -35,25 +34,27 @@ const handleCreateParticipation = async () => {
 <PointCheckLayout>
   <template #participant-points>
     <div class="form-title">참가 신청</div>
-    <div class="participant-points">
-      <div class="form-group">
-        <label class="group-label">보유 포인트</label>
-        <div class="point">₩{{ currentPoints.toLocaleString() }}</div>
-      </div>
+<!--    <div class="participant-points">-->
+<!--      <div class="form-group">-->
+<!--        <label class="group-label">보유 포인트</label>-->
+<!--        <div class="point">₩{{ currentPoints.toLocaleString() }}</div>-->
+<!--      </div>-->
 
-      <div class="form-group">
-        <label class="group-label">참가비</label>
-        <div class="point">₩{{ participationFee.toLocaleString() }}</div>
-      </div>
+<!--      <div class="form-group">-->
+<!--        <label class="group-label">참가비</label>-->
+<!--        <div class="point">₩{{ participationFee.toLocaleString() }}</div>-->
+<!--      </div>-->
 
-      <div class="form-group">
-        <label class="group-label">예상 잔액</label>
-        <div class="point">₩{{ balance.toLocaleString() }}</div>
-      </div>
-    </div>
+<!--      <div class="form-group">-->
+<!--        <label class="group-label">예상 잔액</label>-->
+<!--        <div class="point">₩{{ balance.toLocaleString() }}</div>-->
+<!--      </div>-->
+<!--    </div>-->
+    <h1>모임 참가를 신청하시겠습니까?</h1>
   </template>
   <template #next-btn>
-    <button class="next-btn" @click="handleCreateParticipation">참가 신청하기</button>
+    <button class="next-btn" @click="handleCreateParticipation">예</button>
+    <button class="next-btn reject">아니오</button>
   </template>
 </PointCheckLayout>
 </template>
