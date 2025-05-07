@@ -6,7 +6,7 @@ const props = defineProps({
   }
 })
 
-const defaultImg = 'https://cdn.pixabay.com/photo/2016/03/27/21/59/soccer-1284666_640.jpg'
+const defaultImg = 'https://cdn.pixabay.com/photo/2018/06/12/19/59/football-3471371_640.jpg'
 
 function formatDate(iso) {
   const date = new Date(iso)

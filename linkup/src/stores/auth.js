@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
       userId.value = payload.sub;
 
       // SSE 연결 시작
-      // connectSse(userId.value);
+      connectSse(userId.value);
 
       setupRefreshTimer();
     } catch (e) {
@@ -96,7 +96,10 @@ export const useAuthStore = defineStore('auth', () => {
       userId.value = payload.sub;
 
       setupRefreshTimer();
+      // SSE 연결 시작
+      connectSse(userId.value);
     } catch (err) {
+      showErrorToast('로그인에 실패했습니다.');
       throw err;
     }
   }
@@ -126,6 +129,8 @@ export const useAuthStore = defineStore('auth', () => {
       userId.value = payload.sub;
 
       setupRefreshTimer();
+      // SSE 연결 시작
+      connectSse(userId.value);
     } catch (err) {
       console.error('토큰 갱신 실패', err);
       clearAuth();
