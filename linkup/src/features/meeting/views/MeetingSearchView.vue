@@ -15,6 +15,7 @@ import PendingMeetingsModal from '@/features/meeting/views/PendingMeetingsModal.
 import InterestedMeetingsModal from '@/features/meeting/views/InterestedMeetingsModal.vue';
 import MeetingManageModal from '@/features/meeting/views/MeetingManageModal.vue';
 import ParticipantsModal from '@/features/meeting/views/ParticipantsModal.vue';
+import api from '@/api/axios.js';
 
 const router = useRouter();
 
@@ -63,23 +64,37 @@ const filterWrap = ref(null)
 const dropdownStyle = ref({})
 
 // 모임 리스트 더미 데이터
-const dummyMeetings = [
-  { id: 1, title: '강남 주말 풋살 모임', address: '서울 강남구 역삼동 123', status: '모집중', createdAt: '2025-05-01T10:00:00Z', thumbnailUrl: '' },
-  { id: 2, title: '서초구 평일 테니스', address: '서울 서초구 반포동 456', status: '모집완료', createdAt: '2025-04-28T14:30:00Z', thumbnailUrl: '' }
-]
+
+
+// const dummyMeetings = [
+//   { id: 1, title: '강남 주말 풋살 모임', address: '서울 강남구 역삼동 123', status: '모집중', createdAt: '2025-05-01T10:00:00Z', thumbnailUrl: '' },
+//   { id: 2, title: '서초구 평일 테니스', address: '서울 서초구 반포동 456', status: '모집완료', createdAt: '2025-04-28T14:30:00Z', thumbnailUrl: '' }
+// ]
 
 onMounted(() => {
   loadMeetings()
 })
 
-function loadMeetings() {
-  meetings.value = dummyMeetings
+// function loadMeetings() {
+//   meetings.value = dummyMeetings
+// }
+async function loadMeetings() {
+  try {
+    const resp = await api.get('/common-service/meetings');
+    meetings.value = resp.data.data.meetings;
+  } catch (error) {
+    console.error('모임 데이터를 불러오는 중 오류 발생:', error);
+  }
 }
 
 function onFilterApply(newFilters) {
   Object.assign(filters, newFilters)
   filterDropdownOpen.value = false
   loadMeetings()
+}
+
+function goToMeetingDetail(meetingId) {
+  router.push(`/meetings/${meetingId}`);
 }
 
 function handleNavigate(action) {
@@ -102,7 +117,8 @@ function handleCreateModal(type) {
     router.push('/places');
   }
   if (type === 'map') {
-    // router.push();
+    // router.push('/meetings/create/custom');
+    alert('준비중입니다');
   }
   showModal.create = false;
 }
@@ -176,7 +192,7 @@ function toggleFilterDropdown() {
         </div>
 
       <!-- 모임 카드 리스트 -->
-      <MeetingCard v-for="meeting in meetings" :key="meeting.id" :meeting="meeting" />
+      <MeetingCard v-for="meeting in meetings" :key="meeting.id" :meeting="meeting" @click="goToMeetingDetail" />
     </div>
 
     <!-- 지도 -->
