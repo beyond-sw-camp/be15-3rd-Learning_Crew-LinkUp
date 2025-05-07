@@ -10,7 +10,7 @@
       :rating="place.reviewRating"
       :isFavorite="place.isFavorite"
       :showFavorite="showFavorite"
-      @click="$emit('select', place)"
+      @select="$emit('select', place)"
       @toggle-favorite="$emit('toggle-favorite', place)"
     />
   </div>

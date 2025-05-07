@@ -1,5 +1,5 @@
 <template>
-  <div class="place-card" @click="$emit('click')">
+  <div class="place-card" @click="$emit('select')">
     <div class="image-wrapper">
       <img :src="resolvedImage" :alt="title" class="place-image" />
       <img

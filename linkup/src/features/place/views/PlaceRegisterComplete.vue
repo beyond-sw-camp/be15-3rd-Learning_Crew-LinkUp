@@ -8,7 +8,7 @@
     </div>
 
     <div class="action-buttons">
-      <RouterLink to="/my/places" class="btn btn-primary">운영 장소 목록으로 이동</RouterLink>
+      <RouterLink to="/places" class="btn btn-primary">운영 장소 목록으로 이동</RouterLink>
       <RouterLink to="/" class="btn btn-secondary">메인 페이지로 돌아가기</RouterLink>
     </div>
   </div>

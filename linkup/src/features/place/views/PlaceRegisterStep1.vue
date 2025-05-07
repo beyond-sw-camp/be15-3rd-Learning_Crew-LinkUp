@@ -1,4 +1,5 @@
 <template>
+  <default-main-layout main-class="">
   <main class="register-page">
     <div class="step-indicator">
       <div class="step active">1. 기본 정보 입력</div>
@@ -83,6 +84,7 @@
       </form>
     </section>
   </main>
+  </default-main-layout>
 </template>
 
 <script setup>
@@ -90,6 +92,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { saveBasicPlaceInfo } from '@/api/place';
 import { useAuthStore } from '@/stores/auth';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -156,6 +159,7 @@ body {
 }
 .register-page {
   max-width: 720px;
+  width: 700px;
   margin: 0 auto;
   padding: 48px 24px;
 }

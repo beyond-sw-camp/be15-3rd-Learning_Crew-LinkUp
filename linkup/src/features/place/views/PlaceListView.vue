@@ -18,15 +18,18 @@
           <PlaceMap :places="places" @select="openModal" />
         </main>
       </template>
-
-      <PlaceDetailMember
-        v-if="selectedPlace"
-        :place="selectedPlace"
-        @close="closeModal"
-      />
     </SidebarMainLayout>
 
-    <!-- 플로팅 등록 버튼 (사업자만 표시) -->
+    <!-- ✅ 모달은 무조건 body 아래로 이동 -->
+    <Teleport to="body">
+      <PlaceDetailMember
+        v-if="selectedPlace && selectedPlace.placeId"
+        :place="{ ...selectedPlace }"
+        @close="closeModal"
+      />
+    </Teleport>
+
+    <!-- ✅ 사업자용 플로팅 등록 버튼 -->
     <RouterLink
       v-if="authStore.userRole === 'BUSINESS'"
       to="/place/register/step1"
@@ -44,9 +47,9 @@
 
 <script setup>
 import { ref, watchEffect } from 'vue';
-import { useAuthStore } from '@/stores/auth.js';
 import { getPlaceList } from '@/api/place';
 import { createFavorite, deleteFavorite, getFavoritePlaceIds } from '@/api/favorite';
+import { useAuthStore } from '@/stores/auth.js';
 
 import SidebarMainLayout from '@/components/layout/SidebarMainLayout.vue';
 import PlaceFilter from '../components/PlaceFilter.vue';
@@ -89,6 +92,10 @@ async function fetchPlaceList() {
       longitude: p.longitude,
       isFavorite: favoriteSet.has(p.placeId)
     }));
+
+    if (!isBusiness) {
+      places.value.sort((a, b) => (b.isFavorite === true) - (a.isFavorite === true));
+    }
   } catch (err) {
     console.error('❌ 장소 목록 조회 실패:', err);
   }
@@ -99,6 +106,7 @@ function updateFilter(newFilter) {
 }
 
 function openModal(place) {
+  console.log('[🧪 모달 열기 시도]', place);
   selectedPlace.value = place;
 }
 
@@ -108,7 +116,7 @@ function closeModal() {
 
 async function toggleFavorite(place) {
   const memberId = authStore.userId;
-  if (!memberId) return;
+  if (!memberId || authStore.userRole === 'BUSINESS') return;
 
   const wasFavorite = place.isFavorite;
   place.isFavorite = !wasFavorite;
@@ -119,6 +127,8 @@ async function toggleFavorite(place) {
     } else {
       await createFavorite(place.placeId, memberId);
     }
+
+    places.value.sort((a, b) => (b.isFavorite === true) - (a.isFavorite === true));
   } catch (err) {
     console.error('❌ 즐겨찾기 토글 실패:', err);
     place.isFavorite = wasFavorite;

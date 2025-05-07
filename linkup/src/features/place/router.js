@@ -5,7 +5,7 @@ export const placeRoutes = [
     component: () => import('@/features/place/views/PlaceListView.vue'),
   },
   {
-    path: '/my/places',
+    path: '/places',
     name: 'MyPlaceListView',
     component: () => import('@/features/place/views/MyPlaceListView.vue'),
   },
