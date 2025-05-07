@@ -15,7 +15,7 @@
           :key="'participant-' + index"
           class="participant-card"
         >
-          <img :src="participant.image" alt="프로필" class="participant-thumb" />
+          <img :src="participant.profileImageUrl" alt="프로필" class="participant-thumb" />
           <div class="participant-content">
             <div class="participant-nickname">{{ participant.nickname }}</div>
             <div class="participant-subinfo">매너온도: {{ participant.mannerTemperature }}°C</div>

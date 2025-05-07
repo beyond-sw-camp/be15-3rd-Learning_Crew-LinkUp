@@ -12,7 +12,7 @@ const meeting = ref(null);
 const isLoading = ref(true);
 const count = ref(0);
 const userStore = useAuthStore();
-const showModal = ref(false);
+// const showModal = ref(false);
 
 onMounted(async () => {
   try {
@@ -49,11 +49,15 @@ onMounted(async () => {
 });
 
 const showCreateModal = () => {
-  showModal.value = true;
+  // showModal.value = true;
+  const result = confirm('모임 참가를 신청하시겠습니까?');
+  if (result) {
+    handleCreateParticipation();
+  }
 }
 
 const closeModal = () => {
-  showModal.value = false;
+  // showModal.value = false;
 }
 
 const handleCreateParticipation = async () => {
@@ -70,7 +74,8 @@ const handleCreateParticipation = async () => {
   } catch (error) {
     console.error('모임 신청 중 오류 발생:', error);
   } finally {
-    showModal.value = false;
+    // showModal.value = false;
+    closeModal();
   }
 };
 
@@ -165,15 +170,15 @@ const formattedAge = computed(() => {
       </template>
     </MeetingDetailLayout>
 
-      <div v-if="showModal === true" class="modal">
-        <div class="modal-content">
-          모임 참가를 신청하시겠습니까?
-          <div class="modal-buttons">
-          <button class="accept" @click="handleCreateParticipation">예</button>
-          <button class="reject" @click="closeModal">아니오</button>
-          </div>
-        </div>
-      </div>
+<!--      <div v-if="showModal === true" class="modal">-->
+<!--        <div class="modal-content">-->
+<!--          모임 참가를 신청하시겠습니까?-->
+<!--          <div class="modal-buttons">-->
+<!--          <button class="accept" @click="handleCreateParticipation">예</button>-->
+<!--          <button class="reject" @click="closeModal">아니오</button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
   </div>
   </div>
 </template>
