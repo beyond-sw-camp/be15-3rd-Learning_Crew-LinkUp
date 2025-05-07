@@ -3,8 +3,9 @@ import { useRoute } from 'vue-router';
 import { computed, onMounted, onUnmounted } from 'vue';
 import Header from '@/components/layout/Header.vue';
 import Footer from '@/components/layout/Footer.vue';
-import { useToast } from 'vue-toastification'
-import { emitter } from '@/api/utils/sse.js'
+import { useToast } from 'vue-toastification';
+import { emitter } from '@/api/utils/sse.js';
+import LoadingBar from '@/components/common/LoadingBar.vue';
 
 // 현재 경로
 const route = useRoute();
@@ -12,21 +13,19 @@ const route = useRoute();
 // /admin 경로 기반 필터링
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 
-
-const toast = useToast()
+const toast = useToast();
 
 function handleNotification(data) {
-  toast.info(`📢 ${data.title}\n${data.content}`, { timeout: 5000 })
+  toast.info(`📢 ${data.title}\n${data.content}`, { timeout: 5000 });
 }
 
 onMounted(() => {
-  emitter.on('new-notification', handleNotification)
-})
+  emitter.on('new-notification', handleNotification);
+});
 
 onUnmounted(() => {
-  emitter.off('new-notification', handleNotification)
-})
-
+  emitter.off('new-notification', handleNotification);
+});
 </script>
 
 <template>
@@ -35,9 +34,7 @@ onUnmounted(() => {
   <!-- 공통 라우터 뷰 (AdminLayout 포함됨) -->
   <RouterView />
   <Footer />
+  <LoadingBar />
 </template>
 
-
-<style scoped>
-
-</style>
+<style scoped></style>
