@@ -16,7 +16,7 @@ const filters = reactive({
 // 더미 장소 데이터
 const dummyPlaces = [
   {
-    id: 1,
+    placeId: 1,
     name: '신촌 풋살 센터',
     address: '서울 서대문구 연세로 12',
     price: '40,000원/시간',
@@ -24,7 +24,7 @@ const dummyPlaces = [
     imageUrl: '/img/place_img1.png'
   },
   {
-    id: 2,
+    placeId: 2,
     name: '서울 탁구장',
     address: '서울 마포구 합정동',
     price: '15,000원/시간',
@@ -69,7 +69,7 @@ onMounted(() => {
       <div class="place-list">
         <PlaceCard
           v-for="place in places"
-          :key="place.id"
+          :key="place.placeId"
           :place="place"
         />
       </div>
