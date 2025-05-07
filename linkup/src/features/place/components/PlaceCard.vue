@@ -3,6 +3,7 @@
     <div class="image-wrapper">
       <img :src="resolvedImage" :alt="title" class="place-image" />
       <img
+        v-if="showFavorite"
         :src="favoriteIcon"
         alt="즐겨찾기"
         class="heart-icon"
@@ -35,16 +36,18 @@ const props = defineProps({
   address: String,
   price: String,
   rating: [String, Number],
-  isFavorite: Boolean
+  isFavorite: Boolean,
+  showFavorite: {
+    type: Boolean,
+    default: true
+  }
 });
 
-function isValidImage(img) {
-  return typeof img === 'string' && img.trim() !== '' && img !== 'null' && img !== 'undefined';
-}
-
-const resolvedImage = computed(() => {
-  return isValidImage(props.image) ? props.image : defaultImage;
-});
+const resolvedImage = computed(() =>
+  props.image && props.image !== 'null' && props.image !== 'undefined'
+    ? props.image
+    : defaultImage
+);
 
 const formattedRating = computed(() => {
   const r = parseFloat(props.rating);
