@@ -3,11 +3,13 @@ import { ref } from 'vue'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
 import AdminModal from '@/features/admin/components/AdminModal.vue'
+import { fetchAllOwners } from '@/api/admin.js'
+import { format } from 'date-fns';  // 실제 API 연결
 
 const props = defineProps({ pageTitle: String })
 
 // 필터 상태
-const initFilters = ref({
+const filters = ref({
   status: '',
   userId: ''
 })
@@ -18,43 +20,44 @@ const modalData = ref(null)
 const decision = ref('')
 const rejectReason = ref('')
 
-// 더미 fetch 함수
-function fetchUserAuthorityRequests({ page = 1, status = '', userId = '' }) {
-  const dummyData = [
-    {
-      ownerId: 'user001', userName: '홍길동', email: 'user001@example.com',
-      status: 'PENDING', authorizedAt: null, rejectionReason: '',
-      business_registration_document_url: '/default-image.png'
-    },
-    {
-      ownerId: 'user002', userName: '이순신', email: 'user002@example.com',
-      status: 'ACCEPTED', authorizedAt: '2024-03-01', rejectionReason: '',
-      business_registration_document_url: '/default-image.png'
-    },
-    {
-      ownerId: 'user003', userName: '강감찬', email: 'user003@example.com',
-      status: 'REJECTED', authorizedAt: '2024-03-01', rejectionReason: '서류 불충분',
-      business_registration_document_url: '/default-image.png'
+// 실제 API 연동: 사업자 권한 요청 목록 조회
+const fetchRequests = async ({ page = 1, status = '', userId = '' }) => {
+  try {
+    const params = {
+      statusName: status || undefined,  // 필터링할 상태 이름
+      userId: userId || undefined,      // 사업자 ID
+      page,
+      size: 10                          // 페이지 크기
     }
-  ]
 
-  const filtered = dummyData.filter(item => {
-    const matchStatus = !status || item.status === status
-    const matchUser = !userId || item.ownerId.includes(userId)
-    return matchStatus && matchUser
-  })
+    const response = await fetchAllOwners(params)
 
-  return Promise.resolve({ data: filtered, totalPages: 1 })
+    // API 응답 구조에 맞게 처리
+    return {
+      data: response.data || [],
+      totalPages: response.totalPages || 1
+    }
+  } catch (error) {
+    console.error('사업자 권한 요청 목록 조회 실패:', error)
+    return { data: [], totalPages: 0 }
+  }
 }
 
-// 컬럼 정의
+// 테이블 컬럼 정의
 const columns = [
   { key: 'ownerId', label: '사업자 ID' },
-  { key: 'userName', label: '이름' },
+  { key: 'ownerName', label: '이름' },
   {
-    key: 'status',
+    key: 'statusType',
     label: '상태',
-    format: v => v === 'PENDING' ? '대기' : v === 'ACCEPTED' ? '승인' : '거절'
+    format: v => {
+      switch (v) {
+        case 'PENDING': return '대기'
+        case 'ACCEPTED': return '승인'
+        case 'REJECTED': return '거절'
+        default: return v
+      }
+    }
   },
   {
     key: '등록증',
@@ -65,7 +68,7 @@ const columns = [
       onClick: () => openModal(row)
     })
   },
-  { key: 'authorizedAt', label: '처리일자', format: v => v || '-' },
+  { key: 'authorizedAt', label: '처리일자',    format: v => v ? format(new Date(v), 'yyyy-MM-dd HH:mm') : '-' },
   { key: 'rejectionReason', label: '거절 사유', format: v => v || '-' }
 ]
 
@@ -76,7 +79,6 @@ function openModal(row) {
   decision.value = ''
   rejectReason.value = ''
   console.log('[DEBUG] modalData', modalData.value)
-
 }
 function closeModal() {
   modalVisible.value = false
@@ -96,17 +98,17 @@ function handleDecision() {
 
 <template>
   <AdminListTemplate
-    :fetchFn="fetchUserAuthorityRequests"
+    :fetchFn="fetchRequests"
     :columns="columns"
     :initFilters="initFilters"
     :pageTitle="props.pageTitle"
     :enableModal="false"
   >
     <!-- 필터 영역 -->
-    <template #filters>
+    <template #filters="{ filters }">
       <label class="filter-label">
         상태:
-        <select v-model="initFilters.status" class="select-box">
+        <select v-model="filters.status" class="select-box">
           <option value="">전체</option>
           <option value="PENDING">대기</option>
           <option value="ACCEPTED">승인</option>
@@ -115,7 +117,7 @@ function handleDecision() {
       </label>
       <label class="filter-label">
         사업자 ID:
-        <input v-model="initFilters.userId" class="select-box id-input" placeholder="ID" />
+        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" />
       </label>
     </template>
 
@@ -136,8 +138,9 @@ function handleDecision() {
 
         <div class="modal-right">
           <p><strong>사업자 ID:</strong> {{ modalData?.ownerId }}</p>
-          <p><strong>이름:</strong> {{ modalData?.userName }}</p>
-          <p><strong>이메일:</strong> {{ modalData?.email || '-' }}</p>
+          <p><strong>이름:</strong> {{ modalData?.ownerName }}</p>
+<!--          <p><strong>이메일:</strong> {{ modalData?.email || '-' }}</p>-->
+
           <template v-if="modalData?.status !== 'PENDING'">
             <p><strong>상태:</strong>
               {{ modalData?.status === 'PENDING' ? '대기' : modalData?.status === 'ACCEPTED' ? '승인' : '거절' }}
@@ -146,7 +149,7 @@ function handleDecision() {
             <p><strong>거절 사유:</strong> {{ modalData?.rejectionReason || '-' }}</p>
           </template>
 
-
+          <!-- 상태가 대기인 경우 처리 상태 선택 -->
           <template v-if="modalData?.status === 'PENDING'">
             <label class="modal-label">처리 상태:</label>
             <select v-model="decision" class="modal-select">

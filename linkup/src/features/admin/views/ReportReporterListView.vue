@@ -35,9 +35,12 @@ const columns = [
 ]
 
 // 목록 조회 API
-async function fetchReporterList({ page, reporterId }) {
+async function fetchReporterList({ page }) {
   try {
-    const res = await fetchReporterUserList({ reporterId, page })
+    const res = await fetchReporterUserList({
+      reporterId: filters.value.reporterId || null,
+      page
+    })
     return {
       data: res.data.userList || [],
       totalPages: res.data.pagination?.totalPage || 1
@@ -47,6 +50,7 @@ async function fetchReporterList({ page, reporterId }) {
     return { data: [], totalPages: 1 }
   }
 }
+
 
 // 상세 조회
 async function openModal(row) {

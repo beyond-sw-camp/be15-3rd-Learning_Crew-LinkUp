@@ -13,18 +13,20 @@ import {
 
 const pageTitle = '이의 제기 내역 조회'
 const STATUS_MAP = { 1: '대기', 2: '승인', 3: '거절' }
+
 const filters = ref({ userId: '', statusId: '' })
 const selected = ref(null)
 
 const fetchList = async ({ page, userId, statusId }) => {
   try {
     const res = await fetchObjectionList({ memberId: userId, statusId, page })
+    console.log("응답 데이터:", res)  // 응답 데이터 확인
+
     return {
       data: res.data.objections || [],
       totalPages: res.data.pagination?.totalPage || 1
     }
   } catch (e) {
-    console.error('🚨 이의 제기 목록 조회 실패:', e)
     return { data: [], totalPages: 1 }
   }
 }
@@ -34,7 +36,6 @@ const openDetail = async (row) => {
     const res = await fetchObjectionDetail(row.objectionId)
     selected.value = res.data
   } catch (e) {
-    console.error('🚨 상세 조회 실패:', e)
   }
 }
 
@@ -45,20 +46,16 @@ function close() {
 async function handleAccept() {
   try {
     await acceptObjection(selected.value.objectionId)
-    alert('이의 제기를 승인하였습니다.')
     close()
   } catch (e) {
-    alert('이의 제기 승인 실패')
   }
 }
 
 async function handleReject() {
   try {
     await rejectObjection(selected.value.objectionId)
-    alert('이의 제기를 거절하였습니다.')
     close()
   } catch (e) {
-    alert('이의 제기 거절 실패')
   }
 }
 
@@ -98,26 +95,26 @@ const columns = [
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <!-- 접근성 개선: 필터 aria-label 추가 -->
-    <template #filters>
-      <label class="filter-label">
-        상태:
-        <select v-model="filters.statusId" class="select-box" aria-label="상태 선택">
-          <option value="">전체</option>
-          <option value="1">대기</option>
-          <option value="2">승인</option>
-          <option value="3">거절</option>
-        </select>
-      </label>
-      <label class="filter-label">
-        사용자 ID:
-        <input
-          v-model="filters.userId"
-          class="select-box id-input"
-          placeholder="ID"
-          aria-label="사용자 ID 입력"
-        />
-      </label>
+    <template #filters="{ filters }">
+      <label class="filter-label" for="status-select">상태:</label>
+      <select
+        id="status-select"
+        v-model="filters.statusId"
+        class="select-box"
+      >
+        <option value="">전체</option>
+        <option value="1">대기</option>
+        <option value="2">승인</option>
+        <option value="3">거절</option>
+      </select>
+
+      <label class="filter-label" for="user-id-input">사용자 ID:</label>
+      <input
+        id="user-id-input"
+        v-model="filters.userId"
+        class="select-box id-input"
+        placeholder="ID"
+      />
     </template>
 
     <template #modal>

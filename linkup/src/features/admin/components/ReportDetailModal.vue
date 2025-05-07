@@ -28,7 +28,7 @@ const close = () => emit('update:modelValue', false)
     <section class="modal-report">
       <!-- 헤더 -->
       <header>
-        <h2 id="modal-title" class="modal-report-title">{{ title }}</h2>
+        <h2 id="modal-title" class="modal-title">{{ title }}</h2>
         <p v-if="description" class="sub-text">{{ description }}</p>
       </header>
 

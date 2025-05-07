@@ -454,6 +454,7 @@ input[type="text"]:focus {
     border: 1px solid #ccc;
     border-radius: 6px;
     width: 100%;
+    height: auto;
 }
 
 .modal-footer,
@@ -527,6 +528,7 @@ input[type="text"]:focus {
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin-bottom: 10px;
     gap: 18px 32px;
 }
 

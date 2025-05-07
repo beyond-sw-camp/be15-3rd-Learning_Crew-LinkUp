@@ -1,35 +1,18 @@
-<!-- src/features/admin/views/PointSettlementListView.vue -->
 <script setup>
 import { ref } from 'vue'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
+import { fetchSettlementList } from '@/api/admin.js'
+import { format } from 'date-fns';
 
-// props
+// 페이지 제목
 const props = defineProps({ pageTitle: String })
 
-// 더미 데이터용 fetch 함수 (API 연결 시 교체 가능)
-/*
-import { fetchPointSettlementList } from '@/api/admin.js'
-*/
-
-function fetchPointSettlementList({ ownerId = '', startDate = '', endDate = '', page = 1 }) {
-  const dummy = Array.from({ length: 10 }, (_, i) => ({
-    settlementId: i + 1001,
-    ownerId: `owner${i + 1}`,
-    ownerName: `사업자${i + 1}`,
-    amount: 100000 + i * 5000,
-    settledAt: `2025-04-${String(i + 1).padStart(2, '0')} 14:00`
-  }))
-
-  const filtered = dummy.filter(item => {
-    const matchId = !ownerId || item.ownerId.includes(ownerId)
-    return matchId
-  })
-
-  return Promise.resolve({
-    data: filtered,
-    totalPages: 1
-  })
-}
+// 필터 상태 관리
+const filters = ref({
+  ownerId: '',
+  startDate: '',
+  endDate: ''
+})
 
 // 컬럼 정의
 const columns = [
@@ -37,36 +20,61 @@ const columns = [
   { key: 'ownerId', label: '사업자 ID' },
   { key: 'ownerName', label: '사업자 이름' },
   { key: 'amount', label: '정산 금액', format: v => `${v.toLocaleString()}원` },
-  { key: 'settledAt', label: '정산 일시' }
+  { key: 'completedAt', label: '정산 일시', format: v => v ? format(new Date(v), 'yyyy-MM-dd HH:mm') : '-' }
 ]
 
-// 초기 필터
-const initFilters = {
-  ownerId: '',
-  startDate: '',
-  endDate: ''
+// API 호출 함수 (AdminListTemplate용 fetchFn 규격)
+const fetchList = async ({ page = 1 }) => {
+  try {
+    const params = {
+      userId: filters.value.ownerId || '',
+      startDate: filters.value.startDate || '',
+      endDate: filters.value.endDate || '',
+      page
+    }
+
+    // null/빈 문자열 제거
+    Object.keys(params).forEach(key => {
+      if (!params[key]) delete params[key]
+    })
+
+    const res = await fetchSettlementList(params)
+    console.log('응답 데이터:', res)
+
+    return {
+      data: res.data?.data?.content || [],
+      totalPages: res.data?.data?.totalPages || 1
+    }
+  } catch (error) {
+    console.error('🚨 정산 내역 조회 실패:', error)
+    return { data: [], totalPages: 1 }
+  }
 }
 </script>
 
 <template>
   <AdminListTemplate
-    :fetchFn="fetchPointSettlementList"
+    :fetchFn="fetchList"
     :columns="columns"
-    :initFilters="initFilters"
+    :initFilters="filters"
     :pageTitle="props.pageTitle"
     :enableModal="false"
   >
     <template #filters>
       <label class="filter-label">
         사업자 ID:
-        <input v-model="initFilters.ownerId" class="select-box id-input" placeholder="사업자 ID" />
+        <input
+          v-model="filters.ownerId"
+          class="select-box id-input"
+          placeholder="ID"
+        />
       </label>
 
       <label class="filter-label">
         정산 일시:
-        <input type="date" v-model="initFilters.startDate" class="select-box date-input" />
+        <input type="date" v-model="filters.startDate" class="select-box date-input" />
         ~
-        <input type="date" v-model="initFilters.endDate" class="select-box date-input" />
+        <input type="date" v-model="filters.endDate" class="select-box date-input" />
       </label>
     </template>
   </AdminListTemplate>
