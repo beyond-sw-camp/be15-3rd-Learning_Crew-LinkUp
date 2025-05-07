@@ -42,21 +42,21 @@ export function fetchAccountList(params) {
 
 /* ------------------------------------ 모임 관리 ------------------------------------ */
 /**
- * 관리자 - 모임 목록 조회
- * @param {Object} params - 필터 및 페이지 정보
- * @param {string} [params.gender] - 성별 ('M' | 'F' | 'BOTH')
- * @param {string} [params.ageGroup] - 나이대 ('20', '30', '20,30' 등)
- * @param {string} [params.level] - 레벨 ('LV1' | 'LV2' | 'LV3')
- * @param {string} [params.sportName] - 운동 종목명 ('테니스', '볼링' 등)
- * @param {string} [params.status] - 상태 ('PENDING' | 'ACCEPTED' | 'REJECTED' | 'DONE')
- * @param {string} [params.startDate] - 시작일자 (YYYY-MM-DD)
- * @param {string} [params.endDate] - 종료일자 (YYYY-MM-DD)
- * @param {number} [params.page=1] - 페이지 번호
- * @returns {Promise<Object>} 모임 목록 응답
+ * 관리자 - 모임 목록 조회 (조건 포함)
+ * @param {Object} params
+ * @param {string} [params.meetingGender] - 'M' | 'F' | 'BOTH'
+ * @param {string[]} [params.ageGroups] - 예: ["20", "30"]
+ * @param {string[]} [params.levels] - 예: ["LV1", "LV2"]
+ * @param {number[]} [params.sportIds] - 예: [1, 2, 3]
+ * @param {number[]} [params.statusIds] - 예: [1, 2, 3]
+ * @param {string} [params.minDate] - YYYY-MM-DD
+ * @param {string} [params.maxDate] - YYYY-MM-DD
+ * @param {number} [params.page=1]
  */
 export function fetchAdminMeetingList(params) {
     return api.get('/api/v1/common-service/meetings/list', { params })
 }
+
 
 /**
  * 모임 상세 조회
@@ -64,20 +64,24 @@ export function fetchAdminMeetingList(params) {
  * @returns {Promise<Object>} 단일 모임 상세 정보
  */
 export function fetchMeetingDetail(meetingId) {
-    return api.get(`/api/v1/common-service/meetings/${meetingId}`)
+    return api.get(`/common-service/meetings/${meetingId}`)
 }
+
 
 /**
  * 관리자 - 참가자 평가 내역 조회
  * @param {Object} params
- * @param {'meetingId'|'reviewerId'|'revieweeId'} params.searchType - 검색 기준
- * @param {string} params.searchKeyword - 검색어
- * @param {number} params.page - 페이지 번호
+ * @param {number} [params.meetingId]
+ * @param {number} [params.reviewerId]
+ * @param {number} [params.revieweeId]
+ * @param {number} [params.page=1]
+ * @param {number} [params.size=10]
  * @returns {Promise<Object>} 평가 내역 + pagination
  */
 export function fetchParticipantReviewList(params) {
-    return api.get('/api/v1/common-service/meetings/review', { params })
+    return api.get('/common-service/meetings/review', { params })
 }
+
 
 
 

@@ -1,50 +1,46 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { fetchAdminMeetingList } from '@/api/admin.js'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 
-// props
 const props = defineProps({ pageTitle: String })
 
-// 필터 초기값
-const initFilters = {
-  gender: '',
-  ageGroup: '',
-  level: '',
-  sportName: '',
-  status: '',
-  startDate: '',
-  endDate: ''
-}
+const filters = reactive({
+  meetingGender: '',
+  ageGroups: [],
+  levels: [],
+  sportIds: [],
+  statusIds: [],
+  minDate: '',
+  maxDate: ''
+})
 
-// 운동 종목 더미 (실제 API 연동 시 대체 가능)
 const sportTypes = ref([
-  { sportId: 'TENNIS', sportName: '테니스' },
-  { sportId: 'BOWLING', sportName: '볼링' },
-  { sportId: 'SOCCER', sportName: '축구' }
+  { id: 1, name: '테니스' },
+  { id: 2, name: '볼링' },
+  { id: 3, name: '축구' }
 ])
 
-// 컬럼 정의
+const statusOptions = ref([
+  { id: 1, label: '모집중' },
+  { id: 2, label: '최소 모집 완료' },
+  { id: 3, label: '모집 완료' },
+  { id: 4, label: '진행 완료' },
+  { id: 5, label: '종료' }
+])
+
 const columns = [
   { key: 'meetingId', label: 'ID' },
   { key: 'meetingTitle', label: '제목' },
   { key: 'leaderName', label: '리더' },
   { key: 'sportName', label: '운동' },
   { key: 'date', label: '날짜' },
-  {
-    key: 'time',
-    label: '시간',
-    format: (_, row) => `${row.startTime} ~ ${row.endTime}`
-  },
+  { key: 'time', label: '시간', format: (_, row) => `${row.startTime} ~ ${row.endTime}` },
   { key: 'gender', label: '성별' },
   { key: 'ageGroup', label: '나이대' },
   { key: 'level', label: '레벨' },
   { key: 'placeName', label: '장소' },
-  {
-    key: 'users',
-    label: '참여 인원',
-    format: (_, row) => `${row.minUser} ~ ${row.maxUser}`
-  },
+  { key: 'users', label: '참여 인원', format: (_, row) => `${row.minUser} ~ ${row.maxUser}` },
   { key: 'statusLabel', label: '상태' },
   {
     key: 'view',
@@ -53,23 +49,34 @@ const columns = [
       type: 'button',
       label: '보기',
       onClick: () => alert(`모임 상세 보기: ${row.meetingId}`)
-      // TODO: openMeetingDetailModal(row.meetingId)
     })
   }
 ]
 
-// API 연동
-async function fetchMeetingList(params) {
+async function fetchMeetingList({ page }) {
   try {
-    const res = await fetchAdminMeetingList(params)
-    const list = res.data.meetings.map(m => ({
+    const res = await fetchAdminMeetingList({
+      page,
+      meetingGender: filters.meetingGender || 'BOTH',
+      ageGroups: filters.ageGroups.length ? filters.ageGroups : ['10', '20', '30', '40', '50', '60', '70+'],
+      levels: filters.levels.length ? filters.levels : ['LV1', 'LV2', 'LV3'],
+      sportIds: filters.sportIds.length ? filters.sportIds : [1, 2, 3, 4, 5, 6, 7, 8],
+      statusIds: filters.statusIds.length ? filters.statusIds : [1, 2, 3, 4, 5],
+      minDate: filters.minDate || null,
+      maxDate: filters.maxDate || null
+    })
+
+    const meetings = res.data.meetings || []
+    const pagination = res.data.pagination || {}
+
+    const list = meetings.map(m => ({
       meetingId: m.meetingId,
       meetingTitle: m.meetingTitle,
       leaderName: m.leaderNickname,
       sportName: m.sportName,
       date: m.date,
-      startTime: m.startTime.slice(0, 5),
-      endTime: m.endTime.slice(0, 5),
+      startTime: m.startTime?.slice(0, 5),
+      endTime: m.endTime?.slice(0, 5),
       gender: m.gender,
       ageGroup: m.ageGroup,
       level: m.level,
@@ -82,7 +89,7 @@ async function fetchMeetingList(params) {
 
     return {
       data: list,
-      totalPages: res.data.pagination?.totalPage || 1
+      totalPages: pagination.totalPage || 1
     }
   } catch (e) {
     console.error('🚨 모임 목록 조회 실패:', e)
@@ -95,74 +102,56 @@ async function fetchMeetingList(params) {
   <AdminListTemplate
     :fetchFn="fetchMeetingList"
     :columns="columns"
-    :initFilters="initFilters"
+    :initFilters="filters"
     :pageTitle="props.pageTitle"
   >
-    <template #filters>
-      <label class="filter-label">
-        성별:
-        <select v-model="initFilters.gender" class="select-box">
+    <template #filters="{ filters }">
+      <label class="filter-label">성별:
+        <select v-model="filters.meetingGender" class="select-box">
           <option value="">전체</option>
-          <option value="M">남성</option>
-          <option value="F">여성</option>
+          <option value="MALE">남성</option>
+          <option value="FEMALE">여성</option>
           <option value="BOTH">혼성</option>
         </select>
       </label>
 
-      <label class="filter-label">
-        나이대:
-        <select v-model="initFilters.ageGroup" class="select-box">
-          <option value="">전체</option>
+      <label class="filter-label">나이대:
+        <select v-model="filters.ageGroups" multiple class="select-box">
           <option value="10">10대</option>
           <option value="20">20대</option>
           <option value="30">30대</option>
           <option value="40">40대</option>
           <option value="50">50대</option>
           <option value="60">60대</option>
-          <option value="70">70대+</option>
+          <option value="70+">70대+</option>
         </select>
       </label>
 
-      <label class="filter-label">
-        레벨:
-        <select v-model="initFilters.level" class="select-box">
-          <option value="">전체</option>
+      <label class="filter-label">레벨:
+        <select v-model="filters.levels" multiple class="select-box">
           <option value="LV1">LV1</option>
           <option value="LV2">LV2</option>
           <option value="LV3">LV3</option>
         </select>
       </label>
 
-      <label class="filter-label">
-        운동 종목:
-        <select v-model="initFilters.sportName" class="select-box">
-          <option value="">전체</option>
-          <option
-            v-for="sport in sportTypes"
-            :key="sport.sportId"
-            :value="sport.sportName"
-          >
-            {{ sport.sportName }}
+      <label class="filter-label">운동 종목:
+        <select v-model="filters.sportIds" multiple class="select-box">
+          <option v-for="sport in sportTypes" :key="sport.id" :value="sport.id">
+            {{ sport.name }}
           </option>
         </select>
       </label>
 
-      <label class="filter-label">
-        상태:
-        <select v-model="initFilters.status" class="select-box">
-          <option value="">전체</option>
-          <option value="PENDING">모집중</option>
-          <option value="ACCEPTED">최소 모집 완료</option>
-          <option value="REJECTED">모집 완료</option>
-          <option value="DONE">진행 완료</option>
+      <label class="filter-label">상태:
+        <select v-model="filters.statusIds" multiple class="select-box">
+          <option v-for="s in statusOptions" :key="s.id" :value="s.id">{{ s.label }}</option>
         </select>
       </label>
 
-      <label class="filter-label">
-        조회 기간:
-        <input type="date" v-model="initFilters.startDate" class="select-box date-input" />
-        ~
-        <input type="date" v-model="initFilters.endDate" class="select-box date-input" />
+      <label class="filter-label">조회 기간:
+        <input type="date" v-model="filters.minDate" class="select-box date-input" /> ~
+        <input type="date" v-model="filters.maxDate" class="select-box date-input" />
       </label>
     </template>
   </AdminListTemplate>
