@@ -52,24 +52,33 @@
           </div>
         </div>
 
-        <button class="button" @click="goToReservation">예약하러 가기</button>
+        <button class="button" @click="goToReservation(place)">예약하러 가기</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
 const props = defineProps({
   place: Object,
 });
 const emit = defineEmits(['close']);
+const router = useRouter();
 
 function close() {
   emit('close');
 }
 
-function goToReservation() {
+function goToReservation(place) {
   alert('예약 페이지로 이동 (연결 예정)');
+  router.push({
+    path: '/meetings/create/reserved/step1',
+    query: {
+      placeId: place.id
+    }
+  });
 }
 </script>
 

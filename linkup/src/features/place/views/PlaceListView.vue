@@ -53,6 +53,7 @@ function updateFilter(newFilter) {
 
 const allPlaces = ref([
   {
+    placeId: 1,
     name: '신촌 풋살 센터',
     address: '서울 서대문구 연세로 12',
     region: '서울',
@@ -85,6 +86,7 @@ const allPlaces = ref([
     ]
   },
   {
+    placeId: 2,
     name: '강남 실내 농구장',
     address: '서울 강남구 테헤란로 100',
     region: '서울',

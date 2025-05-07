@@ -118,6 +118,7 @@ function handleCreateModal(type) {
   }
   if (type === 'map') {
     // router.push('/meetings/create/custom');
+    alert('준비중입니다');
   }
   showModal.create = false;
 }
