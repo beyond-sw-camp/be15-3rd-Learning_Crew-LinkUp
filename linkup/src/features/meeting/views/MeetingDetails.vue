@@ -16,9 +16,14 @@ const count = ref(0);
 
 onMounted(async () => {
   try {
-    const { meetingId } = useRoute().params;
-    const response = api.get(`/common-service/meetings/${meetingId}`);
-    const participationResponse = api.get(`common-service/my/meetings/${meetingId}/participation`);
+    const meetingId = route.params.meetingId;
+    const response = await api.get(`/common-service/meetings/${meetingId}`);
+    const participationResponse = await api.get(
+      `common-service/my/meetings/${meetingId}/participation`,
+      {
+        params: {memberId: 55, requesterId: 55},
+      },
+    );
     meeting.value = response.data.data.meeting;
     count.value = participationResponse.data.data.participants.length;
   } catch (err) {
@@ -94,7 +99,11 @@ const formattedAge = computed(() => {
   </div>
 
   <div v-else>
-    <MeetingDetailLayout :title="meeting.meetingTitle" :address="meeting.placeAddress" :image="meeting.image">
+    <MeetingDetailLayout
+      :title="meeting.meetingTitle"
+      :address="meeting.placeAddress"
+      :image="meeting.image"
+    >
       <template #description>
         <section class="desc">{{ meeting.meetingContent }}</section>
       </template>
@@ -102,7 +111,7 @@ const formattedAge = computed(() => {
       <template #details>
         <section class="section">
           <h2>모임 일정</h2>
-          {{ meeting.date }} ({{dayName}}) {{ meeting.startTime }} - {{ meeting.endTime }}
+          {{ meeting.date }} ({{ dayName }}) {{ meeting.startTime }} - {{ meeting.endTime }}
         </section>
         <section class="section">
           <h2>종목</h2>
@@ -114,13 +123,28 @@ const formattedAge = computed(() => {
         </section>
         <section class="section">
           <h2>참가비</h2>
-<!--          {{ meeting.fee }}원-->
+          <!--          {{ meeting.fee }}원-->
         </section>
         <table class="meeting-details-table">
           <tr>
-            <td><section class="section"><h2>성별</h2>{{ displayGender }}</section></td>
-            <td><section class="section"><h2>실력</h2>{{ formattedLevel }}</section></td>
-            <td><section class="section"><h2>나이대</h2>{{ formattedAge }}</section></td>
+            <td>
+              <section class="section">
+                <h2>성별</h2>
+                {{ displayGender }}
+              </section>
+            </td>
+            <td>
+              <section class="section">
+                <h2>실력</h2>
+                {{ formattedLevel }}
+              </section>
+            </td>
+            <td>
+              <section class="section">
+                <h2>나이대</h2>
+                {{ formattedAge }}
+              </section>
+            </td>
           </tr>
         </table>
       </template>
@@ -168,5 +192,4 @@ const formattedAge = computed(() => {
   border-radius: 8px;
   cursor: pointer;
 }
-
 </style>
