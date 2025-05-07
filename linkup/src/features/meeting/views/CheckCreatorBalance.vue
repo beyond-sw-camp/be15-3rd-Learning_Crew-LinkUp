@@ -3,61 +3,63 @@ import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import PointCheckLayout from '@/features/meeting/components/PointCheckLayout.vue';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 
 const route = useRoute();
 const router = useRouter();
 
-const currentPoints = ref(5000);  // 예시로 5000 포인트
+const currentPoints = ref(5000); // 예시로 5000 포인트
 // const participationFee = ref(2000); // 예시로 2000 포인트
 const balance = computed(() => currentPoints.value - participationFee.value);
 
-const {
-  date, startTime, endTime, minUser, maxUser, sportId, placeId, participationFee
-} = route.query;
+const { date, startTime, endTime, minUser, maxUser, sportId, placeId, participationFee } =
+  route.query;
 
 const goToNextStep = async () => {
-    router.push({
-      name: 'CreateMeetingStep2Reserved',
-      query: {
-        date: date,
-        startTime: startTime,
-        endTime: endTime,
-        minUser: minUser,
-        maxUser: maxUser,
-        sportId: sportId,
-        placeId: placeId,
-        participationFee: participationFee
-      },
-    });
+  router.push({
+    name: 'CreateMeetingStep2Reserved',
+    query: {
+      date: date,
+      startTime: startTime,
+      endTime: endTime,
+      minUser: minUser,
+      maxUser: maxUser,
+      sportId: sportId,
+      placeId: placeId,
+      participationFee: participationFee,
+    },
+  });
 };
 </script>
 
 <template>
-<PointCheckLayout>
-  <template #participant-points>
-  <div class="form-title">포인트 확인</div>
-  <div class="participant-points">
-    <div class="form-group">
-      <label class="group-label">보유 포인트</label>
-      <div class="point">₩{{ currentPoints.toLocaleString() }}</div>
-    </div>
+  <DefaultMainLayout>
+    <PointCheckLayout>
+      <template #participant-points>
+        <div class="form-title">포인트 확인</div>
+        <div class="participant-points">
+          <div class="form-group">
+            <label class="group-label">보유 포인트</label>
+            <div class="point">₩{{ currentPoints.toLocaleString() }}</div>
+          </div>
 
-    <div class="form-group">
-      <label class="group-label">참가비</label>
-      <div class="point">₩{{ participationFee.toLocaleString() }}</div>
-    </div>
+          <div class="form-group">
+            <label class="group-label">참가비</label>
+            <div class="point">₩{{ participationFee.toLocaleString() }}</div>
+          </div>
 
-    <div class="form-group">
-      <label class="group-label">예상 잔액</label>
-      <div class="point">₩{{ balance.toLocaleString() }}</div>
-    </div>
-  </div>
-  </template>
+          <div class="form-group">
+            <label class="group-label">예상 잔액</label>
+            <div class="point">₩{{ balance.toLocaleString() }}</div>
+          </div>
+        </div>
+      </template>
 
-  <template #next-btn>
-    <button class="next-btn" @click="goToNextStep">다음 단계로</button>
-  </template>
-</PointCheckLayout>
+      <template #next-btn>
+        <button class="next-btn" @click="goToNextStep">다음 단계로</button>
+      </template>
+    </PointCheckLayout>
+  </DefaultMainLayout>
 </template>
 
 <style scoped>

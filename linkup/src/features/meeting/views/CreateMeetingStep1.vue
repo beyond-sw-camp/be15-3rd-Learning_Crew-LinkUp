@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
 import axios from 'axios';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 
 const MIN_USER = 2;
 const MAX_USER = 30;
@@ -95,6 +96,7 @@ const participationFee = computed(() => {
 </script>
 
 <template>
+  <DefaultMainLayout>
   <CreateMeetingLayout :step="1" title="장소 및 인원 선택">
     <div class="form-group">
       <label class="group-label">선택된 장소</label>
@@ -137,6 +139,7 @@ const participationFee = computed(() => {
 
     <button class="next-btn" @click="goToNextStep">다음 단계로</button>
   </CreateMeetingLayout>
+  </DefaultMainLayout>
 </template>
 
 <style scoped>

@@ -7,6 +7,7 @@ import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayo
 import lv1Icon from '@/assets/icons/meeting_and_place/lv1.svg';
 import lv2Icon from '@/assets/icons/meeting_and_place/lv2.svg';
 import lv3Icon from '@/assets/icons/meeting_and_place/lv3.svg';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -77,6 +78,7 @@ function getLevelIcon(level) {
 </script>
 
 <template>
+  <DefaultMainLayout>
   <template v-if="isLoading">
     <p>로딩 중...</p>
   </template>
@@ -143,6 +145,7 @@ function getLevelIcon(level) {
     <button class="submit-btn" @click="createMeeting">모임 개설 완료</button>
   </CreateMeetingLayout>
   </template>
+  </DefaultMainLayout>
 </template>
 
 <style scoped>
