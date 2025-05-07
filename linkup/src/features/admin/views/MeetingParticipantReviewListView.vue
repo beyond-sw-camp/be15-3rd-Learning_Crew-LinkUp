@@ -1,35 +1,15 @@
 <script setup>
 import { ref } from 'vue'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
+import { fetchParticipantReviewList } from '@/api/admin.js'
 
 const props = defineProps({ pageTitle: String })
 
-// 초기 필터 상태
+// 필터 상태
 const initFilters = ref({
   searchType: 'meetingId',
   keyword: ''
 })
-
-// 더미 fetch 함수
-function fetchParticipantReviewList({ searchType, keyword, page = 1 }) {
-  const dummy = Array.from({ length: 10 }, (_, i) => ({
-    reviewId: `R00${i + 1}`,
-    reviewerId: `user${i + 1}`,
-    reviewerName: `작성자 ${i + 1}`,
-    revieweeId: `target${i + 1}`,
-    revieweeName: `대상자 ${i + 1}`,
-    meetingId: `M00${i + 1}`,
-    score: (i % 5) + 1,
-    createdAt: '2025-05-05 12:00'
-  }))
-
-  const filtered = dummy.filter(item => {
-    if (!keyword) return true
-    return item[searchType]?.includes(keyword)
-  })
-
-  return Promise.resolve({ data: filtered, totalPages: 1 })
-}
 
 // 컬럼 정의
 const columns = [
@@ -42,11 +22,30 @@ const columns = [
   { key: 'score', label: '평점' },
   { key: 'createdAt', label: '작성일시' }
 ]
+
+// API 연동 함수
+async function fetchList({ page, searchType, keyword }) {
+  try {
+    const res = await fetchParticipantReviewList({
+      searchType,
+      searchKeyword: keyword,
+      page
+    })
+
+    return {
+      data: res.data.reviews || [],
+      totalPages: res.data.pagination?.totalPage || 1
+    }
+  } catch (e) {
+    console.error('🚨 참가자 평가 내역 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
+}
 </script>
 
 <template>
   <AdminListTemplate
-    :fetchFn="fetchParticipantReviewList"
+    :fetchFn="fetchList"
     :columns="columns"
     :initFilters="initFilters"
     :pageTitle="props.pageTitle"
@@ -59,7 +58,12 @@ const columns = [
           <option value="reviewerId">작성자 ID</option>
           <option value="revieweeId">대상자 ID</option>
         </select>
-        <input type="text" v-model="initFilters.keyword" class="select-box id-input" placeholder="ID" />
+        <input
+          type="text"
+          v-model="initFilters.keyword"
+          class="select-box id-input"
+          placeholder="ID"
+        />
       </label>
     </template>
   </AdminListTemplate>

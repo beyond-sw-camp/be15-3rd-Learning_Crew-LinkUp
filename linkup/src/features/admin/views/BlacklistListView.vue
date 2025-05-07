@@ -15,14 +15,12 @@ const DetailViewer = defineAsyncComponent(() =>
 )
 
 const pageTitle = '블랙리스트 조회'
-
-// 필터 상태
-const filters = ref({ userId: '' })
-
-// 선택된 사용자 상세 정보
 const selected = ref(null)
 
-// 목록 API 호출
+// 외부에서 props로 전달될 filters 초기값 (AdminListTemplate로 전달됨)
+const initFilters = { userId: '' }
+
+// 목록 조회 API
 const fetchList = async ({ page, userId }) => {
   try {
     const res = await fetchBlacklist({ memberId: userId, page })
@@ -35,28 +33,27 @@ const fetchList = async ({ page, userId }) => {
   }
 }
 
-// 상세 보기 열기
+// 상세 모달 열기
 const openModal = async (row) => {
   try {
     const res = await fetchBlacklistDetail(row.memberId)
     selected.value = res.data
   } catch {
-    // 에러 무시
+    // 오류 무시
   }
 }
 
-// 블랙리스트 해제 처리
+// 해제 처리
 const handleUnblock = async () => {
   if (!selected.value) return
   try {
     await unblockBlacklist(selected.value.memberId)
     selected.value = null
   } catch {
-    // 에러 무시
+    // 오류 무시
   }
 }
 
-// 모달 닫기
 const closeModal = () => {
   selected.value = null
 }
@@ -69,7 +66,7 @@ const columns = [
   {
     key: 'createdAt',
     label: '등록 일시',
-    format: (v) => format(new Date(v), 'yyyy-MM-dd HH:mm')
+    format: v => format(new Date(v), 'yyyy-MM-dd HH:mm')
   },
   {
     key: 'action',
@@ -87,17 +84,23 @@ const columns = [
   <AdminListTemplate
     :fetchFn="fetchList"
     :columns="columns"
-    :initFilters="filters"
+    :initFilters="initFilters"
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <template #filters>
+    <!-- ✅ 필터 영역: filters를 scoped slot으로 명시적으로 전달받음 -->
+    <template #filters="{ filters }">
       <label class="filter-label">
         사용자 ID:
-        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" />
+        <input
+          v-model="filters.userId"
+          class="select-box id-input"
+          placeholder="ID"
+        />
       </label>
     </template>
 
+    <!-- 모달 영역 -->
     <template #modal>
       <DetailViewer
         v-if="selected"
@@ -107,7 +110,6 @@ const columns = [
         description="블랙리스트 대상의 상세 정보를 확인하고 후속 조치를 진행할 수 있습니다."
       >
         <template #default>
-          <!-- 사용자 정보 -->
           <section class="modal-section">
             <h3 class="section-title">사용자 정보</h3>
             <div class="info-grid">
@@ -122,18 +124,18 @@ const columns = [
             </div>
           </section>
 
-          <!-- 블랙리스트 정보 -->
           <section class="modal-section">
             <h3 class="section-title">블랙리스트 정보</h3>
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">등록 일시</span>
-                <span class="value">{{ format(new Date(selected.createdAt), 'yyyy-MM-dd HH:mm') }}</span>
+                <span class="value">
+                  {{ format(new Date(selected.createdAt), 'yyyy-MM-dd HH:mm') }}
+                </span>
               </div>
             </div>
           </section>
 
-          <!-- 사유 -->
           <section class="modal-section">
             <h3 class="section-title">사유</h3>
             <div class="reason-box">{{ selected.reason }}</div>

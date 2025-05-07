@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { fetchAdminMeetingList } from '@/api/admin.js'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 
 // props
@@ -16,58 +17,12 @@ const initFilters = {
   endDate: ''
 }
 
-// 상태 라벨 → ENUM 매핑
-const mapStatusLabelToEnum = (label) => {
-  switch (label) {
-    case '모집중': return 'PENDING'
-    case '최소 모집 완료': return 'ACCEPTED'
-    case '모집 완료': return 'REJECTED'
-    case '진행 완료': return 'DONE'
-    default: return ''
-  }
-}
-
-// 더미 운동 종목 목록
+// 운동 종목 더미 (실제 API 연동 시 대체 가능)
 const sportTypes = ref([
   { sportId: 'TENNIS', sportName: '테니스' },
   { sportId: 'BOWLING', sportName: '볼링' },
   { sportId: 'SOCCER', sportName: '축구' }
 ])
-
-// 더미 API - fetchMeetingList
-function fetchMeetingList(params) {
-  const dummy = Array.from({ length: 10 }, (_, i) => ({
-    meetingId: `M00${i + 1}`,
-    meetingTitle: `모임 ${i + 1}`,
-    leaderName: `리더 ${i + 1}`,
-    sportName: i % 2 === 0 ? '테니스' : '볼링',
-    date: '2025-05-05',
-    startTime: '14:00',
-    endTime: '16:00',
-    gender: i % 2 === 0 ? 'M' : 'F',
-    ageGroup: `${20 + i * 10}`,
-    level: ['LV1', 'LV2', 'LV3'][i % 3],
-    placeName: `장소 ${i + 1}`,
-    customPlaceAddress: '',
-    minUser: 4,
-    maxUser: 10,
-    statusLabel: ['모집중', '최소 모집 완료', '모집 완료', '진행 완료'][i % 4]
-  }))
-
-  const statusEnum = mapStatusLabelToEnum(params.status)
-  const filtered = dummy.filter(item => {
-    return (!params.gender || item.gender === params.gender) &&
-      (!params.ageGroup || item.ageGroup === params.ageGroup) &&
-      (!params.level || item.level === params.level) &&
-      (!params.sportName || item.sportName.includes(params.sportName)) &&
-      (!params.status || mapStatusLabelToEnum(item.statusLabel) === statusEnum)
-  })
-
-  return Promise.resolve({
-    data: filtered,
-    totalPages: 1
-  })
-}
 
 // 컬럼 정의
 const columns = [
@@ -76,23 +31,64 @@ const columns = [
   { key: 'leaderName', label: '리더' },
   { key: 'sportName', label: '운동' },
   { key: 'date', label: '날짜' },
-  { key: 'time', label: '시간', format: (_, row) => `${row.startTime} ~ ${row.endTime}` },
+  {
+    key: 'time',
+    label: '시간',
+    format: (_, row) => `${row.startTime} ~ ${row.endTime}`
+  },
   { key: 'gender', label: '성별' },
   { key: 'ageGroup', label: '나이대' },
   { key: 'level', label: '레벨' },
   { key: 'placeName', label: '장소' },
-  { key: 'users', label: '참여 인원', format: (_, row) => `${row.minUser} ~ ${row.maxUser}` },
+  {
+    key: 'users',
+    label: '참여 인원',
+    format: (_, row) => `${row.minUser} ~ ${row.maxUser}`
+  },
   { key: 'statusLabel', label: '상태' },
   {
     key: 'view',
     label: '상세 보기',
-    format: () => ({
+    format: (_, row) => ({
       type: 'button',
       label: '보기',
-      onClick: () => alert('상세 보기 클릭됨')
+      onClick: () => alert(`모임 상세 보기: ${row.meetingId}`)
+      // TODO: openMeetingDetailModal(row.meetingId)
     })
   }
 ]
+
+// API 연동
+async function fetchMeetingList(params) {
+  try {
+    const res = await fetchAdminMeetingList(params)
+    const list = res.data.meetings.map(m => ({
+      meetingId: m.meetingId,
+      meetingTitle: m.meetingTitle,
+      leaderName: m.leaderNickname,
+      sportName: m.sportName,
+      date: m.date,
+      startTime: m.startTime.slice(0, 5),
+      endTime: m.endTime.slice(0, 5),
+      gender: m.gender,
+      ageGroup: m.ageGroup,
+      level: m.level,
+      placeName: m.placeName,
+      customPlaceAddress: m.customPlaceAddress,
+      minUser: m.minUser,
+      maxUser: m.maxUser,
+      statusLabel: m.statusName
+    }))
+
+    return {
+      data: list,
+      totalPages: res.data.pagination?.totalPage || 1
+    }
+  } catch (e) {
+    console.error('🚨 모임 목록 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
+}
 </script>
 
 <template>
@@ -109,8 +105,10 @@ const columns = [
           <option value="">전체</option>
           <option value="M">남성</option>
           <option value="F">여성</option>
+          <option value="BOTH">혼성</option>
         </select>
       </label>
+
       <label class="filter-label">
         나이대:
         <select v-model="initFilters.ageGroup" class="select-box">
@@ -124,6 +122,7 @@ const columns = [
           <option value="70">70대+</option>
         </select>
       </label>
+
       <label class="filter-label">
         레벨:
         <select v-model="initFilters.level" class="select-box">
@@ -133,29 +132,37 @@ const columns = [
           <option value="LV3">LV3</option>
         </select>
       </label>
+
       <label class="filter-label">
         운동 종목:
         <select v-model="initFilters.sportName" class="select-box">
           <option value="">전체</option>
-          <option v-for="sport in sportTypes" :key="sport.sportId" :value="sport.sportName">
+          <option
+            v-for="sport in sportTypes"
+            :key="sport.sportId"
+            :value="sport.sportName"
+          >
             {{ sport.sportName }}
           </option>
         </select>
       </label>
+
       <label class="filter-label">
         상태:
         <select v-model="initFilters.status" class="select-box">
           <option value="">전체</option>
-          <option value="모집중">모집중</option>
-          <option value="최소 모집 완료">최소 모집 완료</option>
-          <option value="모집 완료">모집 완료</option>
-          <option value="진행 완료">진행 완료</option>
+          <option value="PENDING">모집중</option>
+          <option value="ACCEPTED">최소 모집 완료</option>
+          <option value="REJECTED">모집 완료</option>
+          <option value="DONE">진행 완료</option>
         </select>
       </label>
+
       <label class="filter-label">
         조회 기간:
-        <input type="date" v-model="initFilters.startDate" class="select-box date-input"> ~
-        <input type="date" v-model="initFilters.endDate" class="select-box date-input">
+        <input type="date" v-model="initFilters.startDate" class="select-box date-input" />
+        ~
+        <input type="date" v-model="initFilters.endDate" class="select-box date-input" />
       </label>
     </template>
   </AdminListTemplate>

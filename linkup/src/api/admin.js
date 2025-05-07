@@ -41,17 +41,46 @@ export function fetchAccountList(params) {
 }
 
 /* ------------------------------------ 모임 관리 ------------------------------------ */
-export function fetchMeetingList(params) {
-    return api.get('/api/v1/common-service/admin/meetings', { params })
+/**
+ * 관리자 - 모임 목록 조회
+ * @param {Object} params - 필터 및 페이지 정보
+ * @param {string} [params.gender] - 성별 ('M' | 'F' | 'BOTH')
+ * @param {string} [params.ageGroup] - 나이대 ('20', '30', '20,30' 등)
+ * @param {string} [params.level] - 레벨 ('LV1' | 'LV2' | 'LV3')
+ * @param {string} [params.sportName] - 운동 종목명 ('테니스', '볼링' 등)
+ * @param {string} [params.status] - 상태 ('PENDING' | 'ACCEPTED' | 'REJECTED' | 'DONE')
+ * @param {string} [params.startDate] - 시작일자 (YYYY-MM-DD)
+ * @param {string} [params.endDate] - 종료일자 (YYYY-MM-DD)
+ * @param {number} [params.page=1] - 페이지 번호
+ * @returns {Promise<Object>} 모임 목록 응답
+ */
+export function fetchAdminMeetingList(params) {
+    return api.get('/api/v1/common-service/meetings/list', { params })
 }
 
-export function fetchSportTypes() {
-    return api.get('/api/v1/common-service/sports')
+/**
+ * 모임 상세 조회
+ * @param {number|string} meetingId
+ * @returns {Promise<Object>} 단일 모임 상세 정보
+ */
+export function fetchMeetingDetail(meetingId) {
+    return api.get(`/api/v1/common-service/meetings/${meetingId}`)
 }
 
-export const fetchParticipantReviewList = (params) => {
-    return api.get('/admin/participant-reviews', { params })
+/**
+ * 관리자 - 참가자 평가 내역 조회
+ * @param {Object} params
+ * @param {'meetingId'|'reviewerId'|'revieweeId'} params.searchType - 검색 기준
+ * @param {string} params.searchKeyword - 검색어
+ * @param {number} params.page - 페이지 번호
+ * @returns {Promise<Object>} 평가 내역 + pagination
+ */
+export function fetchParticipantReviewList(params) {
+    return api.get('/api/v1/common-service/meetings/review', { params })
 }
+
+
+
 
 /* ------------------------------------ 장소 관리 ------------------------------------ */
 export const fetchPlaceList = (params) => {
