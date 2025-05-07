@@ -1,6 +1,7 @@
 <script setup>
 
 import { onMounted, ref } from 'vue';
+import api from '@/api/axios.js';
 
 const meetings = ref([]);
 
@@ -12,12 +13,17 @@ meetings.value = [{
 }
 ];
 
+// const isLoading = ref(true);
+//
 // onMounted(async() => {
 //   try {
-//     const response = await axios.get(`/meetings/user/${userId}/created`)
+//     const userId = 55;
+//     const response = await api.get(`common-service/meetings/user/${userId}/created`)
 //     meetings.value = response.data.data.meeting
 //   } catch (e) {
 //     console.error('개설 모임 조회 실패', e);
+//   } finally {
+//     isLoading.value = false;
 //   }
 // })
 
@@ -35,9 +41,15 @@ const statusName = (id) => {
       return '모임 진행 완료';
   }
 }
+
+const emits = defineEmits(['close', 'select']);
 </script>
 
 <template>
+<!--  <template v-if="isLoading">-->
+<!--    로딩중-->
+<!--  </template>-->
+<!--  <template v-else>-->
   <div class="assignment-modal">
     <div class="modal-box">
       <!-- 모달 헤더 -->
@@ -66,6 +78,7 @@ const statusName = (id) => {
 
     </div>
   </div>
+<!--  </template>-->
 </template>
 
 <style scoped>
