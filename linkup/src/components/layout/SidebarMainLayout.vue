@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import SearchBar from '@/components/common/SearchBar.vue';
 
 const props = defineProps({
   width: {
@@ -58,7 +59,6 @@ const closeSidebar = () => {
     >
       ☰
     </button>
-
     <!-- 사이드바 -->
     <aside
       :style="{ width: sidebarWidth }"

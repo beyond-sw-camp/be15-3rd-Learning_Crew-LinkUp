@@ -43,4 +43,19 @@ export const authRoutes = [
       },
     ],
   },
+  {
+    path: '/password/reset',
+    name: 'reset-password',
+    component: () => import('@/features/auth/views/ResetPasswordView.vue'),
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: () => import('@/features/auth/views/ResetPasswordFormView.vue'),
+  },
+  {
+    path: '/recover',
+    name: 'recover-account',
+    component: () => import('@/features/auth/views/RecoverAccountView.vue'),
+  },
 ];
