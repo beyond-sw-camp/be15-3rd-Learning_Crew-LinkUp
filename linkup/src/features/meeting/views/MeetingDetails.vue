@@ -21,24 +21,24 @@ onMounted(async () => {
     const response = await api.get(`/common-service/meetings/${meetingId}`);
     meeting.value = response.data.data.meeting;
 
-    // ✅ 내가 참가자일 경우에만 참가자 목록 조회
-    const isParticipating = meeting.value.participants?.some(
-        (p) => p.memberId === userStore.userId
-    );
-
-    if (isParticipating) {
-      const participationResponse = await api.get(
-          `/common-service/my/meetings/${meetingId}/participation`,
-          {
-            params: {
-              requesterId: userStore.userId,
-            },
-          }
-      );
-      count.value = participationResponse.data.data.participants.length;
-    } else {
-      count.value = 0;
-    }
+    // // ✅ 내가 참가자일 경우에만 참가자 목록 조회
+    // const isParticipating = meeting.value.participants?.some(
+    //     (p) => p.memberId === userStore.userId
+    // );
+    //
+    // if (isParticipating) {
+    //   const participationResponse = await api.get(
+    //       `/common-service/my/meetings/${meetingId}/participation`,
+    //       {
+    //         params: {
+    //           requesterId: userStore.userId,
+    //         },
+    //       }
+    //   );
+    //   count.value = participationResponse.data.data.participants.length;
+    // } else {
+    //   count.value = 0;
+    // }
   } catch (err) {
     console.error('모임 정보를 불러오는 중 오류 발생:', err);
     meeting.value = null;
@@ -126,7 +126,7 @@ const formattedAge = computed(() => {
         </section>
         <section class="section">
           <h2>모집 인원</h2>
-          {{ count }}명/{{ meeting.maxUser }}명 (최소 인원: {{ meeting.minUser }}명)
+          {{ meeting.participantCount }}명/{{ meeting.maxUser }}명 (최소 인원: {{ meeting.minUser }}명)
         </section>
         <section class="section">
           <h2>참가비</h2>

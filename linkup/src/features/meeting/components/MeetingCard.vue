@@ -38,7 +38,7 @@ function formatDate(iso) {
       <header class="meeting-meta">
         <p class="date">
           <img src="@/assets/icons/meeting_and_place/date.svg" alt="달력" class="search-icon" />
-          {{ formatDate(meeting.createdAt) }}
+          {{ formatDate(meeting.date) }}
         </p>
         <button class="bookmark" aria-label="찜하기">
           <img src="@/assets/icons/community/empty_heart.svg" alt="찜" class="search-icon" />
@@ -53,14 +53,14 @@ function formatDate(iso) {
         {{ meeting.placeAddress }}
       </p>
 
-<!--      <p class="likes">-->
-<!--        <img src="@/assets/icons/meeting_and_place/heart.svg" alt="찜인원" class="search-icon" />-->
-<!--        {{ meeting.likes || 0 }}명 찜-->
-<!--      </p>-->
+      <p class="likes">
+        <img src="@/assets/icons/meeting_and_place/heart.svg" alt="찜인원" class="search-icon" />
+        {{ meeting.interestedCount || 0 }}명 찜
+      </p>
 
       <p class="price" v-if="meeting.price !== undefined">
         <span class="material-symbols-outlined card">attach_money</span>
-        <strong>{{ meeting.price.toLocaleString() }}원</strong>
+        <strong>{{ meeting.participationFee.toLocaleString() }}원</strong>
       </p>
     </section>
   </article>
