@@ -1,18 +1,18 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import router from '@/router/index.js';
-
 import MeetingDetailLayout from '@/features/meeting/components/MeetingDetailLayout.vue';
 import MeetingParticipants from '@/features/meeting/components/MeetingParticipants.vue';
 import api from '@/api/axios.js';
 import { useAuthStore } from '@/stores/auth.js';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 
 const route = useRoute();
 const meeting = ref(null);
 const isLoading = ref(true);
 const count = ref(0);
 const userStore = useAuthStore();
+const showModal = ref(false);
 
 onMounted(async () => {
   try {
@@ -48,8 +48,30 @@ onMounted(async () => {
   }
 });
 
-const goToParticipation = () => {
-  router.push({ name: 'CreateParticipation', params: { meetingId: route.params.meetingId } });
+const showCreateModal = () => {
+  showModal.value = true;
+}
+
+const closeModal = () => {
+  showModal.value = false;
+}
+
+const handleCreateParticipation = async () => {
+  const meetingId = route.params.meetingId;
+  try {
+    const response = await api.post(`/common-service/meetings/${meetingId}/participation`,
+      { memberId: userStore.userId }
+    );
+    if (response.data.success) {
+      alert('참가 신청에 성공하였습니다.');
+    } else {
+      console.log('참가 신청 실패');
+    }
+  } catch (error) {
+    console.error('모임 신청 중 오류 발생:', error);
+  } finally {
+    showModal.value = false;
+  }
 };
 
 const displayGender = computed(() => {
@@ -139,9 +161,19 @@ const formattedAge = computed(() => {
       </template>
 
       <template #footer>
-        <button class="button" @click="goToParticipation">참가 신청하기</button>
+        <button class="button" @click="showCreateModal">참가 신청하기</button>
       </template>
     </MeetingDetailLayout>
+
+      <div v-if="showModal === true" class="modal">
+        <div class="modal-content">
+          모임 참가를 신청하시겠습니까?
+          <div class="modal-buttons">
+          <button class="accept" @click="handleCreateParticipation">예</button>
+          <button class="reject" @click="closeModal">아니오</button>
+          </div>
+        </div>
+      </div>
   </div>
   </div>
 </template>
@@ -166,6 +198,7 @@ const formattedAge = computed(() => {
   font-size: 18px;
   margin-bottom: 10px;
 }
+
 .layout-wrapper {
   width: 100%;
   min-height: 100vh; /* 화면보다 내용이 적을 땐 전체 화면 보장 */
@@ -188,5 +221,59 @@ const formattedAge = computed(() => {
   cursor: pointer;
 }
 
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px; /* 버튼 사이에 40px 여백 추가 */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 40px;  /* 내부 여백 */
+  border-radius: 8px;
+  width: 100%;   /* 가로폭을 화면 전체로 확장 */
+  max-width: 500px; /* 최대 폭을 설정하여 너무 넓어지지 않도록 */
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.modal-buttons .accept,
+.modal-buttons .reject {
+  width: 48%; /* 버튼의 가로폭을 설정 */
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-buttons .accept {
+  background-color: #5790FF;
+  color: #fff;
+}
+
+.modal-buttons .accept:hover {
+  background-color: #3a6edc;
+}
+
+.modal-buttons .reject {
+  background-color: #E64980;
+  color: #fff;
+}
+
+.modal-buttons .reject:hover {
+  background-color: #cc3a6a;
+}
 </style>
