@@ -29,7 +29,6 @@ const showModal = reactive({
   interested: false
 });
 
-
 // 지역/운동 필터 데이터
 const regionOptions = [
   { name: '서울특별시', code: 'seoul', children: [{ name: '강남구', code: 'gangnam' }, { name: '서초구', code: 'seocho' }, { name: '마포구', code: 'mapo' }] },
