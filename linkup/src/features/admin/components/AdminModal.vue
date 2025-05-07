@@ -1,7 +1,7 @@
 <!-- src/features/admin/components/AdminModal.vue -->
 <script setup>
 import AdminButton from '@/features/admin/components/AdminButton.vue'
-import '@/assets/css/admin-styles.css'
+impor '@/assets/css/admin-styles.css'
 
 const props = defineProps({
   modelValue: {
@@ -12,12 +12,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-function close() {
-  emit('update:modelValue', false)
-}
+// 닫기 동작 실행
+const close = () => emit('update:modelValue', false)
 </script>
 
 <template>
+  <!-- 모달 외부 클릭 시 닫기 -->
   <div
     v-if="modelValue"
     class="modal"
@@ -50,7 +50,6 @@ function close() {
 </template>
 
 <style scoped>
-/* 스타일은 admin-styles.css 기반이므로 여기선 최소한으로 유지 */
 .modal-header {
   margin-bottom: 16px;
 }

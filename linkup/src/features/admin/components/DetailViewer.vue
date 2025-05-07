@@ -2,7 +2,7 @@
 import AdminButton from '@/features/admin/components/AdminButton.vue'
 import '@/assets/css/admin-styles.css'
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true
@@ -19,9 +19,8 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-function close() {
-  emit('update:modelValue', false)
-}
+// 닫기 핸들러
+const close = () => emit('update:modelValue', false)
 </script>
 
 <template>
@@ -33,18 +32,16 @@ function close() {
     aria-labelledby="modalTitle"
     @click.self="close"
   >
-    <section class="modal-content" role="document">
-      <!-- 헤더 영역 -->
-      <header>
+    <section class="modal-content">
+      <!-- 타이틀 영역 -->
+      <header class="modal-header">
         <slot name="title">
-          <div>
-            <h2 class="modal-title" id="modalTitle">{{ title }}</h2>
-            <p v-if="description" class="sub-text">{{ description }}</p>
-          </div>
+          <h2 id="modalTitle" class="modal-title">{{ title }}</h2>
+          <p v-if="description" class="sub-text">{{ description }}</p>
         </slot>
       </header>
 
-      <!-- 본문 영역 -->
+      <!-- 내용 영역 -->
       <section class="modal-section" aria-label="상세 내용 영역">
         <slot />
       </section>
@@ -60,5 +57,5 @@ function close() {
 </template>
 
 <style scoped>
-/* 스타일은 admin-styles.css에 정의됨 */
+
 </style>

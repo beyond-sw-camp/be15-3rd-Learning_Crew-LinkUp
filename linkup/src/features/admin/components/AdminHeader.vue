@@ -1,19 +1,15 @@
 <script setup>
 import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+import { adminNavItems } from '@/features/admin/constants/adminNavItems.js'
 import '@/assets/css/admin-styles.css'
 
 const route = useRoute()
 
-const navItems = [
-  { label: '회원 관리', path: '/admin/users' },
-  { label: '포인트 관리', path: '/admin/points' },
-  { label: '모임 관리', path: '/admin/meetings' },
-  { label: '장소 관리', path: '/admin/places' },
-  { label: '신고 관리', path: '/admin/reports' },
-  { label: '제재 관리', path: '/admin/penalties' }
-]
-
-const isActive = (path) => route.path.startsWith(path)
+// 현재 경로에 해당하는 네비게이션 활성화 상태 계산
+const activePath = computed(() =>
+  adminNavItems.find(item => route.path.startsWith(item.path))?.path
+)
 </script>
 
 <template>
@@ -21,11 +17,11 @@ const isActive = (path) => route.path.startsWith(path)
     <div class="header-left" aria-label="서비스 이름">서비스 관리</div>
     <nav class="admin-nav" role="navigation" aria-label="관리자 메뉴">
       <ul class="admin-nav-list">
-        <li v-for="item in navItems" :key="item.path">
+        <li v-for="item in adminNavItems" :key="item.path">
           <RouterLink
             :to="item.path"
             class="nav-link"
-            :class="{ active: isActive(item.path) }"
+            :class="{ active: activePath === item.path }"
           >
             {{ item.label }}
           </RouterLink>
@@ -34,7 +30,3 @@ const isActive = (path) => route.path.startsWith(path)
     </nav>
   </header>
 </template>
-
-<style scoped>
-
-</style>

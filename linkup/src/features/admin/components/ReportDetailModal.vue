@@ -5,7 +5,7 @@ const props = defineProps({
   modelValue: Boolean,
   title: { type: String, default: '상세 정보' },
   description: { type: String, default: '' },
-  summary: { type: Object, default: () => ({}) },
+  summary: { type: Array, default: () => [] }, // label/value 쌍 배열로 가정
   headers: { type: Array, required: true },
   rows: { type: Array, default: () => [] },
   showActionButton: { type: Boolean, default: false },
@@ -14,12 +14,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'action'])
 const close = () => emit('update:modelValue', false)
-const isOpen = computed(() => props.modelValue)
 </script>
 
 <template>
   <div
-    v-if="isOpen"
+    v-if="modelValue"
     class="modal"
     role="dialog"
     aria-modal="true"
@@ -35,9 +34,13 @@ const isOpen = computed(() => props.modelValue)
 
       <!-- 요약 정보 -->
       <section class="modal-report-section" aria-labelledby="summary-section">
-        <h3 id="summary-section" class="sr-only">신고자 및 피신고자 정보</h3>
+        <h3 id="summary-section" class="sr-only">요약 정보</h3>
         <div class="report-detail-grid">
-          <div class="info-report-item" v-for="(item, index) in summary" :key="index">
+          <div
+            class="info-report-item"
+            v-for="item in summary"
+            :key="item.label"
+          >
             <span class="label"><strong>{{ item.label }}:</strong></span>
             <span class="value">{{ item.value }}</span>
           </div>
@@ -50,12 +53,16 @@ const isOpen = computed(() => props.modelValue)
         <table class="table" role="table">
           <thead>
           <tr>
-            <th v-for="header in headers" :key="header" scope="col">{{ header }}</th>
+            <th v-for="header in headers" :key="header" scope="col">
+              {{ header }}
+            </th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="(row, idx) in rows" :key="idx">
-            <td v-for="key in Object.keys(row)" :key="key">{{ row[key] }}</td>
+            <td v-for="header in headers" :key="header">
+              {{ row[header] ?? '-' }}
+            </td>
           </tr>
           </tbody>
         </table>
@@ -66,7 +73,7 @@ const isOpen = computed(() => props.modelValue)
         <button
           v-if="showActionButton"
           class="btn btn-reject"
-          @click="$emit('action')"
+          @click="emit('action')"
         >
           {{ actionLabel }}
         </button>
