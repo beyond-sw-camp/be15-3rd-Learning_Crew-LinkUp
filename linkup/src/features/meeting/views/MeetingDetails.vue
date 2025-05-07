@@ -86,7 +86,7 @@ const formattedAge = computed(() => {
   <div v-else>
     <MeetingDetailLayout
         :title="meeting.meetingTitle"
-        :address="meeting.placeAddress"
+        :address="meeting.place.address"
         :image="meeting.image"
     >
       <template #description>
@@ -108,7 +108,7 @@ const formattedAge = computed(() => {
         </section>
         <section class="section">
           <h2>참가비</h2>
-          {{ meeting.fee }}원
+          {{ meeting.participationFee.toLocaleString() }}원
         </section>
         <table class="meeting-details-table">
           <tr>
