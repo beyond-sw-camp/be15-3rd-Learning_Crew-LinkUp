@@ -1,22 +1,26 @@
 <script setup>
-import AdminButton from "@/features/admin/components/AdminButton.vue"
-import { computed } from 'vue';
+import { computed } from 'vue'
+import AdminButton from '@/features/admin/components/AdminButton.vue'
 
-const props = defineProps({ title: String })
+const props = defineProps({
+  title: String
+})
+
 const emit = defineEmits(['search'])
 
-// title 유효성 확인을 computed로 추출
+// 빈 문자열 방지
 const hasTitle = computed(() => props.title?.trim())
-
 const triggerSearch = () => emit('search')
 </script>
 
 <template>
   <section class="filter-wrapper" role="search" aria-labelledby="filter-title">
-    <!-- 조건부 타이틀 렌더링 -->
-    <h1 v-if="hasTitle" class="page-title" id="filter-title">{{ props.title }}</h1>
+    <!-- 페이지 제목 (필요 시만 표시) -->
+    <h1 v-if="hasTitle" id="filter-title" class="page-title">
+      {{ props.title }}
+    </h1>
 
-    <!-- 검색 필터 폼 -->
+    <!-- 검색 필터 -->
     <form class="filter-box" @submit.prevent="triggerSearch">
       <fieldset class="filter-fields">
         <legend class="sr-only">필터 조건 입력 영역</legend>

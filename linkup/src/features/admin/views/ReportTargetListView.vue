@@ -121,7 +121,7 @@ function handleSanction() {
         <option value="targetId">대상 ID</option>
       </select>
 
-      <label class="filter-label" for="searchKeyword" class="sr-only">검색어</label>
+      <label class="filter-label sr-only" for="searchKeyword">검색어</label>
       <input
         id="searchKeyword"
         v-model="filters.searchKeyword"

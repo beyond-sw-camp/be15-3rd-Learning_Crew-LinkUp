@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import AdminFilter from './AdminFilter.vue'
 import AdminTable from './AdminTable.vue'
 import Pagination from './Pagination.vue'
@@ -15,14 +15,14 @@ const props = defineProps({
 
 const emit = defineEmits(['update:page'])
 
-// 내부 상태 관리
+// 필터, 페이징, 데이터 상태
 const filters = ref({ ...props.initFilters })
 const rows = ref([])
 const page = ref(1)
 const totalPages = ref(1)
 const selected = ref(null)
 
-// 리스트 API 호출
+// 리스트 조회
 const fetchList = async (newPage = 1) => {
   page.value = newPage
   try {
@@ -50,13 +50,13 @@ const closeModal = () => {
 const format = (value, formatter, row) =>
   typeof formatter === 'function' ? formatter(value, row) : value
 
-// 최초 로딩
+// 초기 조회
 onMounted(() => fetchList(1))
 </script>
 
 <template>
   <div class="main-admin">
-    <!-- 제목 및 필터 영역 -->
+    <!-- 필터 영역 -->
     <section class="filter-wrapper" aria-label="필터 섹션">
       <h2 class="page-title">{{ pageTitle || '관리 목록' }}</h2>
       <AdminFilter
@@ -70,7 +70,7 @@ onMounted(() => fetchList(1))
       </AdminFilter>
     </section>
 
-    <!-- 데이터 테이블 -->
+    <!-- 테이블 영역 -->
     <section aria-label="데이터 테이블">
       <AdminTable @row-click="handleRowClick">
         <template #thead>
@@ -115,7 +115,7 @@ onMounted(() => fetchList(1))
       />
     </nav>
 
-    <!-- 상세 모달 -->
+    <!-- 모달 영역 -->
     <slot name="modal" />
   </div>
 </template>
