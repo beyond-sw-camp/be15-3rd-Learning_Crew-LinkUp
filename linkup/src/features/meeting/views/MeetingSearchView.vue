@@ -191,7 +191,7 @@ function toggleFilterDropdown() {
         </div>
 
       <!-- 모임 카드 리스트 -->
-      <MeetingCard v-for="meeting in meetings" :key="meeting.id" :meeting="meeting" @click="goToMeetingDetail" />
+      <MeetingCard v-for="meeting in meetings" :key="meeting.id" :meeting="meeting" @click="goToMeetingDetail(meeting.meetingId)" />
     </div>
 
     <!-- 지도 -->
