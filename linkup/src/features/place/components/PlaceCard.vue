@@ -3,9 +3,10 @@
     <div class="image-wrapper">
       <img :src="resolvedImage" :alt="title" class="place-image" />
       <img
-        src="@/assets/icons/meeting_and_place/heart.svg"
+        :src="favoriteIcon"
         alt="즐겨찾기"
         class="heart-icon"
+        @click.stop="$emit('toggle-favorite')"
       />
     </div>
     <div class="place-info">
@@ -25,13 +26,16 @@
 <script setup>
 import { computed } from 'vue';
 import defaultImage from '@/assets/images/linkup_bg.jpg';
+import fullHeart from '@/assets/icons/meeting_and_place/full_heart.svg';
+import emptyHeart from '@/assets/icons/meeting_and_place/heart.svg';
 
 const props = defineProps({
   image: String,
   title: String,
   address: String,
   price: String,
-  rating: [String, Number]
+  rating: [String, Number],
+  isFavorite: Boolean
 });
 
 function isValidImage(img) {
@@ -46,6 +50,10 @@ const formattedRating = computed(() => {
   const r = parseFloat(props.rating);
   return !isNaN(r) ? r.toFixed(1) : '0.0';
 });
+
+const favoriteIcon = computed(() =>
+  props.isFavorite ? fullHeart : emptyHeart
+);
 </script>
 
 <style scoped>

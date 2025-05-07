@@ -53,5 +53,6 @@ export const useAuthStore = defineStore('auth', () => {
     profileImageUrl,
     setAuth,
     clearAuth,
+    userId
   };
 });

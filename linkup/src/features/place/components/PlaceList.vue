@@ -7,8 +7,10 @@
       :title="place.name"
       :address="place.address"
       :price="place.price"
-      :rating="formatRating(place.reviewRating)"
+      :rating="place.reviewRating"
+      :isFavorite="place.isFavorite"
       @click="$emit('select', place)"
+      @toggle-favorite="$emit('toggle-favorite', place)"
     />
   </div>
 </template>
@@ -16,13 +18,11 @@
 <script setup>
 import PlaceCard from './PlaceCard.vue';
 
-defineProps({ places: Array });
-defineEmits(['select']);
+defineProps({
+  places: Array
+});
 
-function formatRating(value) {
-  const num = parseFloat(value);
-  return isNaN(num) ? '0.0' : num.toFixed(1);
-}
+defineEmits(['select', 'toggle-favorite']);
 </script>
 
 <style scoped>
