@@ -33,7 +33,6 @@ const createMeeting = async () => {
     meetingDate: route.query.meetingDate,
     meetingTime: route.query.meetingTime,
     placeId: route.query.placeId,
-    participationFee: route.query.participationFee,
     sportType: selectedSport.value,
     gender: selectedGender.value,
     ageGroup: selectedAgeGroups.join(','),

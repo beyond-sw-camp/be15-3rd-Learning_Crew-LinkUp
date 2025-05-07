@@ -2,8 +2,8 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
-import axios from 'axios';
 import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
+import api from '@/api/axios.js';
 
 const MIN_USER = 2;
 const MAX_USER = 30;
@@ -76,7 +76,7 @@ const goToNextStep = () => {
     name: 'CheckCreatorBalance',
     query: {
       placeId: placeId,
-      participationFee: participationFee.value,
+      // participationFee: participationFee.value,
       date: selectedDate.value,
       startTime: selectedTimeSlot.value.startTime,
       endTime: selectedTimeSlot.value.endTime,

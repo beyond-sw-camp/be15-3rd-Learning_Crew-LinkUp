@@ -12,7 +12,7 @@ const meetingTitle = ref('');
 const meetingContent = ref('');
 
 const {
-  date, startTime, endTime, minUser, maxUser, sportId, placeId, participationFee
+  date, startTime, endTime, minUser, maxUser, sportId, placeId
 } = route.query;
 
 const goToNextStep = () => {

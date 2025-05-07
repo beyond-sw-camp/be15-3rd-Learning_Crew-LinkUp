@@ -124,11 +124,12 @@ function closeModal() {
 async function acceptParticipation(applicant) {
   try {
     const memberId = applicant.memberId;
-    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/accept`
+    const response = await api.put(`/common-service/meetings/${meetingId.value}/participation/${memberId}/accept`
     ,  { // 여기에 body 데이터 작성
-        requesterId: auth.userId,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        memberId: auth.userId  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
         // 필요한 다른 데이터들을 여기에 추가
       });
+    console.log(response.data);
   } catch (error) {
     console.error('참가 수락 실패:', error);
     alert('참가 수락에 실패했습니다.');
@@ -138,11 +139,12 @@ async function acceptParticipation(applicant) {
 async function rejectParticipation(applicant) {
   try {
     const memberId = applicant.memberId;
-    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/reject`,
+    const response = await api.put(`/common-service/meetings/${meetingId.value}/participation/${memberId}/reject`,
       { // 여기에 body 데이터 작성
-        requesterId: auth.userId,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        memberId: auth.userId  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
         // 필요한 다른 데이터들을 여기에 추가
       });
+    console.log(response.data);
   } catch (error) {
     console.error('참가 거절 실패:', error);
     alert('참가 거절에 실패했습니다.');

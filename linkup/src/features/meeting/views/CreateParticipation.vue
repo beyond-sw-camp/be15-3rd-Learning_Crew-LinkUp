@@ -2,9 +2,13 @@
 import PointCheckLayout from '@/features/meeting/components/PointCheckLayout.vue';
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/auth.js';
+import api from '@/api/axios.js';
 const route = useRoute();
 
 const meetingId = route.params.meetingId;
+
+const auth = useAuthStore();
 
 const currentPoints = ref(5000);  // 예시로 5000 포인트
 const participationFee = ref(2000); // 예시로 2000 포인트
@@ -12,11 +16,9 @@ const balance = computed(() => currentPoints.value - participationFee.value);
 
 const handleCreateParticipation = async () => {
   try {
-    const response = await fetch(`/meetings/${meetingId}/participation`, {
-      method: 'POST',
-      body: JSON.stringify({ memberId: 54 }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = api.post(`/common-service/meetings/${meetingId}/participation`,
+     { memberId: auth.userId }
+    );
 
     if (response.ok) {
       console.log('참가 신청 성공');
