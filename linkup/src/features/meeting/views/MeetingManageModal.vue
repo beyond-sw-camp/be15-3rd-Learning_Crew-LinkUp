@@ -121,7 +121,11 @@ function closeModal() {
 async function acceptParticipation(applicant) {
   try {
     const memberId = applicant.memberId;
-    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/accept`);
+    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/accept`
+    ,  { // 여기에 body 데이터 작성
+        requesterId: 55,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        // 필요한 다른 데이터들을 여기에 추가
+      });
   } catch (error) {
     console.error('참가 수락 실패:', error);
     alert('참가 수락에 실패했습니다.');
@@ -131,7 +135,11 @@ async function acceptParticipation(applicant) {
 async function rejectParticipation(applicant) {
   try {
     const memberId = applicant.memberId;
-    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/reject`);
+    return api.post(`common-service/meetings/${meetingId.value}/participation/${memberId}/reject`,
+      { // 여기에 body 데이터 작성
+        requesterId: 55,  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        // 필요한 다른 데이터들을 여기에 추가
+      });
   } catch (error) {
     console.error('참가 거절 실패:', error);
     alert('참가 거절에 실패했습니다.');
@@ -142,8 +150,15 @@ const cancelMeeting = async () => {
   try {
     const result = confirm('정말 모집을 취소하시겠습니까?');
     if (result) {
-      return api.delete(`common-service/meetings/${meetingId.value}/cancel`);
+      return api.delete(`common-service/meetings/${meetingId.value}/cancel`, {
+          params: {
+            memberId: 55,  // 요청자 ID 등 필요한 파라미터
+            // 다른 필요한 파라미터들 추가
+          }
+        }
+      );
     }
+    alert('모집 취소에 성공했습니다.');
   } catch (e) {
     console.error('모임 취소 실패', e);
     alert('모임 취소에 실패했습니다.');
