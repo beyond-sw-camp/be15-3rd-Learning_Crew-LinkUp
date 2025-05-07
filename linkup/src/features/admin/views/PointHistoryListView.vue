@@ -19,12 +19,6 @@ const page = ref(1); // 페이지 상태 관리
 const rows = ref([]); // 데이터 저장
 const totalPages = ref(1); // 전체 페이지 수
 
-// 검색 버튼 클릭 시 호출되는 함수
-const search = async () => {
-  console.log('검색 버튼 클릭됨', filters.value); // 필터 값 확인 로그 추가
-  page.value = 1; // 페이지 리셋
-  await fetchList(); // 필터 값에 맞는 데이터 조회
-};
 
 // 포인트 내역 조회 함수
 // 포인트 내역 조회 함수
@@ -107,7 +101,7 @@ const columns = [
           class="select-box"
         >
           <option value="">전체</option>
-          <option value="MEMBER">회원</option>
+          <option value="USER">회원</option>
           <option value="OWNER">사업자</option>
         </select>
 

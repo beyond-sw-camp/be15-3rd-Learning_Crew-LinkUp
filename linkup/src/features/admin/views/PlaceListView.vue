@@ -7,7 +7,7 @@ import { fetchPlaceList } from '@/api/admin.js'  // 실제 API 연동
 const props = defineProps({ pageTitle: String })
 
 // 필터 초기값 설정
-const initFilters = {
+const filters = {
   sportId: '',
   ownerId: '',
   isActive: ''
@@ -15,10 +15,16 @@ const initFilters = {
 
 // 운동 종목 목록
 const sportTypes = ref([
-  { sportId: 'TENNIS', sportName: '테니스' },
-  { sportId: 'SOCCER', sportName: '축구' },
-  { sportId: 'BASKETBALL', sportName: '농구' }
+  { sportId: '1', sportName: '기타 운동' },
+  { sportId: '2', sportName: '축구' },
+  { sportId: '3', sportName: '테니스' },
+  { sportId: '4', sportName: '볼링' },
+  { sportId: '5', sportName: '탁구' },
+  { sportId: '6', sportName: '농구' },
+  { sportId: '7', sportName: '골프' },
+  { sportId: '8', sportName: '배드민턴' }
 ])
+
 
 // API 연동 함수 - 장소 목록 조회
 async function fetchPlaceListData({ page = 1, sportId = '', ownerId = '', isActive = '' }) {
@@ -68,14 +74,14 @@ const columns = [
   <AdminListTemplate
     :fetchFn="fetchPlaceListData"
     :columns="columns"
-    :initFilters="initFilters"
+    :initFilters="filters"
     :pageTitle="props.pageTitle"
   >
-  <template #filters>
+  <template #filters="{ filters }">
     <!-- 운동 종목 필터 -->
     <label class="filter-label">
       운동 종목:
-      <select v-model="initFilters.sportId" class="select-box">
+      <select v-model="filters.sportId" class="select-box">
         <option value="">전체</option>
         <option v-for="sport in sportTypes" :key="sport.sportId" :value="sport.sportId">
           {{ sport.sportName }}
@@ -88,7 +94,7 @@ const columns = [
       사업자 ID:
       <input
         type="text"
-        v-model="initFilters.ownerId"
+        v-model="filters.ownerId"
         class="select-box id-input"
         placeholder="ID"
       />
@@ -97,7 +103,7 @@ const columns = [
     <!-- 활성화 상태 필터 -->
     <label class="filter-label">
       활성화 상태:
-      <select v-model="initFilters.isActive" class="select-box">
+      <select v-model="filters.isActive" class="select-box">
         <option value="">전체</option>
         <option value="Y">활성화</option>
         <option value="N">비활성화</option>

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import { fetchSettlementList } from '@/api/admin.js'
+import { format } from 'date-fns';
 
 // 페이지 제목
 const props = defineProps({ pageTitle: String })
@@ -19,7 +20,7 @@ const columns = [
   { key: 'ownerId', label: '사업자 ID' },
   { key: 'ownerName', label: '사업자 이름' },
   { key: 'amount', label: '정산 금액', format: v => `${v.toLocaleString()}원` },
-  { key: 'settledAt', label: '정산 일시' }
+  { key: 'completedAt', label: '정산 일시', format: v => v ? format(new Date(v), 'yyyy-MM-dd HH:mm') : '-' }
 ]
 
 // API 호출 함수 (AdminListTemplate용 fetchFn 규격)

@@ -10,7 +10,7 @@ const props = defineProps({
 })
 
 // 필터 상태
-const initFilters = ref({
+const filters = ref({
   authority: '',
   status: '',
   userId: ''
@@ -46,10 +46,10 @@ const columns = [
   { key: 'userName', label: '이름' },
   { key: 'nickname', label: '닉네임', format: v => v || '-' },
   { key: 'email', label: '이메일' },
-  { key: 'authority', label: '권한' },
+  { key: 'roleName', label: '권한' },
   { key: 'pointBalance', label: '보유 포인트', format: v => `${v.toLocaleString()}P` },
   { key: 'contactNumber', label: '연락처' },
-  { key: 'status', label: '계정 상태', format: v => v === 'ACCEPTED' ? '활성화' : '비활성화' }
+  { key: 'status', label: '계정 상태', format: v => v === 'NULL' ? '비활성화' : '활성화' }
 ]
 </script>
 
@@ -57,13 +57,13 @@ const columns = [
   <AdminListTemplate
     :fetchFn="fetchUsers"
     :columns="columns"
-    :initFilters="initFilters"
+    :initFilters="filters"
     :pageTitle="props.pageTitle"
   >
-    <template #filters>
+    <template #filters="{ filters }">
       <label class="filter-label">
         권한:
-        <select v-model="initFilters.authority" class="select-box">
+        <select v-model="filters.authority" class="select-box">
           <option value="">전체</option>
           <option value="USER">회원</option>
           <option value="BUSINESS">사업자</option>
@@ -73,16 +73,16 @@ const columns = [
 
       <label class="filter-label">
         상태:
-        <select v-model="initFilters.status" class="select-box">
+        <select v-model="filters.status" class="select-box">
           <option value="">전체</option>
-          <option value="ACCEPTED">활성화</option>
+          <option value="NULL">활성화</option>
           <option value="DELETED">비활성화</option>
         </select>
       </label>
 
       <label class="filter-label">
         사용자 ID:
-        <input v-model="initFilters.userId" class="select-box id-input" placeholder="ID" />
+        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" />
       </label>
     </template>
   </AdminListTemplate>

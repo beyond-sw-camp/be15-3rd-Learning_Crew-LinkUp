@@ -172,15 +172,15 @@ export function fetchSettlementList({
  * @param {Object} params
  * @param {number} [params.page] - 페이지 번호 (기본값: 1)
  * @param {number} [params.size] - 페이지 크기 (기본값: 10)
- * @param {string} [params.roleName] - 권한 이름 (ex: USER, ADMIN, BUSINESS)
+ * @param {string} [params.XUserRole] - 권한 이름 (ex: USER, ADMIN, BUSINESS)
  * @param {string} [params.statusType] - 상태 타입 (ex: PENDING, ACCEPTED, DELETED, REJECTED)
  * @returns {Promise<Object>} 계좌 목록 및 페이징 정보
  */
 export function fetchAccount({
-                               page = 1, size = 10, roleName = null, statusType = null
+                               page = 1, size = 10, XUserRole = null, statusType = null
                              }) {
   const params = {
-    page, size, roleName, statusType
+    page, size, XUserRole, statusType
   };
 
   // null, undefined, 빈 문자열을 제외한 파라미터만 포함시키기

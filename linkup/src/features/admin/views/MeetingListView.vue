@@ -16,9 +16,14 @@ const filters = reactive({
 })
 
 const sportTypes = ref([
-  { id: 1, name: '테니스' },
-  { id: 2, name: '볼링' },
-  { id: 3, name: '축구' }
+  { id: '1', name: '기타 운동' },
+  { id: '2', name: '축구' },
+  { id: '3', name: '테니스' },
+  { id: '4', name: '볼링' },
+  { id: '5', name: '탁구' },
+  { id: '6', name: '농구' },
+  { id: '7', name: '골프' },
+  { id: '8', name: '배드민턴' }
 ])
 
 const statusOptions = ref([
@@ -105,7 +110,6 @@ const fetchAdminMeetingList = async ({ page }) => {
     :columns="columns"
     :initFilters="filters"
     :pageTitle="props.pageTitle"
-    :filters="filters"
   >
     <template #filters="{ filters }">
       <label class="filter-label">성별:

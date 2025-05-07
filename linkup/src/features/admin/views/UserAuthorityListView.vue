@@ -3,12 +3,13 @@ import { ref } from 'vue'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
 import AdminModal from '@/features/admin/components/AdminModal.vue'
-import { fetchAllOwners } from '@/api/admin.js'  // 실제 API 연결
+import { fetchAllOwners } from '@/api/admin.js'
+import { format } from 'date-fns';  // 실제 API 연결
 
 const props = defineProps({ pageTitle: String })
 
 // 필터 상태
-const initFilters = ref({
+const filters = ref({
   status: '',
   userId: ''
 })
@@ -47,9 +48,16 @@ const columns = [
   { key: 'ownerId', label: '사업자 ID' },
   { key: 'ownerName', label: '이름' },
   {
-    key: 'status',
+    key: 'statusType',
     label: '상태',
-    format: v => v === 'PENDING' ? '대기' : v === 'ACCEPTED' ? '거절' : '승인'
+    format: v => {
+      switch (v) {
+        case 'PENDING': return '대기'
+        case 'ACCEPTED': return '승인'
+        case 'REJECTED': return '거절'
+        default: return v
+      }
+    }
   },
   {
     key: '등록증',
@@ -60,7 +68,7 @@ const columns = [
       onClick: () => openModal(row)
     })
   },
-  { key: 'authorizedAt', label: '처리일자', format: v => v || '-' },
+  { key: 'authorizedAt', label: '처리일자',    format: v => v ? format(new Date(v), 'yyyy-MM-dd HH:mm') : '-' },
   { key: 'rejectionReason', label: '거절 사유', format: v => v || '-' }
 ]
 
@@ -97,10 +105,10 @@ function handleDecision() {
     :enableModal="false"
   >
     <!-- 필터 영역 -->
-    <template #filters>
+    <template #filters="{ filters }">
       <label class="filter-label">
         상태:
-        <select v-model="initFilters.status" class="select-box">
+        <select v-model="filters.status" class="select-box">
           <option value="">전체</option>
           <option value="PENDING">대기</option>
           <option value="ACCEPTED">승인</option>
@@ -109,7 +117,7 @@ function handleDecision() {
       </label>
       <label class="filter-label">
         사업자 ID:
-        <input v-model="initFilters.userId" class="select-box id-input" placeholder="ID" />
+        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" />
       </label>
     </template>
 

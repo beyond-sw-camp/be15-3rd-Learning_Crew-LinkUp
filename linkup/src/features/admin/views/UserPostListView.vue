@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
-import { fetchAllPosts } from '@/api/admin.js'  // 실제 API 연동
+import { fetchAllPosts } from '@/api/admin.js'
+import { format } from 'date-fns';  // 실제 API 연동
 
 const props = defineProps({ pageTitle: String })
 
 // 필터 초기값
-const initFilters = ref({
+const filters = ref({
   writerId: '',
   isDeleted: ''
 })
@@ -37,8 +38,8 @@ const columns = [
   { key: 'userId', label: '작성자 ID' },
   { key: 'nickname', label: '작성자 닉네임' },
   { key: 'title', label: '제목' },
-  { key: 'createdAt', label: '생성일' },
-  { key: 'deletedAt', label: '삭제일', format: v => v || '-' },
+  { key: 'createdAt', label: '생성일', format: v => v ? format(new Date(v), 'yyyy-MM-dd HH:mm') : '-' },
+  { key: 'deletedAt', label: '삭제일', format: v => v ? format(new Date(v), 'yyyy-MM-dd HH:mm') : '-' },
   { key: 'isDeleted', label: '공개 여부', format: v => (v === 'Y' ? '비공개' : '공개') },
   {
     key: 'detail',
@@ -56,18 +57,18 @@ const columns = [
   <AdminListTemplate
     :fetchFn="fetchPostListData"
     :columns="columns"
-    :initFilters="initFilters"
+    :initFilters="filters"
     :pageTitle="props.pageTitle"
     :enableModal="false"
   >
     <template #filters="{ filters }">
       <label class="filter-label">
         작성자 ID:
-        <input v-model="initFilters.writerId" class="select-box id-input" placeholder="ID" />
+        <input v-model="filters.writerId" class="select-box id-input" placeholder="ID" />
       </label>
       <label class="filter-label">
         공개 여부:
-        <select v-model="initFilters.isDeleted" class="select-box">
+        <select v-model="filters.isDeleted" class="select-box">
           <option value="">전체</option>
           <option value="N">공개</option>
           <option value="Y">비공개</option>
