@@ -60,7 +60,7 @@ const columns = [
     :pageTitle="props.pageTitle"
     :enableModal="false"
   >
-    <template #filters>
+    <template #filters="{ filters }">
       <label class="filter-label">
         작성자 ID:
         <input v-model="initFilters.writerId" class="select-box id-input" placeholder="ID" />
