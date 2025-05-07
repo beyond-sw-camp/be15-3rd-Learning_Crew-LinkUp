@@ -138,12 +138,49 @@ export function fetchParticipantReviews({
 
 
 /* ------------------------------------ 장소 관리 ------------------------------------ */
-export const fetchPlaceList = (params) => {
-    return api.get('/admin/places', { params })
+/**
+ * 관리자가 서비스에 등록된 장소 목록을 조회합니다.
+ * @param {Object} params
+ * @param {number} [params.page=1] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size=10] - 페이지 크기 (기본값: 10)
+ * @param {number} [params.sportId] - 운동 종목 ID (선택사항)
+ * @param {string} [params.address] - 장소 주소 (선택사항)
+ * @param {number} [params.ownerId] - 장소 소유자 ID (선택사항)
+ * @param {boolean} [params.isActive] - 활성/비활성 필터 (선택사항)
+ * @returns {Promise<Object>} 장소 목록 및 페이징 정보
+ */
+export function fetchPlaceList({
+                                   page = 1, size = 10,
+                                   sportId = null,
+                                   address = null,
+                                   ownerId = null,
+                                   isActive = null
+                               }) {
+    return api.get('/common-service/admin/places', {
+        params: {
+            page, size, sportId, address, ownerId, isActive
+        }
+    })
 }
 
-export function fetchPlaceReviewList(params) {
-    return api.get('/admin/place-reviews', { params })
+/**
+ * 관리자가 등록된 장소에 대한 후기 내역을 조회합니다.
+ * @param {Object} params
+ * @param {number} [params.page=1] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size=10] - 페이지 크기 (기본값: 10)
+ * @param {number} [params.memberId] - 회원 ID (선택사항)
+ * @param {boolean} [params.isActive] - 활성/비활성 필터 (선택사항)
+ * @returns {Promise<Object>} 장소 후기 목록 및 페이징 정보
+ */
+export function fetchPlaceReviewList({
+                                         page = 1, size = 10,
+                                         memberId = null, isActive = null
+                                     }) {
+    return api.get('/common-service/admin/place-reviews', {
+        params: {
+            page, size, memberId, isActive
+        }
+    })
 }
 
 /* ----------------------------- 신고 관련 API ----------------------------- */
