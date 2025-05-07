@@ -13,6 +13,7 @@ const emit = defineEmits(['select']);
 const mapContainer = ref(null);
 let map = null;
 let overlays = [];
+let userMarker = null; // 클릭으로 표시할 사용자 위치 마커
 
 onMounted(() => {
   const script = document.createElement('script');
@@ -24,8 +25,8 @@ onMounted(() => {
     kakao.maps.load(() => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
+          const lat = parseFloat(position.coords.latitude.toFixed(10));
+          const lng = parseFloat(position.coords.longitude.toFixed(10));
           const userLocation = new kakao.maps.LatLng(lat, lng);
 
           map = new kakao.maps.Map(mapContainer.value, {
@@ -33,13 +34,14 @@ onMounted(() => {
             level: 4,
           });
 
-          new kakao.maps.Marker({
+          userMarker = new kakao.maps.Marker({
             map: map,
             position: userLocation,
           });
 
           drawOverlays();
           kakao.maps.event.addListener(map, 'zoom_changed', adjustOverlayScale);
+          kakao.maps.event.addListener(map, 'click', onMapClick);
         },
         (error) => {
           console.error('[MAP] 위치 정보를 가져올 수 없습니다.', error);
@@ -52,6 +54,7 @@ onMounted(() => {
 
           drawOverlays();
           kakao.maps.event.addListener(map, 'zoom_changed', adjustOverlayScale);
+          kakao.maps.event.addListener(map, 'click', onMapClick);
         },
         {
           enableHighAccuracy: true,
@@ -62,6 +65,23 @@ onMounted(() => {
     });
   };
 });
+
+function onMapClick(mouseEvent) {
+  const latlng = mouseEvent.latLng;
+  map.setCenter(latlng);
+
+  if (userMarker) {
+    userMarker.setMap(null);
+  }
+
+  userMarker = new kakao.maps.Marker({
+    map: map,
+    position: latlng,
+  });
+
+  console.log('[MAP] 사용자가 선택한 위치:', latlng.getLat(), latlng.getLng());
+  // emit('select', { lat: latlng.getLat(), lng: latlng.getLng() }); // 부모에게 전달하고 싶을 경우 사용
+}
 
 watch(() => props.places, drawOverlays, { deep: true });
 

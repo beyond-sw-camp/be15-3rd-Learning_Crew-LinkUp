@@ -19,8 +19,19 @@
           >
             <div class="day-label">{{ day.label }}</div>
             <div class="time-selects">
-              <input type="time" v-model="day.start" /> ~
-              <input type="time" v-model="day.end" />
+              <select v-model="day.start">
+                <option value="">-- 시작시간 --</option>
+                <option v-for="time in timeOptions" :key="time" :value="time">
+                  {{ time }}
+                </option>
+              </select>
+              ~
+              <select v-model="day.end">
+                <option value="">-- 종료시간 --</option>
+                <option v-for="time in timeOptions" :key="time" :value="time">
+                  {{ time }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
@@ -42,6 +53,12 @@ import {
 } from '@/api/place';
 
 const router = useRouter();
+
+const timeOptions = [];
+for (let h = 0; h < 24; h++) {
+  const hour = h.toString().padStart(2, '0');
+  timeOptions.push(`${hour}:00`, `${hour}:30`);
+}
 
 const days = ref([
   { label: '월요일', value: 'MONDAY', start: '', end: '' },
@@ -146,7 +163,7 @@ label {
   margin-bottom: 8px;
   align-items: center;
 }
-input[type='time'] {
+select {
   padding: 10px;
   border: 1px solid #e6e6e6;
   border-radius: 8px;
