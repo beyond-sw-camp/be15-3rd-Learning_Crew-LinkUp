@@ -1,25 +1,29 @@
 <template>
-  <div class="place-list">
+  <div class="flex flex-col gap-4 w-full">
     <PlaceCard
-      v-for="(place, index) in places"
-      :key="index"
+      v-for="place in places"
+      :key="place.placeId"
       :image="place.image"
       :title="place.name"
       :address="place.address"
       :price="place.price"
-      @click="$emit('select', place)"
+      :rating="place.reviewRating"
+      :isFavorite="place.isFavorite"
+      :showFavorite="showFavorite"
+      @select="$emit('select', place)"
+      @toggle-favorite="$emit('toggle-favorite', place)"
     />
   </div>
 </template>
 
 <script setup>
-import PlaceCard from './PlaceCard.vue';
-defineProps({ places: Array });
-defineEmits(['select']);
-</script>
+import PlaceCard from './PlaceCard.vue'
 
-<style scoped>
-.place-list {
-  @apply flex flex-col gap-4 p-4 bg-white rounded-md shadow-sm h-full overflow-y-auto;
-}
-</style>
+defineProps({
+  places: Array,
+  showFavorite: {
+    type: Boolean,
+    default: true
+  }
+});
+</script>

@@ -33,7 +33,7 @@ const props = defineProps({
 
 <style scoped>
 .search-bar-wrapper {
-  @apply absolute top-0 left-0 w-full z-20 bg-background-surface shadow-md px-6 py-2;
+  @apply absolute top-0 left-0 w-full z-50 bg-background-surface shadow-md px-6 py-2;
 }
 
 .search-bar-content {

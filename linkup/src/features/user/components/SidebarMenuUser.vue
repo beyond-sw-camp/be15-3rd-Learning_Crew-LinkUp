@@ -25,6 +25,7 @@ onMounted(async () => {
     isError.value = false;
     const { data } = await getUserMypage();
     userInfo.value = data.data;
+    authStore.setPointBalance(data.data.point);
   } catch (e) {
     console.error('회원 마이페이지 조회 실패', e);
     isError.value = true;
@@ -111,6 +112,8 @@ const handlePaymentComplete = async ({ amount, orderId, paymentKey }) => {
             <button type="button" class="charge-btn" @click="showPaymentModal = true">
               충전하기
             </button>
+            <div class="value">{{ userInfo.point.toLocaleString() }}P</div>
+            <button type="button" class="charge-btn">충전하기</button>
           </div>
         </div>
       </section>

@@ -1,9 +1,7 @@
 <script setup>
 import SidebarMainLayout from '@/components/layout/SidebarMainLayout.vue';
 import SidebarMenuBusiness from '@/features/user/components/SidebarMenuBusiness.vue';
-import SidebarMenuUser from '@/features/user/components/SidebarMenuUser.vue';
 import { useAuthStore } from '@/stores/auth.js';
-const { userRole } = useAuthStore();
 </script>
 
 <template>

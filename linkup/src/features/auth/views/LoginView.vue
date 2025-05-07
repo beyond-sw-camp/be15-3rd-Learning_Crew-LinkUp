@@ -1,7 +1,6 @@
 <script setup>
 import FullVertialCenterLayout from '@/components/layout/FullVertialCenterLayout.vue';
 import LoginForm from '@/features/auth/components/LoginForm.vue';
-import { loginUser } from '@/api/user.js';
 import { useAuthStore } from '@/stores/auth.js';
 import { useRouter } from 'vue-router';
 
