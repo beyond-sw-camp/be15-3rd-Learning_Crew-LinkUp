@@ -1,5 +1,4 @@
 import api from './axios.js'
-import qs from 'qs'
 
 /* ------------------------------------ 회원 관리 ------------------------------------ */
 /**
@@ -12,9 +11,15 @@ import qs from 'qs'
  * @returns {Promise<Object>} - 전체 회원 목록 및 페이징 정보
  */
 export function fetchUserList({ roleName = '', statusName = '', page = 1, size = 10 }) {
-  return api.get('/users', {
-    params: { roleName, statusName, page, size }
-  });
+  // 필터링된 파라미터만 전달
+  const params = {
+    ...(roleName && { roleName }),   // roleName이 있을 경우에만 포함
+    ...(statusName && { statusName }), // statusName이 있을 경우에만 포함
+    page,
+    size
+  };
+
+  return api.get('/user-service/admin/users', { params });
 }
 
 /**
@@ -26,9 +31,28 @@ export function fetchUserList({ roleName = '', statusName = '', page = 1, size =
  * @returns {Promise<Object>} - 모든 사업자 목록 및 페이징 정보
  */
 export function fetchAllOwners({ statusName = '', page = 1, size = 10 }) {
-  return api.get('/businesses', {
-    params: { statusName, page, size }
-  });
+  // 필터링된 파라미터만 전달
+  const params = {
+    ...(statusName && { statusName }),  // statusName이 있을 경우에만 포함
+    page,
+    size
+  };
+
+  return api.get('/common-service/admin/businesses', { params });
+}
+
+/**
+ * 사업자 상세 정보 조회 API
+ * @param {number} targetId - 사업자 ID
+ * @returns {Promise<Object>} - 사업자 상세 정보
+ */
+export function fetchOwnerDetails(targetId) {
+  return api.get(`/businesses/${targetId}`)
+    .then(response => response.data)
+    .catch(error => {
+      console.error('사업자 상세 조회 실패:', error);
+      throw error; // Propagate error for further handling
+    });
 }
 
 
@@ -124,10 +148,13 @@ export function fetchSettlementList({
                                       page = 1, size = 10, userId = null, startDate = null, endDate = null
                                     }) {
   const params = {
-    page, size, userId, startDate, endDate
+    page,
+    size,
+    userId: userId ? Number(userId) : null,
+    startDate: /^\d{4}-\d{2}-\d{2}$/.test(startDate) ? startDate : null,
+    endDate: /^\d{4}-\d{2}-\d{2}$/.test(endDate) ? endDate : null
   };
 
-  // null, undefined, 빈 문자열을 제외한 파라미터만 포함시키기
   Object.keys(params).forEach(key => {
     if (params[key] === null || params[key] === undefined || params[key] === '') {
       delete params[key];
@@ -138,6 +165,7 @@ export function fetchSettlementList({
     params
   });
 }
+
 
 /**
  * 계좌 목록 조회

@@ -27,42 +27,36 @@ const search = async () => {
 };
 
 // 포인트 내역 조회 함수
-const fetchList = async () => {
+// 포인트 내역 조회 함수
+const fetchList = async ({ page = 1 }) => {
   try {
     const params = {
-      // 필터 값이 있을 경우 그대로 전달하고, 없으면 빈 문자열을 전달
       userId: filters.value.userId || '',
       roleName: filters.value.authority || '',
       transactionType: filters.value.transactionType || '',
       startDate: filters.value.startDate || '',
       endDate: filters.value.endDate || '',
-      page: page.value || 1,
+      page
     };
 
-    console.log('필터링된 파라미터:', params); // 필터링된 파라미터 확인
+    // 빈 값 제거
+    Object.keys(params).forEach(key => {
+      if (!params[key]) delete params[key]
+    });
 
-    // API 호출
     const res = await fetchPointTransactionList(params);
+    console.log('응답 데이터:', res);
 
-    // 응답 데이터 구조 점검
-    console.log('응답 데이터:', res); // 응답 데이터 확인
-
-    // 응답 데이터 처리
-    if (res.data && res.data.data && res.data.data.content) {
-      rows.value = res.data.data.content; // 데이터 저장
-      totalPages.value = res.data.data.totalPages || 1; // 전체 페이지 수 저장
-      console.log('데이터 할당:', rows.value);  // rows 값 출력
-    } else {
-      console.error('잘못된 응답:', res);
-      rows.value = [];
-      totalPages.value = 1;
-    }
+    return {
+      data: res.data?.data?.content || [],
+      totalPages: res.data?.data?.totalPages || 1
+    };
   } catch (e) {
     console.error('API 요청 실패:', e);
-    rows.value = [];
-    totalPages.value = 1;
+    return { data: [], totalPages: 1 };
   }
 };
+
 
 // 테이블 컬럼 설정
 const columns = [
@@ -92,9 +86,9 @@ const columns = [
       :initFilters="filters"
       :pageTitle="pageTitle"
       :enableModal="false"
-      :currentPage="page"
     >
-      <!-- 필터 영역 -->
+
+    <!-- 필터 영역 -->
       <template #filters="{ filters }">
         <!-- 사용자 ID 필터 -->
         <label class="filter-label" for="user-id-input">사용자 ID:</label>
