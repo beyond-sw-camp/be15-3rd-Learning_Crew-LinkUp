@@ -51,7 +51,7 @@ const columns = [
   {
     key: 'action',
     label: '신고 내역',
-    format: (_, row) => ({
+    format: (_, __, row) => ({
       type: 'button',
       label: '보기',
       onClick: () => openModal(row)
@@ -59,10 +59,13 @@ const columns = [
   }
 ]
 
+
 async function openModal(row) {
   try {
     const res = await fetchTargetDetailById(row.targetType, row.targetId)
     const reports = res.data.reportList || []
+    console.log('reports : ', res)
+    console.log('🔍 fetch 결과 rows:', res.data.targetList)
 
     selectedRow.value = row
     summaryInfo.value = [

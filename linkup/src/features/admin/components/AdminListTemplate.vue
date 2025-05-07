@@ -76,7 +76,8 @@ const closeModal = () => {
 }
 
 const format = (value, formatter, row) =>
-  typeof formatter === 'function' ? formatter(value, row) : value
+  typeof formatter === 'function' ? formatter(value, null, row) : value
+
 
 //초기 로드
 onMounted(() => fetchList({ ...filters.value, page: 1 }))
