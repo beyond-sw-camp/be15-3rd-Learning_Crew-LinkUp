@@ -1,9 +1,12 @@
 <script setup>
 import { ref } from 'vue'
+import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import ReportDetailModal from '@/features/admin/components/ReportDetailModal.vue'
-import { format } from 'date-fns'
-import { fetchReporterUserList, fetchReporterUserDetail } from '@/api/admin.js'
+import {
+  fetchReporterUserList,
+  fetchReporterUserDetail
+} from '@/api/admin.js'
 
 const pageTitle = '신고자 목록 조회'
 const filters = ref({ reporterId: '' })
@@ -11,7 +14,6 @@ const selectedReporter = ref(null)
 const summaryInfo = ref([])
 const reportRows = ref([])
 
-// 컬럼 정의
 const columns = [
   { key: 'memberId', label: '신고자 ID' },
   { key: 'memberName', label: '신고자 이름' },
@@ -32,7 +34,7 @@ const columns = [
   }
 ]
 
-// 목록 API 호출
+// 목록 조회 API
 async function fetchReporterList({ page, reporterId }) {
   try {
     const res = await fetchReporterUserList({ reporterId, page })
@@ -46,7 +48,7 @@ async function fetchReporterList({ page, reporterId }) {
   }
 }
 
-// 상세 API 호출
+// 상세 조회
 async function openModal(row) {
   try {
     const res = await fetchReporterUserDetail(row.memberId)
@@ -67,12 +69,12 @@ async function openModal(row) {
     }
 
     reportRows.value = reports.map(r => ({
-      reportId: r.reportId,
-      targetId: r.targetMemberId,
-      targetName: r.targetName,
-      reportType: r.reportType,
-      createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      status: statusMap[r.statusId] || '-'
+      신고ID: r.reportId,
+      피신고자ID: r.targetMemberId,
+      피신고자이름: r.targetName,
+      신고유형: r.reportType,
+      신고일시: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
+      상태: statusMap[r.statusId] || '-'
     }))
   } catch (e) {
     console.error('🚨 신고자 상세 조회 실패:', e)
@@ -88,20 +90,27 @@ async function openModal(row) {
     :pageTitle="pageTitle"
     :enableModal="true"
   >
+    <!-- 필터 영역 -->
     <template #filters>
-      <label class="filter-label">
-        신고자 ID:
-        <input v-model="filters.reporterId" class="select-box id-input" placeholder="ID" />
-      </label>
+      <label class="filter-label" for="reporterId">신고자 ID:</label>
+      <input
+        id="reporterId"
+        v-model="filters.reporterId"
+        class="select-box id-input"
+        placeholder="ID"
+        type="text"
+        inputmode="numeric"
+      />
     </template>
 
+    <!-- 상세 모달 -->
     <template #modal>
       <ReportDetailModal
         v-if="selectedReporter"
         :model-value="true"
         @update:modelValue="selectedReporter = null"
-        :title="'신고자 신고 내역'"
-        :description="'신고자의 상세 신고 기록을 확인할 수 있습니다.'"
+        title="신고자 신고 내역"
+        description="신고자의 상세 신고 기록을 확인할 수 있습니다."
         :summary="summaryInfo"
         :headers="['신고 ID', '피신고자 ID', '피신고자 이름', '신고 유형', '신고 일시', '상태']"
         :rows="reportRows"

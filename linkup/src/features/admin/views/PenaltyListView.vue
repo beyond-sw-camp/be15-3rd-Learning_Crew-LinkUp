@@ -114,19 +114,22 @@ const columns = [
     :enableModal="true"
   >
     <template #filters>
-      <label class="filter-label">사용자 ID:
-        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" />
+      <label class="filter-label">
+        사용자 ID:
+        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" aria-label="사용자 ID 입력" />
       </label>
-      <label class="filter-label">제재 유형:
-        <select v-model="filters.penaltyType" class="select-box">
+      <label class="filter-label">
+        제재 유형:
+        <select v-model="filters.penaltyType" class="select-box" aria-label="제재 유형 선택">
           <option value="">전체</option>
           <option value="POST">POST</option>
           <option value="COMMENT">COMMENT</option>
           <option value="REVIEW">REVIEW</option>
         </select>
       </label>
-      <label class="filter-label">상태:
-        <select v-model="filters.statusId" class="select-box">
+      <label class="filter-label">
+        상태:
+        <select v-model="filters.statusId" class="select-box" aria-label="제재 상태 선택">
           <option value="">전체</option>
           <option value="1">대기</option>
           <option value="2">승인</option>
@@ -144,16 +147,16 @@ const columns = [
         description="해당 사용자에 대한 제재 이력을 확인할 수 있습니다."
       >
         <template #default>
-          <section class="modal-section">
-            <h3 class="section-title">사용자 정보</h3>
+          <section class="modal-section" aria-labelledby="penalty-user-info">
+            <h3 class="section-title" id="penalty-user-info">사용자 정보</h3>
             <div class="info-grid">
               <div class="info-item"><span class="label">사용자 ID</span><span class="value">{{ selected.userId }}</span></div>
               <div class="info-item"><span class="label">이름</span><span class="value">{{ selected.userName }}</span></div>
             </div>
           </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">제재 정보</h3>
+          <section class="modal-section" aria-labelledby="penalty-info">
+            <h3 class="section-title" id="penalty-info">제재 정보</h3>
             <div class="info-grid">
               <div class="info-item"><span class="label">패널티 ID</span><span class="value">{{ selected.penaltyId }}</span></div>
               <div class="info-item"><span class="label">유형</span><span class="value">{{ selected.penaltyType }}</span></div>
@@ -162,8 +165,8 @@ const columns = [
             </div>
           </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">관련 콘텐츠</h3>
+          <section class="modal-section" aria-labelledby="penalty-content-info">
+            <h3 class="section-title" id="penalty-content-info">관련 콘텐츠</h3>
             <div class="info-grid">
               <div v-if="selected.postId" class="info-item"><span class="label">게시글 ID</span><span class="value">{{ selected.postId }}</span></div>
               <div v-if="selected.commentId" class="info-item"><span class="label">댓글 ID</span><span class="value">{{ selected.commentId }}</span></div>
@@ -172,8 +175,8 @@ const columns = [
             </div>
           </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">사유</h3>
+          <section class="modal-section" aria-labelledby="penalty-reason">
+            <h3 class="section-title" id="penalty-reason">사유</h3>
             <div class="reason-box">{{ selected.reason }}</div>
           </section>
         </template>
