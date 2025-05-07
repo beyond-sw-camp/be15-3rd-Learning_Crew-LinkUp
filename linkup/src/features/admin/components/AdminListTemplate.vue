@@ -21,14 +21,15 @@ const page = ref(1)
 const totalPages = ref(1)
 const selected = ref(null)
 
-const fetchList = async (newPage = 1) => {
-  page.value = newPage
+const fetchList = async (params = {}) => {
+  page.value = params.page || 1
   try {
-    const res = await props.fetchFn({ ...filters.value, page: newPage })
+    const res = await props.fetchFn(params)
     rows.value = res.data || res.list || []
     totalPages.value = res.totalPages || 1
-    emit('update:page', newPage)
-  } catch {
+    emit('update:page', page.value)
+  } catch (e) {
+    console.error('🔴 fetchList error:', e)
     rows.value = []
     totalPages.value = 1
   }
@@ -45,7 +46,8 @@ const closeModal = () => {
 const format = (value, formatter, row) =>
   typeof formatter === 'function' ? formatter(value, row) : value
 
-onMounted(() => fetchList(1))
+//초기 로드
+onMounted(() => fetchList({ ...filters.value, page: 1 }))
 </script>
 
 <template>
@@ -57,15 +59,16 @@ onMounted(() => fetchList(1))
       <AdminFilter
         v-if="showFilter"
         :filters="filters"
-        @search="fetchList(1)"
+        @update:filters="v => (filters.value = v)"
+        @search="() => fetchList({ ...filters.value, page: 1 })"
       >
-        <template #filters="{ filters }">
-          <slot name="filters" :filters="filters" />
-        </template>
+      <template #filters="{ filters }">
+        <slot name="filters" :filters="filters" />
+      </template>
       </AdminFilter>
     </section>
 
-    <!-- 테이블 영역 -->
+    <!-- 테이블 -->
     <section aria-label="데이터 테이블">
       <AdminTable @row-click="handleRowClick">
         <template #thead>
@@ -106,7 +109,7 @@ onMounted(() => fetchList(1))
       <Pagination
         :current-page="page"
         :total-pages="totalPages"
-        @update:page="fetchList"
+        @update:page="newPage => fetchList({ ...filters.value, page: newPage })"
       />
     </nav>
 

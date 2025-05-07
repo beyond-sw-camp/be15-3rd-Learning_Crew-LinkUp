@@ -1,36 +1,61 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
 
+// Props
 const props = defineProps({
   title: String,
-  filters: Object //  명시적으로 filters 받아오기
+  filters: Object
 })
 
-const emit = defineEmits(['search'])
+const emit = defineEmits(['search', 'update:filters'])
 
+// 제목 여부 확인
 const hasTitle = computed(() => props.title?.trim())
-const triggerSearch = () => emit('search')
+
+//    로컬 복사본 생성 (props.filters는 반응형 아님)
+const localFilters = ref({ ...props.filters })
+
+//    localFilters 변경 시 부모로 emit
+watch(localFilters, (newVal) => {
+  emit('update:filters', newVal)
+}, { deep: true })
+
+// 검색 버튼 클릭 시 emit
+const triggerSearch = () => {
+  console.log('[AdminFilter] 검색 버튼 눌림') // 디버깅용
+  emit('search')
+}
 </script>
 
 <template>
   <section class="filter-wrapper" role="search" aria-labelledby="filter-title">
-    <!-- 제목이 있을 경우만 렌더링 -->
+    <!-- 제목 -->
     <h1 v-if="hasTitle" id="filter-title" class="page-title">
       {{ props.title }}
     </h1>
 
+    <!-- 필터 form -->
     <form class="filter-box" @submit.prevent="triggerSearch">
       <fieldset class="filter-fields">
         <legend class="sr-only">필터 조건 입력 영역</legend>
-        <!-- scoped slot으로 filters 명시적 전달 -->
-        <slot name="filters" :filters="filters" />
+
+        <!-- scoped slot: 로컬 filters 전달 -->
+        <slot name="filters" :filters="localFilters" />
       </fieldset>
-      <AdminButton type="primary" aria-label="검색 버튼">검색</AdminButton>
+
+      <!-- 검색 버튼 -->
+      <AdminButton
+        type="primary"
+        aria-label="검 버튼"
+        native-type="submit"
+      >
+        검색
+      </AdminButton>
     </form>
   </section>
 </template>
 
 <style scoped>
-/* 스타일은 admin-styles.css에서 일괄 관리되므로 생략 가능 */
+/* 외부 admin-styles.css 사용 */
 </style>

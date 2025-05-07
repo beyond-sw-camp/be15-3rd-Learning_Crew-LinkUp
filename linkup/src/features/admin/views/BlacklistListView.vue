@@ -1,13 +1,13 @@
 <script setup>
-import { ref, defineAsyncComponent } from 'vue'
+import { ref, computed, defineAsyncComponent } from 'vue'
 import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
-import AdminButton from '@/features/admin/components/AdminButton.vue'
 import {
   fetchBlacklist,
   fetchBlacklistDetail,
   unblockBlacklist
 } from '@/api/admin.js'
+import AdminButton from '@/features/admin/components/AdminButton.vue';
 
 // DetailViewer lazy import
 const DetailViewer = defineAsyncComponent(() =>
@@ -15,12 +15,19 @@ const DetailViewer = defineAsyncComponent(() =>
 )
 
 const pageTitle = '블랙리스트 조회'
+
+// 필터 상태 (v-model 바인딩 대상)
+const filters = ref({ userId: '' })
+
+// 상세 정보
 const selected = ref(null)
 
-// 외부에서 props로 전달될 filters 초기값 (AdminListTemplate로 전달됨)
-const initFilters = { userId: '' }
+// 날짜 포맷
+const createdAtFormatted = computed(() =>
+  selected.value?.createdAt ? format(new Date(selected.value.createdAt), 'yyyy-MM-dd HH:mm') : ''
+)
 
-// 목록 조회 API
+// 목록 API
 const fetchList = async ({ page, userId }) => {
   try {
     const res = await fetchBlacklist({ memberId: userId, page })
@@ -33,32 +40,30 @@ const fetchList = async ({ page, userId }) => {
   }
 }
 
-// 상세 모달 열기
+// 상세 조회
 const openModal = async (row) => {
   try {
     const res = await fetchBlacklistDetail(row.memberId)
     selected.value = res.data
   } catch {
-    // 오류 무시
+    selected.value = null
   }
 }
 
-// 해제 처리
+// 해제
 const handleUnblock = async () => {
-  if (!selected.value) return
   try {
     await unblockBlacklist(selected.value.memberId)
     selected.value = null
-  } catch {
-    // 오류 무시
-  }
+  } catch {}
 }
 
+// 모달 닫기
 const closeModal = () => {
   selected.value = null
 }
 
-// 테이블 컬럼 정의
+// 테이블 컬럼
 const columns = [
   { key: 'memberId', label: '사용자 ID' },
   { key: 'userName', label: '사용자 이름' },
@@ -84,11 +89,10 @@ const columns = [
   <AdminListTemplate
     :fetchFn="fetchList"
     :columns="columns"
-    :initFilters="initFilters"
+    :initFilters="filters"
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <!-- ✅ 필터 영역: filters를 scoped slot으로 명시적으로 전달받음 -->
     <template #filters="{ filters }">
       <label class="filter-label">
         사용자 ID:
@@ -100,7 +104,6 @@ const columns = [
       </label>
     </template>
 
-    <!-- 모달 영역 -->
     <template #modal>
       <DetailViewer
         v-if="selected"
@@ -122,23 +125,21 @@ const columns = [
                 <span class="value">{{ selected.userName }}</span>
               </div>
             </div>
-          </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">블랙리스트 정보</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="label">등록 일시</span>
-                <span class="value">
-                  {{ format(new Date(selected.createdAt), 'yyyy-MM-dd HH:mm') }}
-                </span>
+            <section class="modal-section">
+              <h3 class="section-title">블랙리스트 정보</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">등록 일시</span>
+                  <span class="value">{{ createdAtFormatted }}</span>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <section class="modal-section">
-            <h3 class="section-title">사유</h3>
-            <div class="reason-box">{{ selected.reason }}</div>
+            <section class="modal-section">
+              <h3 class="section-title">사유</h3>
+              <div class="reason-box">{{ selected.reason }}</div>
+            </section>
           </section>
         </template>
 

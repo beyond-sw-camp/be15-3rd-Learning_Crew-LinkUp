@@ -166,21 +166,19 @@ export function acceptReport(reportId, message = '신고가 처리되고 제재�
 /**
  * 신고 대상별 목록 조회
  * @param {Object} params
- * @param {string} [params.isActive] - 'Y' | 'N'
- * @param {string} [params.searchType] - 'targetId'만 지원
- * @param {string} [params.searchKeyword]
+ * @param {string} params.targetType - 필수 (null 가능)
+ * @param {string|number|null} [params.targetId] - optional
+ * @param {string|null} [params.isActive] - Y | N | null
  * @param {number} [params.page]
- * @returns {Promise<Object>} 대상 리스트 + pagination
  */
-export function fetchReportedTargetList({ page = 1, isActive = '', searchType = '', searchKeyword = '' }) {
-    const params = {
-        targetType: 'ALL',
-        page
-    }
-    if (isActive) params.isActive = isActive
-    if (searchType === 'targetId' && searchKeyword) params.targetId = searchKeyword
-
-    return api.get('/common-service/report/target', { params })
+export function fetchReportedTargetList({ targetType = null, targetId = null, isActive = null,
+                                            page = 1
+                                        }) {
+    return api.get('/common-service/report/target', {
+        params: {
+            targetType, targetId, isActive, page
+        }
+    })
 }
 
 /**
