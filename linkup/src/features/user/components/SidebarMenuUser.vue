@@ -17,6 +17,7 @@ onMounted(async () => {
     isError.value = false;
     const { data } = await getUserMypage();
     userInfo.value = data.data;
+    authStore.setPointBalance(data.data.point);
   } catch (e) {
     console.error('회원 마이페이지 조회 실패', e);
     isError.value = true;
@@ -69,7 +70,7 @@ const navigationItems = computed(() => [
           </div>
           <div class="status-card point">
             <div class="label">나의 포인트</div>
-            <div class="value">{{ userInfo.point }}P</div>
+            <div class="value">{{ userInfo.point.toLocaleString() }}P</div>
             <button type="button" class="charge-btn">충전하기</button>
           </div>
         </div>
