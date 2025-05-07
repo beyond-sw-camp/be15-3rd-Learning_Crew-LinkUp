@@ -1,4 +1,5 @@
 import api from './axios.js'
+import qs from 'qs'
 
 /* ------------------------------------ 회원 관리 ------------------------------------ */
 export function fetchUserList(params) {
@@ -32,9 +33,38 @@ export function fetchCommentList(params) {
 }
 
 /* ------------------------------------ 포인트 관리 ------------------------------------ */
-export function fetchPointHistoryList(params) {
-    return api.get('/api/v1/common-service/points', { params })
+
+/**
+ * 포인트 거래 내역 조회
+ * @param {Object} params - 요청에 사용될 파라미터
+ * @param {string} [params.startDate] - 시작 날짜 (yyyy-MM-dd 형식), 필수 아님
+ * @param {string} [params.endDate] - 종료 날짜 (yyyy-MM-dd 형식), 필수 아님
+ * @param {string} [params.roleName] - 사용자 역할 (예: USER, BUSINESS), 필수 아님
+ * @param {string} [params.transactionType] - 거래 유형 (예: PAYMENT, CHARGE), 필수 아님
+ * @param {number} [params.userId] - 사용자 ID, 필수 아님
+ * @param {number} [params.page=1] - 페이지 번호, 기본값은 1
+ * @returns {Promise<Object>} - 포인트 거래 내역과 페이징 정보를 포함하는 응답 객체
+ */
+export function fetchPointTransactionHistory({
+                                                 startDate, endDate, roleName, transactionType, userId, page = 1
+                                             }) {
+    // 필수 파라미터에 null, undefined 또는 빈 값이 있을 경우 제외
+    const params = {
+        ...(startDate && { startDate }),
+        ...(endDate && { endDate }),
+        ...(roleName && { roleName }),
+        ...(transactionType && { transactionType }),
+        ...(userId && { userId }),
+        page // page는 항상 포함
+    };
+
+    return api.get('/common-service/admin/users/point/transaction', {
+        params: params
+    });
 }
+
+
+
 
 export function fetchAccountList(params) {
     return api.get('/api/v1/common-service/accounts', { params })
@@ -42,44 +72,65 @@ export function fetchAccountList(params) {
 
 /* ------------------------------------ 모임 관리 ------------------------------------ */
 /**
- * 관리자 - 모임 목록 조회 (조건 포함)
+ * 전체 모임 내역 조회
  * @param {Object} params
- * @param {string} [params.meetingGender] - 'M' | 'F' | 'BOTH'
- * @param {string[]} [params.ageGroups] - 예: ["20", "30"]
- * @param {string[]} [params.levels] - 예: ["LV1", "LV2"]
- * @param {number[]} [params.sportIds] - 예: [1, 2, 3]
- * @param {number[]} [params.statusIds] - 예: [1, 2, 3]
- * @param {string} [params.minDate] - YYYY-MM-DD
- * @param {string} [params.maxDate] - YYYY-MM-DD
- * @param {number} [params.page=1]
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size] - 페이지 크기 (기본값: 10)
+ * @param {string} [params.gender] - 성별 필터 (BOTH, FEMALE, MALE)
+ * @param {Array<string>} [params.ageGroups] - 나이대 필터 (예: ["10", "20", "30", "40", "50", "60", "70+"])
+ * @param {Array<string>} [params.levels] - 레벨 필터 (예: ["LV1", "LV2", "LV3"])
+ * @param {Array<number>} [params.sportIds] - 스포츠 ID 필터 (예: [1, 2, 3])
+ * @param {Array<number>} [params.statusIds] - 상태 ID 필터 (예: [1, 2, 3, 4, 5])
+ * @param {string} [params.minDate] - 최소 날짜 필터 (형식: yyyy-MM-dd)
+ * @param {string} [params.maxDate] - 최대 날짜 필터 (형식: yyyy-MM-dd)
+ * @returns {Promise<Object>} 전체 모임 목록 및 페이징 정보
  */
-export function fetchAdminMeetingList(params) {
-    return api.get('/api/v1/common-service/meetings/list', { params })
+export function fetchMeetingList({
+                                     page = 1,
+                                     size = 10,
+                                     gender = 'BOTH',
+                                     ageGroups = ["10", "20", "30", "40", "50", "60", "70+"],
+                                     levels = ["LV1", "LV2", "LV3"],
+                                     sportIds = [1, 2, 3, 4, 5, 6, 7, 8],
+                                     statusIds = [1, 2, 3, 4, 5],
+                                     minDate = null,
+                                     maxDate = null
+                                 }) {
+    return api.get('/common-service/meetings/list', {
+        params: {
+            page, size,
+            gender,
+            ageGroups: ageGroups.join(','),
+            levels: levels.join(','),
+            sportIds: sportIds.join(','),
+            statusIds: statusIds.join(','),
+            minDate, maxDate
+        }
+    })
 }
 
-
 /**
- * 모임 상세 조회
- * @param {number|string} meetingId
- * @returns {Promise<Object>} 단일 모임 상세 정보
- */
-export function fetchMeetingDetail(meetingId) {
-    return api.get(`/common-service/meetings/${meetingId}`)
-}
-
-
-/**
- * 관리자 - 참가자 평가 내역 조회
+ * 참가자 평가 내역 조회
  * @param {Object} params
- * @param {number} [params.meetingId]
- * @param {number} [params.reviewerId]
- * @param {number} [params.revieweeId]
- * @param {number} [params.page=1]
- * @param {number} [params.size=10]
- * @returns {Promise<Object>} 평가 내역 + pagination
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size] - 페이지 크기 (기본값: 10)
+ * @param {number} [params.meetingId] - 모임 ID
+ * @param {number} [params.reviewerId] - 평가자 ID
+ * @param {number} [params.revieweeId] - 평가받은 사람 ID
+ * @returns {Promise<Object>} 참가자 평가 목록 및 페이징 정보
  */
-export function fetchParticipantReviewList(params) {
-    return api.get('/common-service/meetings/review', { params })
+export function fetchParticipantReviews({
+                                            page = 1,
+                                            size = 10,
+                                            meetingId = null,
+                                            reviewerId = null,
+                                            revieweeId = null
+                                        }) {
+    return api.get('/common-service/meetings/review', {
+        params: {
+            page, size, meetingId, reviewerId, revieweeId
+        }
+    })
 }
 
 

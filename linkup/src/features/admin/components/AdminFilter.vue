@@ -13,18 +13,18 @@ const emit = defineEmits(['search', 'update:filters'])
 // 제목 여부 확인
 const hasTitle = computed(() => props.title?.trim())
 
-//    로컬 복사본 생성 (props.filters는 반응형 아님)
+// 로컬 복사본 생성 (props.filters는 반응형 아님)
 const localFilters = ref({ ...props.filters })
 
-//    localFilters 변경 시 부모로 emit
+// localFilters 변경 시 부모로 emit
 watch(localFilters, (newVal) => {
   emit('update:filters', newVal)
 }, { deep: true })
 
 // 검색 버튼 클릭 시 emit
 const triggerSearch = () => {
-  console.log('[AdminFilter] 검색 버튼 눌림') // 디버깅용
-  emit('search')
+  console.log('[AdminFilter] 검색 버튼 눌림', localFilters.value)  // 디버깅용
+  emit('search', localFilters.value)  // localFilters 값을 emit하여 부모에서 처리하도록 함
 }
 </script>
 
@@ -47,7 +47,7 @@ const triggerSearch = () => {
       <!-- 검색 버튼 -->
       <AdminButton
         type="primary"
-        aria-label="검 버튼"
+        aria-label="검색 버튼"
         native-type="submit"
       >
         검색

@@ -1,16 +1,16 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { fetchAdminMeetingList } from '@/api/admin.js'
+import { fetchMeetingList } from '@/api/admin.js'  // Adjusted to call fetchMeetingList API
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 
 const props = defineProps({ pageTitle: String })
 
 const filters = reactive({
-  meetingGender: '',
-  ageGroups: [],
-  levels: [],
-  sportIds: [],
-  statusIds: [],
+  meetingGender: 'BOTH',
+  ageGroups: '',
+  levels: '',
+  sportIds: '',
+  statusIds: '',
   minDate: '',
   maxDate: ''
 })
@@ -53,11 +53,11 @@ const columns = [
   }
 ]
 
-async function fetchMeetingList({ page }) {
+const fetchAdminMeetingList = async ({ page }) => {
   try {
-    const res = await fetchAdminMeetingList({
+    const res = await fetchMeetingList({
       page,
-      meetingGender: filters.meetingGender || 'BOTH',
+      gender: filters.meetingGender || 'BOTH',
       ageGroups: filters.ageGroups.length ? filters.ageGroups : ['10', '20', '30', '40', '50', '60', '70+'],
       levels: filters.levels.length ? filters.levels : ['LV1', 'LV2', 'LV3'],
       sportIds: filters.sportIds.length ? filters.sportIds : [1, 2, 3, 4, 5, 6, 7, 8],
@@ -66,8 +66,8 @@ async function fetchMeetingList({ page }) {
       maxDate: filters.maxDate || null
     })
 
-    const meetings = res.data.meetings || []
-    const pagination = res.data.pagination || {}
+    const meetings = res.data?.data?.meetings || []
+    const pagination = res.data?.pagination || {}
 
     const list = meetings.map(m => ({
       meetingId: m.meetingId,
@@ -86,13 +86,14 @@ async function fetchMeetingList({ page }) {
       maxUser: m.maxUser,
       statusLabel: m.statusName
     }))
+    console.log("응답 데이터:", res)  // 응답 데이터 확인
 
     return {
       data: list,
       totalPages: pagination.totalPage || 1
     }
   } catch (e) {
-    console.error('🚨 모임 목록 조회 실패:', e)
+    console.error('Error fetching meeting list:', e)
     return { data: [], totalPages: 1 }
   }
 }
@@ -100,23 +101,24 @@ async function fetchMeetingList({ page }) {
 
 <template>
   <AdminListTemplate
-    :fetchFn="fetchMeetingList"
+    :fetchFn="fetchAdminMeetingList"
     :columns="columns"
     :initFilters="filters"
     :pageTitle="props.pageTitle"
+    :filters="filters"
   >
     <template #filters="{ filters }">
       <label class="filter-label">성별:
         <select v-model="filters.meetingGender" class="select-box">
-          <option value="">전체</option>
+          <option value="BOTH">전체</option>
           <option value="MALE">남성</option>
           <option value="FEMALE">여성</option>
-          <option value="BOTH">혼성</option>
         </select>
       </label>
 
       <label class="filter-label">나이대:
-        <select v-model="filters.ageGroups" multiple class="select-box">
+        <select v-model="filters.ageGroups" class="select-box">
+          <option value="">전체</option>
           <option value="10">10대</option>
           <option value="20">20대</option>
           <option value="30">30대</option>
@@ -128,7 +130,8 @@ async function fetchMeetingList({ page }) {
       </label>
 
       <label class="filter-label">레벨:
-        <select v-model="filters.levels" multiple class="select-box">
+        <select v-model="filters.levels" class="select-box">
+          <option value="">전체</option>
           <option value="LV1">LV1</option>
           <option value="LV2">LV2</option>
           <option value="LV3">LV3</option>
@@ -136,7 +139,8 @@ async function fetchMeetingList({ page }) {
       </label>
 
       <label class="filter-label">운동 종목:
-        <select v-model="filters.sportIds" multiple class="select-box">
+        <select v-model="filters.sportIds" class="select-box">
+          <option value="">전체</option>
           <option v-for="sport in sportTypes" :key="sport.id" :value="sport.id">
             {{ sport.name }}
           </option>
@@ -144,7 +148,8 @@ async function fetchMeetingList({ page }) {
       </label>
 
       <label class="filter-label">상태:
-        <select v-model="filters.statusIds" multiple class="select-box">
+        <select v-model="filters.statusIds" class="select-box">
+          <option value="">전체</option>
           <option v-for="s in statusOptions" :key="s.id" :value="s.id">{{ s.label }}</option>
         </select>
       </label>

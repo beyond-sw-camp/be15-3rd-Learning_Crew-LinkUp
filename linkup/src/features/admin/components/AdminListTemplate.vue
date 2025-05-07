@@ -21,12 +21,42 @@ const page = ref(1)
 const totalPages = ref(1)
 const selected = ref(null)
 
+// 필터를 사용할 수 있게 두 가지 방식으로 처리 (파라미터와 JSON 방식)
+const formatFilters = (filters) => {
+  const formatted = { ...filters }
+
+  // JSON 처리 및 undefined, 빈 문자열 제거
+  Object.keys(formatted).forEach(key => {
+    if (formatted[key] === undefined || formatted[key] === '') {
+      delete formatted[key]
+    }
+  })
+
+  return formatted
+}
+
+
+// 데이터를 처리하는 범용 함수 (재사용성 고려)
+const processResponseData = (response) => {
+  // 데이터가 예상하는 형태인지 확인
+  const rows = response?.data?.data?.content || response?.data || response?.list || []
+  const totalPages = response?.data?.data?.totalPages || 1
+  const currentPage = response?.data?.data?.currentPage || 1
+  return { rows, totalPages, currentPage }
+}
+
+// fetchList 함수에서 호출
 const fetchList = async (params = {}) => {
   page.value = params.page || 1
   try {
-    const res = await props.fetchFn(params)
-    rows.value = res.data || res.list || []
-    totalPages.value = res.totalPages || 1
+    const formattedParams = formatFilters(params) // 필터링
+    const res = await props.fetchFn(formattedParams)
+
+    // 응답 처리
+    const { rows: fetchedRows, totalPages: fetchedTotalPages } = processResponseData(res)
+
+    rows.value = fetchedRows  // 포인트 거래 내역을 rows에 할당
+    totalPages.value = fetchedTotalPages  // 총 페이지 수 할당
     emit('update:page', page.value)
   } catch (e) {
     console.error('🔴 fetchList error:', e)
@@ -34,6 +64,8 @@ const fetchList = async (params = {}) => {
     totalPages.value = 1
   }
 }
+
+
 
 const handleRowClick = (row) => {
   if (props.enableModal) selected.value = row
@@ -62,9 +94,9 @@ onMounted(() => fetchList({ ...filters.value, page: 1 }))
         @update:filters="v => (filters.value = v)"
         @search="() => fetchList({ ...filters.value, page: 1 })"
       >
-      <template #filters="{ filters }">
-        <slot name="filters" :filters="filters" />
-      </template>
+        <template #filters="{ filters }">
+          <slot name="filters" :filters="filters" />
+        </template>
       </AdminFilter>
     </section>
 

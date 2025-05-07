@@ -20,6 +20,8 @@ const selected = ref(null)
 const fetchList = async ({ page, userId, statusId }) => {
   try {
     const res = await fetchObjectionList({ memberId: userId, statusId, page })
+    console.log("응답 데이터:", res)  // 응답 데이터 확인
+
     return {
       data: res.data.objections || [],
       totalPages: res.data.pagination?.totalPage || 1
