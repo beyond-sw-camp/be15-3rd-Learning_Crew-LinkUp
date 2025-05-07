@@ -8,11 +8,11 @@ const route = useRoute();
 const router = useRouter();
 
 const currentPoints = ref(5000);  // 예시로 5000 포인트
-const participationFee = ref(2000); // 예시로 2000 포인트
+// const participationFee = ref(2000); // 예시로 2000 포인트
 const balance = computed(() => currentPoints.value - participationFee.value);
 
 const {
-  date, startTime, endTime, minUser, maxUser, sportId
+  date, startTime, endTime, minUser, maxUser, sportId, placeId, participationFee
 } = route.query;
 
 const goToNextStep = async () => {
@@ -24,7 +24,9 @@ const goToNextStep = async () => {
         endTime: endTime,
         minUser: minUser,
         maxUser: maxUser,
-        sportId: sportId
+        sportId: sportId,
+        placeId: placeId,
+        participationFee: participationFee
       },
     });
 };
