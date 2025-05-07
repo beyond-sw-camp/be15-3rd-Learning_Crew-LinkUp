@@ -1,16 +1,17 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
 
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
 import lv1Icon from '@/assets/icons/meeting_and_place/lv1.svg';
 import lv2Icon from '@/assets/icons/meeting_and_place/lv2.svg';
 import lv3Icon from '@/assets/icons/meeting_and_place/lv3.svg';
-import api from '@/api/axios.js';
 
 const route = useRoute();
 const router = useRouter();
 
+const selectedSport = ref('');
 const selectedGender = ref('BOTH');
 const selectedAgeGroups = reactive([]);
 const selectedLevels = reactive([]);
@@ -31,7 +32,8 @@ const createMeeting = async () => {
     meetingDate: route.query.meetingDate,
     meetingTime: route.query.meetingTime,
     placeId: route.query.placeId,
-    sportId: route.query.sportId,
+    participationFee: route.query.participationFee,
+    sportType: selectedSport.value,
     gender: selectedGender.value,
     ageGroup: selectedAgeGroups.join(','),
     level: selectedLevels.join(','),
@@ -53,7 +55,7 @@ const createMeeting = async () => {
   }
 
   try {
-    api.post('/meetings/create', payload);
+    await axios.post('/meetings/create', payload);
     alert('모임 개설이 완료되었습니다.');
     router.push('/meetings');
   } catch (e) {

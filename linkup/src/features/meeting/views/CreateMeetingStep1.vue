@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
-import api from '@/api/axios.js';
+import axios from 'axios';
 
 const MIN_USER = 2;
 const MAX_USER = 30;
@@ -10,14 +10,13 @@ const MAX_USER = 30;
 const route = useRoute();
 const router = useRouter();
 
+const placeId = route.query.placeId;
+
 // const isLoading = ref(true);
 // const place = ref(null);
-//
-// const placeId = route.query.placeId;
-//
-// onMounted(async () => {
+// onMounted(async() => {
 //   try {
-//     const response = api.get(`/common-service/place/${placeId}`)
+//     const response = await axios.get(`/place/${placeId}`)
 //     place.value = response.data.data.place
 //   } catch (e) {
 //     console.error('장소 조회 실패', e);
@@ -75,6 +74,8 @@ const goToNextStep = () => {
   router.push({
     name: 'CheckCreatorBalance',
     query: {
+      placeId: placeId,
+      participationFee: participationFee.value,
       date: selectedDate.value,
       startTime: selectedTimeSlot.value.startTime,
       endTime: selectedTimeSlot.value.endTime,
@@ -89,7 +90,7 @@ const participationFee = computed(() => {
   if (minUser.value === 0) {
     return '모집 인원을 입력해주세요.';
   }
-  return (rentalCost / minUser.value).toLocaleString();
+  return Math.floor(rentalCost / minUser.value);
 });
 </script>
 
@@ -132,7 +133,7 @@ const participationFee = computed(() => {
       </div>
     </div>
 
-    <div class="price-per-person">{{ participationFee }}<span class="per-person">/인당</span></div>
+    <div class="price-per-person">{{ participationFee.toLocaleString() }}<span class="per-person">/인당</span></div>
 
     <button class="next-btn" @click="goToNextStep">다음 단계로</button>
   </CreateMeetingLayout>
