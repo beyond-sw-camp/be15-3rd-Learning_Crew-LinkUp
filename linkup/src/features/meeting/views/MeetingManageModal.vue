@@ -69,35 +69,10 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import api from '@/api/axios.js';
 
-const leaderNickname = '방구석메시';
-
-// const participants = ref([
-//   {
-//     nickname: '방구석메시',
-//     mannerTemperature: 38,
-//     image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup',
-//   },
-//   {
-//     nickname: '운동광인생',
-//     mannerTemperature: 40,
-//     image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup2',
-//   },
-// ])
+const leaderNickname = ref([]);
 
 const participants = ref([]);
 const applicants = ref([]);
-
-// const applicants = ref([
-//   {
-//     memberId: 23,
-//     nickname: '열정파워',
-//     gender: '남자',
-//     age: 30,
-//     mannerTemperature: 38,
-//     introduction: '승부욕 강한 타입입니다.',
-//     profileImageUrl: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup3',
-//   },
-// ])
 
 const props = defineProps({
   visible: Boolean,
@@ -112,6 +87,8 @@ const fetchParticipants = async () => {
       params: { memberId: 55, requesterId: 55 }
     });
     participants.value = response.data.data.participants;
+    const meetingResponse = await api.get(`common-service/meetings/${meetingId.value}`);
+    leaderNickname.value = meetingResponse.data.data.meeting.leaderNickname;
   } catch (error) {
     console.error('참가자 목록을 불러오는 중 오류 발생:', error);
   }
