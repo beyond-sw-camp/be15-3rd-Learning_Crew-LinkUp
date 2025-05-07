@@ -1,4 +1,4 @@
-<script setup>
+<!--<script setup>
 import PointCheckLayout from '@/features/meeting/components/PointCheckLayout.vue';
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
@@ -27,33 +27,84 @@ const handleCreateParticipation = async () => {
     console.error('모임 신청 중 오류 발생:', error);
   }
 };
+</script>-->
+<script setup>
+import PointCheckLayout from '@/features/meeting/components/PointCheckLayout.vue';
+import { computed, ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import api from '@/api/axios.js';
+import { useAuthStore } from '@/stores/auth.js';
+
+const route = useRoute();
+const meetingId = route.params.meetingId;
+const userStore = useAuthStore();
+
+// 동적 값 초기화
+const currentPoints = ref(0);
+const participationFee = ref(0);
+const balance = computed(() => currentPoints.value - participationFee.value);
+
+onMounted(async () => {
+  try {
+    // 1. 사용자 포인트 설정
+    currentPoints.value = userStore.pointBalance || 0;
+
+    // 2. 모임 참가비 조회
+    const resp = await api.get(`/common-service/meetings/${meetingId}`);
+    const meeting = resp.data.data.meeting;
+    participationFee.value = meeting.fee || 0;
+
+    console.log('모임 정보:', meeting);
+  } catch (error) {
+    console.error('데이터 조회 실패:', error);
+  }
+});
+
+const handleCreateParticipation = async () => {
+  try {
+    const response = await fetch(`/meetings/${meetingId}/participation`, {
+      method: 'POST',
+      body: JSON.stringify({ memberId: userStore.userId }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (response.ok) {
+      console.log('참가 신청 성공');
+    } else {
+      console.log('참가 신청 실패');
+    }
+  } catch (error) {
+    console.error('모임 신청 중 오류 발생:', error);
+  }
+};
 </script>
 
 <template>
-<PointCheckLayout>
-  <template #participant-points>
-    <div class="form-title">참가 신청</div>
-    <div class="participant-points">
-      <div class="form-group">
-        <label class="group-label">보유 포인트</label>
-        <div class="point">₩{{ currentPoints.toLocaleString() }}</div>
-      </div>
+  <PointCheckLayout>
+    <template #participant-points>
+      <div class="form-title">참가 신청</div>
+      <div class="participant-points">
+        <div class="form-group">
+          <label class="group-label">보유 포인트</label>
+          <div class="point">₩{{ currentPoints.toLocaleString() }}</div>
+        </div>
 
-      <div class="form-group">
-        <label class="group-label">참가비</label>
-        <div class="point">₩{{ participationFee.toLocaleString() }}</div>
-      </div>
+        <div class="form-group">
+          <label class="group-label">참가비</label>
+          <div class="point">₩{{ participationFee.toLocaleString() }}</div>
+        </div>
 
-      <div class="form-group">
-        <label class="group-label">예상 잔액</label>
-        <div class="point">₩{{ balance.toLocaleString() }}</div>
+        <div class="form-group">
+          <label class="group-label">예상 잔액</label>
+          <div class="point">₩{{ balance.toLocaleString() }}</div>
+        </div>
       </div>
-    </div>
-  </template>
-  <template #next-btn>
-    <button class="next-btn" @click="handleCreateParticipation">참가 신청하기</button>
-  </template>
-</PointCheckLayout>
+    </template>
+
+    <template #next-btn>
+      <button class="next-btn" @click="handleCreateParticipation">참가 신청하기</button>
+    </template>
+  </PointCheckLayout>
 </template>
 
 <style scoped>

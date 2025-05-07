@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
       userId.value = payload.sub;
 
       // SSE 연결 시작
-      // connectSse(userId.value);
+       connectSse(userId.value);
     } catch (e) {
       accessToken.value = null;
       userRole.value = null;
@@ -50,6 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
       userRole.value = payload.role;
       expirationTime.value = payload.exp * 1000;
       userId.value = payload.sub;
+      connectSse(userId.value);
     } catch (err) {
       showErrorToast('로그인에 실패했습니다.');
       throw err;

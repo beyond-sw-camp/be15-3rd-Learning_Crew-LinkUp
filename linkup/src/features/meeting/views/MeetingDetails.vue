@@ -1,108 +1,93 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-
 import router from '@/router/index.js';
 
 import MeetingDetailLayout from '@/features/meeting/components/MeetingDetailLayout.vue';
 import MeetingParticipants from '@/features/meeting/components/MeetingParticipants.vue';
 import api from '@/api/axios.js';
+import { useAuthStore } from '@/stores/auth.js';
 
 const route = useRoute();
-
 const meeting = ref(null);
-const isLoading = ref(true); // 로딩 중 상태
+const isLoading = ref(true);
 const count = ref(0);
+const userStore = useAuthStore();
 
 onMounted(async () => {
   try {
     const meetingId = route.params.meetingId;
+
     const response = await api.get(`/common-service/meetings/${meetingId}`);
-    const participationResponse = await api.get(
-      `common-service/my/meetings/${meetingId}/participation`,
-      {
-        params: {memberId: 55, requesterId: 55},
-      },
-    );
     meeting.value = response.data.data.meeting;
-    count.value = participationResponse.data.data.participants.length;
+
+    // ✅ 내가 참가자일 경우에만 참가자 목록 조회
+    const isParticipating = meeting.value.participants?.some(
+        (p) => p.memberId === userStore.userId
+    );
+
+    if (isParticipating) {
+      const participationResponse = await api.get(
+          `/common-service/my/meetings/${meetingId}/participation`,
+          {
+            params: {
+              requesterId: userStore.userId,
+            },
+          }
+      );
+      count.value = participationResponse.data.data.participants.length;
+    } else {
+      count.value = 0;
+    }
   } catch (err) {
     console.error('모임 정보를 불러오는 중 오류 발생:', err);
+    meeting.value = null;
+    count.value = 0;
   } finally {
     isLoading.value = false;
   }
 });
 
-// onMounted(() => {
-//   meeting.value = {
-//     meetingTitle: '요즘 같은 선선한 날에 축구 한 판 어때요!',
-//     placeAddress: '서울 동작구 장승배기 223',
-//     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-//     meetingContent:
-//       '평일 저녁 스트레스를 축구로 풀어보아요! 초보자도 환영이며, 경기 후 근처에서 가볍게 뒤풀이도 가능합니다. 운동화만 챙겨오시면 됩니다!',
-//     date: '2025-04-23',
-//     startTime: '19:00',
-//     endTime: '21:00',
-//     sportName: '축구',
-//     minUser: 10,
-//     maxUser: 20,
-//     gender: 'BOTH',
-//     ageGroup: '20,30',
-//     level: 'LV1,LV2,LV3',
-//     fee: 5000,
-//     leader: [
-//       {
-//         nickname: '메시',
-//         gender: 'M',
-//         age: 29,
-//         introduction: '지금이 메시고',
-//         mannerTemperature: 92,
-//         profileImageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-//       },
-//     ],
-//   };
-//   isLoading.value = false;
-// });
-
 const goToParticipation = () => {
   router.push({ name: 'CreateParticipation', params: { meetingId: route.params.meetingId } });
 };
 
-// 성별 표시
 const displayGender = computed(() => {
-  return meeting.value?.gender === 'M' ? '남자' : meeting.value.gender === 'F' ? '여자' : '무관';
+  return meeting.value?.gender === 'M' ? '남자' : meeting.value?.gender === 'F' ? '여자' : '무관';
 });
 
-// 날짜로부터 요일 계산
 const dayName = computed(() => {
   return meeting.value ? '일월화수목금토'[new Date(meeting.value.date).getDay()] : '';
 });
 
-// 실력 변환
 const formattedLevel = computed(() => meeting.value?.level?.replaceAll(',', ', ') || '');
 
-// 나이대 변환
 const formattedAge = computed(() => {
   return (
-    meeting.value?.ageGroup
-      ?.replace('70+', '70')
-      .split(',')
-      .map((age) => (age === '70' ? '70대 이상' : `${age}대`))
-      .join(', ') || ''
+      meeting.value?.ageGroup
+          ?.replace('70+', '70')
+          .split(',')
+          .map((age) => (age === '70' ? '70대 이상' : `${age}대`))
+          .join(', ') || ''
   );
 });
 </script>
 
 <template>
+  <div class="layout-wrapper">
   <div v-if="isLoading">
     <p>모임 정보를 불러오는 중입니다...</p>
   </div>
 
+  <div v-else-if="!meeting">
+    <p>모임 정보를 불러올 수 없습니다.</p>
+  </div>
+
   <div v-else>
     <MeetingDetailLayout
-      :title="meeting.meetingTitle"
-      :address="meeting.placeAddress"
-      :image="meeting.image"
+        :title="meeting.meetingTitle"
+        :address="meeting.placeAddress"
+        :image="meeting.image"
     >
       <template #description>
         <section class="desc">{{ meeting.meetingContent }}</section>
@@ -123,7 +108,7 @@ const formattedAge = computed(() => {
         </section>
         <section class="section">
           <h2>참가비</h2>
-          <!--          {{ meeting.fee }}원-->
+          {{ meeting.fee }}원
         </section>
         <table class="meeting-details-table">
           <tr>
@@ -158,6 +143,7 @@ const formattedAge = computed(() => {
       </template>
     </MeetingDetailLayout>
   </div>
+  </div>
 </template>
 
 <style scoped>
@@ -180,6 +166,15 @@ const formattedAge = computed(() => {
   font-size: 18px;
   margin-bottom: 10px;
 }
+.layout-wrapper {
+  width: 100%;
+  min-height: 100vh; /* 화면보다 내용이 적을 땐 전체 화면 보장 */
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding-bottom: 100px; /* footer 또는 버튼 영역 고려해서 여백 확보 */
+  box-sizing: border-box;
+}
 
 .button {
   width: 100%;
@@ -192,4 +187,6 @@ const formattedAge = computed(() => {
   border-radius: 8px;
   cursor: pointer;
 }
+
+
 </style>

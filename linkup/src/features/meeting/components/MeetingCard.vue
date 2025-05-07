@@ -13,7 +13,7 @@ function handleClick() {
   emit('click', props.meeting.id)
 }
 
-const defaultImg = 'https://cdn.pixabay.com/photo/2016/03/27/21/59/soccer-1284666_640.jpg'
+const defaultImg = 'https://cdn.pixabay.com/photo/2021/06/04/06/54/racket-6308994_640.jpg'
 
 function formatDate(iso) {
   const date = new Date(iso)
