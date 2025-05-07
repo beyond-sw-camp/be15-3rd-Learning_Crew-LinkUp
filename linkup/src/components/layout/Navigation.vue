@@ -63,7 +63,7 @@ const mypageLink = computed(() => {
     <ul class="nav-list">
       <li><RouterLink class="nav-link" to="/community">커뮤니티</RouterLink></li>
       <li><RouterLink class="nav-link" to="/community">모임</RouterLink></li>
-      <li><RouterLink class="nav-link" to="/create">장소</RouterLink></li>
+      <li><RouterLink class="nav-link" to="/places">장소</RouterLink></li>
 
       <template v-if="authStore.isAuthenticated">
         <li class="relative" ref="dropdownRef">

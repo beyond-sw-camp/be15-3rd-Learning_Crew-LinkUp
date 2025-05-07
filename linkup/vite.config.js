@@ -18,7 +18,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000', // ✅ 백엔드 포트 (상황에 따라 8081 등 조정)
+        target: 'http://localhost:8000',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''),
       }
