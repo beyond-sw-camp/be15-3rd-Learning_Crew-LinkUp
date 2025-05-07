@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <img :src="image" class="image" />
+    <img src="https://cdn.pixabay.com/photo/2021/06/04/06/54/racket-6308994_640.jpg" class="image"  alt="이미지"/>
     <main class="content">
       <header>
         <h1>{{ title }}</h1>
