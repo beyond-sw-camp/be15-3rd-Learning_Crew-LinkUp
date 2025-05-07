@@ -3,79 +3,41 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import AdminHeader from '@/features/admin/components/AdminHeader.vue'
 import AdminSidebar from '@/features/admin/components/AdminSidebar.vue'
+import { adminSidebarMap } from '@/features/admin/constants/adminSidebarMap.js' // 사이드바 정의 외부화
 
 const route = useRoute()
 
-// 도메인별 사이드바 메뉴 구성
+// 현재 경로에 맞는 도메인별 사이드바 항목 계산
 const sidebarItems = computed(() => {
-  if (route.path.startsWith('/admin/users')) {
-    return [
-      { label: '회원 목록 조회', path: '/admin/users/members' },
-      { label: '권한 요청 목록', path: '/admin/users/authorities' },
-      { label: '게시글 내역 조회', path: '/admin/users/posts' },
-      { label: '댓글 내역 조회', path: '/admin/users/comments' }
-    ]
-  }
-  if (route.path.startsWith('/admin/point')) {
-    return [
-      { label: '포인트 내역 조회', path: '/admin/points/points' },
-      { label: '계좌 목록 조회', path: '/admin/points/accounts' }
-    ]
-  }
-  if (route.path.startsWith('/admin/place')) {
-    return [
-      { label: '장소 목록 조회', path: '/admin/places/list' },
-      { label: '장소 후기 조회', path: '/admin/places/reviews' }
-    ]
-  }
-  if (route.path.startsWith('/admin/meeting')) {
-    return [
-      { label: '모임 목록 조회', path: '/admin/meetings/list' },
-      { label: '참가자 평가 내역', path: '/admin/meetings/reviews' }
-    ]
-  }
-  if (route.path.startsWith('/admin/report')) {
-    return [
-      { label: '신고 목록 조회', path: '/admin/reports/list' },
-      { label: '신고 대상별 내역', path: '/admin/reports/targets' },
-      { label: '신고자 목록 조회', path: '/admin/reports/reporters' },
-      { label: '피신고자 목록 조회', path: '/admin/reports/reportees' }
-    ]
-  }
-  if (route.path.startsWith('/admin/penalties')) {
-    return [
-      { label: '제재 내역 조회', path: '/admin/penalties/list' },
-      { label: '이의 제기 내역 조회', path: '/admin/penalties/objections' },
-      { label: '블랙리스트 조회', path: '/admin/penalties/blacklist' }
-    ]
-  }
-  return []
+  return Object.entries(adminSidebarMap).find(([prefix]) =>
+    route.path.startsWith(prefix)
+  )?.[1] || []
 })
 
-// 현재 라우트에 맞는 label을 title로 사용
-const pageTitle = computed(() => {
-  const matched = sidebarItems.value.find(item => route.path === item.path)
-  return matched?.label || ''
-})
-
+// 페이지 타이틀 계산: meta.title이 있으면 우선 사용
+const pageTitle = computed(() =>
+  route.meta?.title || sidebarItems.value.find(item => item.path === route.path)?.label || ''
+)
 </script>
-
 
 <template>
   <div class="admin-wrapper">
-    <!-- 시맨틱 header -->
-    <header>
+    <!-- 헤더 영역 -->
+    <header role="banner">
       <AdminHeader />
     </header>
 
     <div class="admin-container">
-      <!-- 시맨틱 nav/aside -->
+      <!-- 사이드바 메뉴 -->
+      <aside role="complementary" aria-label="관리자 메뉴" class="sidebar">
         <AdminSidebar :menu-items="sidebarItems" />
+      </aside>
 
-      <!-- 시맨틱 main 영역 -->
+      <!-- 메인 콘텐츠 영역 -->
       <main class="admin-main" role="main">
-        <section aria-labelledby="admin-content-title">
-          <!-- RouterView 에 페이지 타이틀 prop 전달 -->
+        <section :aria-labelledby="'admin-content-title'">
+          <!-- 시각장애인을 위한 숨김 제목 -->
+          <h2 id="admin-content-title" class="sr-only">{{ pageTitle }}</h2>
           <RouterView :page-title="pageTitle" />
         </section>
       </main>
@@ -83,7 +45,6 @@ const pageTitle = computed(() => {
   </div>
 </template>
 
-
-<style scoped>
+ <style scoped>
 
 </style>

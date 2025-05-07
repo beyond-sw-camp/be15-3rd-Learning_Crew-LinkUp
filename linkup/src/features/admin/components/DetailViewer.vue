@@ -2,7 +2,7 @@
 import AdminButton from '@/features/admin/components/AdminButton.vue'
 import '@/assets/css/admin-styles.css'
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true
@@ -18,46 +18,44 @@ defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// 닫기 핸들러
+const close = () => emit('update:modelValue', false)
 </script>
-
-
 
 <template>
   <div
-      v-if="modelValue"
-      class="modal detail-viewer"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modalTitle"
-      @click.self="$emit('update:modelValue', false)"
+    v-if="modelValue"
+    class="modal detail-viewer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    @click.self="close"
   >
     <section class="modal-content">
-      <!-- 헤더 -->
-      <header>
+      <!-- 타이틀 영역 -->
+      <header class="modal-header">
         <slot name="title">
-          <div>
-            <h2 class="modal-title" id="modalTitle">{{ title }}</h2>
-            <p v-if="description" class="sub-text">{{ description }}</p>
-          </div>
+          <h2 id="modalTitle" class="modal-title">{{ title }}</h2>
+          <p v-if="description" class="sub-text">{{ description }}</p>
         </slot>
       </header>
 
-      <!-- 본문 -->
-      <section class="modal-section" aria-label="모달 본문">
+      <!-- 내용 영역 -->
+      <section class="modal-section" aria-label="상세 내용 영역">
         <slot />
       </section>
 
-      <!-- 푸터 -->
+      <!-- 푸터 영역 -->
       <footer class="modal-footer">
         <slot name="footer">
-          <AdminButton type="secondary" @click="$emit('update:modelValue', false)">닫기</AdminButton>
+          <AdminButton type="secondary" @click="close">닫기</AdminButton>
         </slot>
       </footer>
     </section>
   </div>
 </template>
 
-
 <style scoped>
-/* 공통 DetailViewer 스타일은 admin-styles.css에 정의되어 있음 */
+
 </style>
