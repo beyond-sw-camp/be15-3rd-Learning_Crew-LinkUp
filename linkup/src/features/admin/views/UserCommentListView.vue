@@ -1,42 +1,37 @@
-<!-- src/features/admin/views/UserCommentListView.vue -->
 <script setup>
 import { ref } from 'vue'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
+import { fetchAllComments } from '@/api/admin.js'  // 실제 API 연동
 
 const props = defineProps({ pageTitle: String })
 
-// 실제 API (주석 처리)
-/*
-import { fetchCommentList } from '@/api/admin.js'
+// 필터 초기값 설정
+const initFilters = ref({
+  userId: '',
+  isDeleted: '',
+  postId: ''
+})
 
-function fetchCommentList(params) {
-  return api.get('/api/v1/common-service/comments', { params })
-}
-*/
+// API 연동 함수 - 댓글 목록 조회
+async function fetchCommentListData({ page = 1, userId = '', isDeleted = '', postId = '' }) {
+  try {
+    const res = await fetchAllComments({
+      page,
+      userId,
+      isDeleted,
+      postId
+    })
+    console.log("응답 데이터:", res)  // 응답 데이터 확인
 
-// 더미 데이터로 대체
-function fetchCommentList({ userId = '', isDeleted = '', page = 1 }) {
-  const dummy = Array.from({ length: 10 }, (_, i) => ({
-    commentId: `C00${i + 1}`,
-    postId: `P00${i + 1}`,
-    userId: `user${i + 1}`,
-    userName: `작성자${i + 1}`,
-    content: `댓글 내용 ${i + 1}`,
-    createdAt: '2024-05-01',
-    deletedAt: i % 4 === 0 ? '2024-05-02' : null,
-    isDeleted: i % 4 === 0 ? 'Y' : 'N'
-  }))
 
-  const filtered = dummy.filter(item => {
-    const matchUser = !userId || item.userId.includes(userId)
-    const matchDeleted = !isDeleted || item.isDeleted === isDeleted
-    return matchUser && matchDeleted
-  })
-
-  return Promise.resolve({
-    data: filtered,
-    totalPages: 1
-  })
+    return {
+      data: res.data?.data?.postComments || [],  // 실제 API 응답 데이터 구조에 맞게 수정
+      totalPages: res.data?.data?.pagination?.totalPages || 1  // 페이지 정보
+    }
+  } catch (error) {
+    console.error('🚨 댓글 목록 조회 실패:', error)
+    return { data: [], totalPages: 1 }
+  }
 }
 
 // 테이블 컬럼 정의
@@ -44,23 +39,17 @@ const columns = [
   { key: 'commentId', label: '댓글 ID' },
   { key: 'postId', label: '게시글 ID' },
   { key: 'userId', label: '작성자 ID' },
-  { key: 'userName', label: '작성자 이름' },
-  { key: 'content', label: '내용' },
+  { key: 'nickname', label: '작성자 닉네임' },
+  { key: 'commentContent', label: '내용' },
   { key: 'createdAt', label: '작성일' },
   { key: 'deletedAt', label: '삭제일', format: v => v || '-' },
   { key: 'isDeleted', label: '공개 여부', format: v => (v === 'Y' ? '비공개' : '공개') }
 ]
-
-// 필터 초기값
-const initFilters = {
-  userId: '',
-  isDeleted: ''
-}
 </script>
 
 <template>
   <AdminListTemplate
-    :fetchFn="fetchCommentList"
+    :fetchFn="fetchCommentListData"
     :columns="columns"
     :initFilters="initFilters"
     :pageTitle="props.pageTitle"

@@ -24,13 +24,48 @@ export function updateUserAuthorityStatus(id, decision, reason = '') {
 }
 
 /* ------------------------------------ 게시글/댓글 ------------------------------------ */
-export function fetchPostList(params) {
-    return api.get('/api/v1/common-service/posts/list', { params })
+/**
+ * 전체 게시글 목록 조회 (관리자용, 검색 조건 포함)
+ * @param {Object} params
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size] - 페이지 크기 (기본값: 10)
+ * @param {string} [params.keyword] - 게시글 제목 또는 내용으로 키워드 검색
+ * @param {string} [params.isDeleted] - 삭제 여부 필터 (Y = 삭제, N = 미삭제)
+ * @returns {Promise<Object>} 게시글 목록 및 페이징 정보
+ */
+export function fetchAllPosts({
+                                page = 1, size = 10,
+                                keyword = '', isDeleted = ''
+                              }) {
+  return api.get('/common-service/posts/list', {
+    params: {
+      page, size, keyword, isDeleted
+    }
+  })
 }
 
-export function fetchCommentList(params) {
-    return api.get('/api/v1/common-service/comments', { params })
+
+/**
+ * 전체 댓글 조회 (관리자용)
+ * @param {Object} params
+ * @param {number} [params.page] - 페이지 번호 (기본값: 1)
+ * @param {number} [params.size] - 페이지 크기 (기본값: 10)
+ * @param {number} [params.userId] - 특정 회원 ID로 댓글 조회
+ * @param {string} [params.keyword] - 댓글 내용 또는 제목 키워드로 검색
+ * @param {string} [params.isDeleted] - 삭제 여부 필터 (Y = 삭제, N = 미삭제)
+ * @returns {Promise<Object>} 댓글 목록 및 페이징 정보
+ */
+export function fetchAllComments({
+                                   page = 1, size = 10,
+                                   userId = null, keyword = '', isDeleted = ''
+                                 }) {
+  return api.get('/common-service/comments', {
+    params: {
+      page, size, userId, keyword, isDeleted
+    }
+  })
 }
+
 
 /* ------------------------------------ 포인트 관리 ------------------------------------ */
 
