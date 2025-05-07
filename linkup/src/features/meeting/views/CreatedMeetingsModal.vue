@@ -5,27 +5,27 @@ import api from '@/api/axios.js';
 
 const meetings = ref([]);
 
-meetings.value = [{
-  meetingId: 1,
-  meetingTitle: "제목",
-  placeName: "종합운동장",
-  statusId: 1
-}
-];
+// meetings.value = [{
+//   meetingId: 1,
+//   meetingTitle: "제목",
+//   placeName: "종합운동장",
+//   statusId: 1
+// }
+// ];
 
-// const isLoading = ref(true);
-//
-// onMounted(async() => {
-//   try {
-//     const userId = 55;
-//     const response = await api.get(`common-service/meetings/user/${userId}/created`)
-//     meetings.value = response.data.data.meeting
-//   } catch (e) {
-//     console.error('개설 모임 조회 실패', e);
-//   } finally {
-//     isLoading.value = false;
-//   }
-// })
+const isLoading = ref(true);
+
+onMounted(async() => {
+  try {
+    const userId = 55;
+    const response = await api.get(`common-service/meetings/user/${userId}/created`)
+    meetings.value = response.data.data.meetings;
+  } catch (e) {
+    console.error('개설 모임 조회 실패', e);
+  } finally {
+    isLoading.value = false;
+  }
+})
 
 const statusName = (id) => {
   switch(id) {
@@ -46,10 +46,10 @@ const emits = defineEmits(['close', 'select']);
 </script>
 
 <template>
-<!--  <template v-if="isLoading">-->
-<!--    로딩중-->
-<!--  </template>-->
-<!--  <template v-else>-->
+  <template v-if="isLoading">
+    로딩중
+  </template>
+  <template v-else>
   <div class="assignment-modal">
     <div class="modal-box">
       <!-- 모달 헤더 -->
@@ -78,7 +78,7 @@ const emits = defineEmits(['close', 'select']);
 
     </div>
   </div>
-<!--  </template>-->
+  </template>
 </template>
 
 <style scoped>
