@@ -107,13 +107,10 @@ const handlePaymentComplete = async ({ amount, orderId, paymentKey }) => {
           </div>
           <div class="status-card point">
             <div class="label">나의 포인트</div>
-            <div class="value">{{ userInfo.point }}P</div>
-<!--            <button type="button" class="charge-btn">충전하기</button>-->
+            <div class="value">{{ userInfo.point.toLocaleString() }}P</div>
             <button type="button" class="charge-btn" @click="showPaymentModal = true">
               충전하기
             </button>
-            <div class="value">{{ userInfo.point.toLocaleString() }}P</div>
-            <button type="button" class="charge-btn">충전하기</button>
           </div>
         </div>
       </section>
