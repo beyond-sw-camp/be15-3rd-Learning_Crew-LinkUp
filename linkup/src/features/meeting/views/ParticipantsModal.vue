@@ -15,13 +15,13 @@
           :key="'participant-' + index"
           class="participant-card"
         >
-          <img :src="participant.image" alt="프로필" class="participant-thumb" />
+          <img :src="participant.profileImageUrl" alt="프로필" class="participant-thumb" />
           <div class="participant-content">
             <div class="participant-nickname">{{ participant.nickname }}</div>
             <div class="participant-subinfo">매너온도: {{ participant.mannerTemperature }}°C</div>
           </div>
           <div class="participant-actions">
-            <template v-if="participant.nickname === creatorNickname">
+            <template v-if="participant.nickname === leaderNickname">
               <button class="participant-btn disabled" disabled>
                 <img src="@/assets/icons/meeting_and_place/crown.svg" alt="개설자" class="leader"/>
               </button>
@@ -38,26 +38,57 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue';
+import api from '@/api/axios.js';
+import { useAuthStore } from '@/stores/auth.js';
 
-const creatorNickname = '방구석메시';
+const auth = useAuthStore();
 
-const participants = ref([
-  {
-    nickname: '방구석메시',
-    mannerTemperature: 38,
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup',
-  },
-  {
-    nickname: '운동광인생',
-    mannerTemperature: 40,
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup2',
-  },
-])
+const leaderNickname = ref([]);
+// 참가자 목록 조회 api.get(`common-service/my/meetings/${meetingId}/participation`);
 
-defineProps({
-  visible: Boolean
+const participants = ref([]);
+// const participants = ref([
+//   {
+//     nickname: '방구석메시',
+//     mannerTemperature: 38,
+//     profileImageUrl: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup',
+//   },
+//   {
+//     nickname: '운동광인생',
+//     mannerTemperature: 40,
+//     profileImageUrl: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup2',
+//   },
+// ])
+
+const props = defineProps({
+  visible: Boolean,
+  meeting: Object
 });
+
+const meetingId = computed(() => props.meeting?.meetingId);
+
+const fetchParticipants = async () => {
+  try {
+    const response = await api.get(`common-service/my/meetings/${meetingId.value}/participation`, {
+      params: { memberId: auth.userId, requesterId: auth.userId }
+    });
+    participants.value = response.data.data.participants;
+    const meetingResponse = await api.get(`common-service/meetings/${meetingId.value}`);
+    leaderNickname.value = meetingResponse.data.data.meeting.leaderNickname;
+  } catch (error) {
+    console.error('참가자 목록을 불러오는 중 오류 발생:', error);
+  }
+};
+
+// watch로 meetingId가 변경될 때마다 데이터 로드
+watch(meetingId, (newMeetingId) => {
+  if (newMeetingId) {
+    fetchParticipants();
+  }
+});
+
+
 const emit = defineEmits(['close']);
 function closeModal() {
   emit('close');

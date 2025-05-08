@@ -57,6 +57,11 @@ export const meetingRoutes = [
         path: 'create/custom/step3',
         name: 'CreateMeetingStep3Custom',
         component: () => import('@/features/meeting/views/CreateCustomMeetingStep3.vue')
+      },
+      {
+        path: 'create/custom',
+        name: 'SelectCustomPlace',
+        component: () => import('@/features/meeting/views/SelectCustomPlace.vue')
       }
     ]
   },

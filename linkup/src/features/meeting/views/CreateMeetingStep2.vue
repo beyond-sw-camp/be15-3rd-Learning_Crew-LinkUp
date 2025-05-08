@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -11,7 +12,7 @@ const meetingTitle = ref('');
 const meetingContent = ref('');
 
 const {
-  date, startTime, endTime, minUser, maxUser, sportId
+  date, startTime, endTime, minUser, maxUser, sportId, placeId
 } = route.query;
 
 const goToNextStep = () => {
@@ -37,6 +38,7 @@ const goToNextStep = () => {
 </script>
 
 <template>
+  <DefaultMainLayout>
   <CreateMeetingLayout :step="2" title="모임 정보 작성">
         <div class="form-group">
           <label class="group-label">모임 제목</label>
@@ -50,6 +52,7 @@ const goToNextStep = () => {
 
         <button class="next-btn" @click="goToNextStep">다음 단계로</button>
   </CreateMeetingLayout>
+  </DefaultMainLayout>
 </template>
 
 <style scoped>

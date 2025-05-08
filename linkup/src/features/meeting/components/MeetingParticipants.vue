@@ -4,13 +4,13 @@
     <section class="organizer-section">
     <h2>개설자 정보</h2>
     <div class="organizer-card">
-      <img :src="leader.image" alt="개설자 이미지" class="leader-img" />
+      <img :src="leader?.profileImageUrl" alt="개설자 이미지" class="leader-img" />
       <div>
-        <p class="nickname">{{ leader.nickname }}</p>
+        <p class="nickname">{{ leader?.nickname }}</p>
         <p class="meta">
-          {{ formatGender(leader.gender) }} | {{ leader.age }}세 | {{ leader.mannerTemperature }}℃
+          {{ formatGender(leader?.gender) }} | {{ leader?.age }}세 | {{ leader?.mannerTemperature }}℃
         </p>
-        <p class="intro">{{ leader.introduction }}</p>
+        <p class="intro">{{ leader?.introduction }}</p>
       </div>
     </div>
   </section>

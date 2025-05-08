@@ -1,82 +1,3 @@
-<!--<template>
-  <div class="community-detail">
-    &lt;!&ndash; 목록 + 액션버튼 묶어서 한 줄에 배치 &ndash;&gt;
-    <div class="button-row">
-      <button class="back-button" @click="goBack">← 목록으로</button>
-      <div class="action-buttons">
-        <button @click="editPost">수정</button>
-        <button @click="deletePost">삭제</button>
-        <button @click="reportPost">신고</button>
-      </div>
-    </div>
-
-    <h1 class="post-title">{{ post?.title }}</h1>
-
-    <div class="author-info">
-      <img src="https://cdn.pixabay.com/photo/2022/02/13/17/22/cartoon-easter-bunny-7011655_1280.jpg" alt="프로필" class="author-img" />
-      <div>
-        <div class="nickname">{{ post?.nickname }}</div>
-        <div class="date">작성일: {{ formatDate(post?.createdAt) }}</div>
-      </div>
-    </div>
-
-    <div class="post-images" v-if="post?.imageUrls?.length">
-      <img v-for="(url, index) in post.imageUrls" :key="index" :src="url" class="post-image" alt="게시글 이미지" />
-    </div>
-
-    <div class="post-box">
-      <p class="content">{{ post?.content }}</p>
-      <div class="post-footer">
-        <div></div>
-        <div class="like-section">❤️ {{ post?.likeCount || 0 }}</div>
-      </div>
-    </div>
-
-    &lt;!&ndash; 댓글 등록 폼 &ndash;&gt;
-    <PostCommentForm
-        :postId="post?.postId"
-        :onCommentAdded="fetchPost"
-    />
-
-    &lt;!&ndash; 댓글 리스트 &ndash;&gt;
-    <PostCommentList :comments="post?.comments" />
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api from '@/features/community/communityApi';
-import PostCommentForm from "@/features/community/components/PostCommentForm.vue";
-import PostCommentList from "@/features/community/components/PostCommentList.vue";
-
-
-const route = useRoute();
-const router = useRouter();
-const postId = computed(() => route.params.id);
-const post = ref(null);
-
-const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString();
-
-const fetchPost = async () => {
-  try {
-    const res = await api.fetchPostById(postId.value);
-    post.value = res.data.data;
-  } catch (e) {
-    console.error('상세 조회 실패', e);
-  }
-};
-
-const goBack = () => router.push('/community');
-const editPost = () => alert('수정 기능 준비 중');
-const deletePost = () => alert('삭제 기능 준비 중');
-const reportPost = () => alert('신고 기능 준비 중');
-
-onMounted(() => {
-  fetchPost();
-});
-</script>-->
-
 <template>
   <div class="community-detail">
     <!-- 목록 + 액션버튼 묶어서 한 줄에 배치 -->
@@ -131,26 +52,32 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 댓글 등록창 -->
-    <div class="comment-form">
-      <textarea v-model="newComment" placeholder="댓글을 입력해주세요..."></textarea>
-      <button @click="submitComment">댓글 등록</button>
-    </div>
+
+
+    <PostCommentForm
+        :postId="post?.postId"
+        :onCommentAdded="fetchPost"
+    />
 
     <!-- 댓글 리스트 -->
     <div class="comments" v-if="post?.comments?.length">
       <h2>댓글</h2>
       <div class="comment" v-for="comment in post.comments" :key="comment.commentId">
-        <p class="comment-content">{{ comment.commentContent }}</p>
-        <div class="comment-footer">
+        <div class="comment-header">
           <img :src="comment.profileImageUrl || defaultImage"
                class="comment-img"
+               alt="comment_img"
                @click="openMiniProfile($event, comment.userId)" />
+          <div class="comment-meta">
+            <div class="comment-user">
           <span class="comment-nickname" @click="openMiniProfile($event, comment.userId)">
             {{ comment.nickname }}
           </span>
-          <span class="comment-date">{{ formatDate(comment.createdAt) }}</span>
-          <span class="comment-like">❤️ {{ comment.likeCount || 0 }}</span>
+              <span class="comment-date">{{ formatDate(comment.createdAt) }}</span>
+              <span class="comment-like">❤️ {{ comment.likeCount || 0 }}</span>
+            </div>
+            <p class="comment-content">{{ comment.commentContent }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -170,6 +97,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/features/community/communityApi';
 import {getUserProfile} from "@/api/user.js";
+import UserMiniProfile from "@/features/community/components/UserMiniProfile.vue";
+import PostCommentForm from "@/features/community/components/PostCommentForm.vue";
 
 
 const route = useRoute();
@@ -181,13 +110,14 @@ const newComment = ref('');
 const showProfile = ref(false);
 const selectedUser = ref(null);
 const profilePosition = ref({ x: 0, y: 0 });
-const defaultImage = '/default-profile.png';
+const defaultImage = 'https://api.dicebear.com/7.x/thumbs/svg?seed=%EA%B1%B4%ED%9D%AC';
 
 const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString();
 
 const fetchPost = async () => {
   try {
     const res = await api.fetchPostById(postId.value);
+    console.log('[DEBUG] 게시글 데이터:', res.data.data);
     post.value = res.data.data;
   } catch (e) {
     console.error('상세 조회 실패', e);
@@ -197,13 +127,30 @@ const fetchPost = async () => {
 const openMiniProfile = async (event, targetId) => {
   try {
     const res = await getUserProfile({ targetId });
-    selectedUser.value = res.data.data;
-    profilePosition.value = { x: event.clientX, y: event.clientY };
+    console.log('[DEBUG] 프로필 응답:', res.data.data);
+    console.log('user.id', res.data.data.member.user.userId)
+    selectedUser.value = res.data.data.member;
+
+    const targetEl = event.currentTarget || event.target;
+    if (!targetEl || !targetEl.getBoundingClientRect) return;
+
+    const rect = targetEl.getBoundingClientRect();
+    profilePosition.value = {
+      x: rect.left + window.scrollX,
+      y: rect.top + window.scrollY + 8,
+    };
+
     showProfile.value = true;
   } catch (e) {
     console.error('프로필 조회 실패', e);
   }
 };
+
+const goBack = () => {
+  router.back() // 브라우저 히스토리 상 한 단계 뒤로 이동
+}
+
+
 
 const closeMiniProfile = () => {
   showProfile.value = false;
@@ -303,4 +250,67 @@ onMounted(fetchPost);
 .like-section {
   font-size: 1.2rem;
 }
+.comment {
+  margin-bottom: 20px;
+}
+.comment-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.comment-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+.comment-meta {
+  flex: 1;
+}
+.comment-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+.comment-nickname {
+  font-weight: bold;
+}
+.comment-date {
+  color: #888;
+}
+.comment-like {
+  color: #e25555;
+}
+.comment-content {
+  margin-left: 2px;
+  font-size: 1rem;
+  white-space: pre-wrap;
+}
+
+/* 추가 */
+.comment-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.comment-nickname {
+  font-weight: bold;
+  margin-left: 8px;
+}
+.comment-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.comment-content {
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+
 </style>
