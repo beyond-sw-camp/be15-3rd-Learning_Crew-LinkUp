@@ -13,8 +13,8 @@ meetings.value = [{
 
 // onMounted(async() => {
 //   try {
-//     const response = await axios.get(`/meetings/user/{userId}/created`)
-//     meetings.value = response.data
+//     const response = await axios.get(`/meetings/interested/${userId}`)
+//     meetings.value = response.data.data.meeting
 //   } catch (e) {
 //     console.error('개설 모임 조회 실패', e);
 //   }
@@ -41,7 +41,7 @@ const statusName = (id) => {
     <div class="modal-box">
       <!-- 모달 헤더 -->
       <div class="modal-header">
-        <img src="@/assets/icons/meeting_and_place/sidebar-interested_meetings.svg" alt="개설 모임 목록" class="icon-img"/>
+        <img src="@/assets/icons/meeting_and_place/sidebar-interested_meetings.svg" alt="찜 모임 목록" class="icon-img"/>
         <h2>찜한 모임 목록</h2>
         <button class="close-btn" @click="$emit('close')">×</button>
       </div>
@@ -59,7 +59,9 @@ const statusName = (id) => {
             <div class="assignment-address"> {{ meeting.placeName || meeting.customPlaceAddress }} </div>
           </div>
           <div class="assignment-status"> {{ statusName(meeting.statusId) }} </div>
-          <img src="/src/assets/icons/community/heart.svg" alt="찜 취소" class="heart"/>
+          <button class="bookmark">
+            <img src="/src/assets/icons/community/heart.svg" alt="찜 취소" class="heart"/>
+          </button>
         </div>
 
       </div>

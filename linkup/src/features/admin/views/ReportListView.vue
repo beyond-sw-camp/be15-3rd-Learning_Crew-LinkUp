@@ -4,7 +4,6 @@ import { format } from 'date-fns'
 import AdminListTemplate from '@/features/admin/components/AdminListTemplate.vue'
 import DetailViewer from '@/features/admin/components/DetailViewer.vue'
 import AdminButton from '@/features/admin/components/AdminButton.vue'
-
 import {
   fetchReportList,
   fetchReportDetail,
@@ -15,18 +14,21 @@ import {
 
 const props = defineProps({ pageTitle: String })
 
-const initFilters = ref({ status: '', reportTypeId: '' })
-const reloadKey = ref(0)
+// 필터 상태
+const filters = ref({ statusId: '', reportTypeId: '' })
+const selected = ref(null)
 const reportTypes = ref([])
 
+// 상태 정보
 const STATUS_OPTIONS = [
   { id: 1, label: '처리중' },
   { id: 2, label: '완료' },
   { id: 3, label: '기각' }
 ]
-const statusToId = Object.fromEntries(STATUS_OPTIONS.map(s => [s.label, s.id]))
+
 const idToStatus = Object.fromEntries(STATUS_OPTIONS.map(s => [s.id, s.label]))
 
+// 신고 유형 불러오기
 onMounted(async () => {
   try {
     const res = await fetchReportTypes()
@@ -39,10 +41,14 @@ onMounted(async () => {
   }
 })
 
-async function loadReportList({ status, reportTypeId, page }) {
+// 신고 목록 불러오기
+async function loadReportList({ page, reportTypeId, statusId }) {
   try {
-    const statusId = statusToId[status] || null
-    const res = await fetchReportList({ statusId, reportTypeId, page })
+    const res = await fetchReportList({
+      reportTypeId: reportTypeId || undefined,
+      statusId: statusId || undefined,
+      page
+    })
 
     const list = (res.data.reports || []).map(r => ({
       ...r,
@@ -58,8 +64,7 @@ async function loadReportList({ status, reportTypeId, page }) {
   }
 }
 
-const selected = ref(null)
-
+// 상세 정보 열기
 async function openDetail(row) {
   try {
     const res = await fetchReportDetail(row.reportId)
@@ -67,23 +72,24 @@ async function openDetail(row) {
       ...res.data,
       status: idToStatus[res.data.statusId] ?? '-'
     }
-  } catch (e) {}
+  } catch {}
 }
 
+// 제재 처리
 async function handleSanction(action) {
   if (!selected.value) return
   try {
     const reportId = selected.value.reportId
-    if (action === 'APPROVED') {
+    if (action === 'REJECTED') {
       await rejectReport(reportId)
-    } else if (action === 'REJECTED') {
+    } else if (action === 'APPROVED') {
       await acceptReport(reportId)
     }
     selected.value = null
-    reloadKey.value++
-  } catch (e) {}
+  } catch {}
 }
 
+// 테이블 컬럼 정의
 const columns = [
   { key: 'reportId', label: '신고 ID' },
   { key: 'reporterMemberId', label: '신고자 ID' },
@@ -114,33 +120,38 @@ const columns = [
   <AdminListTemplate
     :fetchFn="loadReportList"
     :columns="columns"
-    :initFilters="initFilters"
+    :initFilters="filters"
     :pageTitle="props.pageTitle"
     :enableModal="true"
-    :key="reloadKey"
   >
-    <!-- 필터 -->
-    <template #filters>
-      <label class="filter-label">
-        상태:
-        <select v-model="initFilters.status" class="select-box" aria-label="상태 필터">
-          <option value="">전체</option>
-          <option v-for="s in STATUS_OPTIONS" :key="s.id" :value="s.label">{{ s.label }}</option>
-        </select>
-      </label>
+    <!--필터 영역 -->
+    <template #filters="{ filters }">
+      <label class="filter-label" for="status-filter">상태:</label>
+      <select
+        id="status-filter"
+        v-model="filters.statusId"
+        class="select-box"
+        aria-label="상태 필터"
+      >
+        <option value="">전체</option>
+        <option v-for="s in STATUS_OPTIONS" :key="s.id" :value="s.id">{{ s.label }}</option>
+      </select>
 
-      <label class="filter-label">
-        신고 유형:
-        <select v-model.number="initFilters.reportTypeId" class="select-box" aria-label="신고 유형 필터">
-          <option value="">전체</option>
-          <option v-for="type in reportTypes" :key="type.reportTypeId" :value="type.reportTypeId">
-            {{ type.reportType }}
-          </option>
-        </select>
-      </label>
+      <label class="filter-label" for="type-filter">신고 유형:</label>
+      <select
+        id="type-filter"
+        v-model="filters.reportTypeId"
+        class="select-box"
+        aria-label="신고 유형 필터"
+      >
+        <option value="">전체</option>
+        <option v-for="type in reportTypes" :key="type.reportTypeId" :value="type.reportTypeId">
+          {{ type.reportType }}
+        </option>
+      </select>
     </template>
 
-    <!-- 모달 -->
+    <!--상세 모달 -->
     <template #modal>
       <DetailViewer
         v-if="selected"
@@ -155,11 +166,11 @@ const columns = [
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">신고자</span>
-                <span class="value">{{ selected?.reporterMemberId }} / {{ selected?.reporterName }}</span>
+                <span class="value">{{ selected.reporterMemberId }} / {{ selected.reporterName }}</span>
               </div>
               <div class="info-item">
                 <span class="label">피신고자</span>
-                <span class="value">{{ selected?.targetMemberId }} / {{ selected?.targetName }}</span>
+                <span class="value">{{ selected.targetMemberId }} / {{ selected.targetName }}</span>
               </div>
             </div>
           </section>
@@ -169,30 +180,30 @@ const columns = [
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">신고 유형</span>
-                <span class="value">{{ selected?.reportType }}</span>
+                <span class="value">{{ selected.reportType }}</span>
               </div>
               <div class="info-item">
                 <span class="label">상태</span>
-                <span class="value">{{ selected?.status }}</span>
+                <span class="value">{{ selected.status }}</span>
               </div>
               <div class="info-item">
                 <span class="label">신고 일시</span>
-                <span class="value">{{ format(new Date(selected?.createdAt), 'yyyy-MM-dd HH:mm') }}</span>
+                <span class="value">{{ format(new Date(selected.createdAt), 'yyyy-MM-dd HH:mm') }}</span>
               </div>
-              <div class="info-item" v-if="selected?.postId">
+              <div class="info-item" v-if="selected.postId">
                 <span class="label">게시글 ID</span>
-                <span class="value">{{ selected?.postId }}</span>
+                <span class="value">{{ selected.postId }}</span>
               </div>
-              <div class="info-item" v-if="selected?.commentId">
+              <div class="info-item" v-if="selected.commentId">
                 <span class="label">댓글 ID</span>
-                <span class="value">{{ selected?.commentId }}</span>
+                <span class="value">{{ selected.commentId }}</span>
               </div>
             </div>
           </section>
 
           <section class="modal-section" aria-labelledby="section3">
             <h3 id="section3" class="section-title">신고 사유</h3>
-            <div class="reason-box">{{ selected?.reason }}</div>
+            <div class="reason-box">{{ selected.reason }}</div>
           </section>
         </template>
 

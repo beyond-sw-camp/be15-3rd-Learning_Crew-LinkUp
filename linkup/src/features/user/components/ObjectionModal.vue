@@ -35,7 +35,7 @@ const handleSubmit = () => {
 <template>
   <div class="modal" @click.self="$emit('update:modelValue', false)">
     <div class="report-modal">
-      <h2 class="modal-report-title">{{ title }}</h2>
+      <h2 class="modal-title">{{ title }}</h2>
 
       <!-- 대상 정보 -->
       <div class="modal-report-section">

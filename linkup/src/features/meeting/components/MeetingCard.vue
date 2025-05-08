@@ -1,4 +1,5 @@
 <script setup>
+import { defineProps, defineEmits } from 'vue'
 const props = defineProps({
   meeting: {
     type: Object,
@@ -6,7 +7,13 @@ const props = defineProps({
   }
 })
 
-const defaultImg = 'https://cdn.pixabay.com/photo/2018/06/12/19/59/football-3471371_640.jpg'
+const emit = defineEmits(['click'])
+
+function handleClick() {
+  emit('click', props.meeting.id)
+}
+
+const defaultImg = 'https://cdn.pixabay.com/photo/2021/06/04/06/54/racket-6308994_640.jpg'
 
 function formatDate(iso) {
   const date = new Date(iso)
@@ -16,7 +23,7 @@ function formatDate(iso) {
 </script>
 
 <template>
-  <article class="meeting-card">
+  <article class="meeting-card" @click="handleClick">
     <!-- 썸네일 이미지 -->
     <figure class="meeting-img-wrapper">
       <img
@@ -31,7 +38,7 @@ function formatDate(iso) {
       <header class="meeting-meta">
         <p class="date">
           <img src="@/assets/icons/meeting_and_place/date.svg" alt="달력" class="search-icon" />
-          {{ formatDate(meeting.createdAt) }}
+          {{ formatDate(meeting.date) }}
         </p>
         <button class="bookmark" aria-label="찜하기">
           <img src="@/assets/icons/community/empty_heart.svg" alt="찜" class="search-icon" />
@@ -39,21 +46,21 @@ function formatDate(iso) {
       </header>
 
 
-      <h3 class="title">{{ meeting.title }}</h3>
+      <h3 class="title">{{ meeting.meetingTitle }}</h3>
 
       <p class="location">
         <img src="@/assets/icons/meeting_and_place/place.svg" alt="주소" class="search-icon" />
-        {{ meeting.address }}
+        {{ meeting.placeAddress }}
       </p>
 
       <p class="likes">
         <img src="@/assets/icons/meeting_and_place/heart.svg" alt="찜인원" class="search-icon" />
-        {{ meeting.likes || 0 }}명 찜
+        {{ meeting.interestedCount || 0 }}명 찜
       </p>
 
       <p class="price" v-if="meeting.price !== undefined">
         <span class="material-symbols-outlined card">attach_money</span>
-        <strong>{{ meeting.price.toLocaleString() }}원</strong>
+        <strong>{{ meeting.participationFee.toLocaleString() }}원</strong>
       </p>
     </section>
   </article>

@@ -16,18 +16,22 @@ const reportRows = ref([])
 const summaryInfo = ref([])
 
 // 목록 API 호출
-const fetchList = async ({ page, reporteeId }) => {
+const fetchList = async ({ page }) => {
   try {
-    const res = await fetchReporteeUserList({ reporteeId, page })
+    const res = await fetchReporteeUserList({
+      reporteeId: filters.value.reporteeId || null,
+      page
+    })
     return {
       data: res.data.userList || [],
       totalPages: res.data.pagination?.totalPage || 1
     }
   } catch (e) {
-    console.error('🚨 피신고자 목록 조회 실패:', e)
+    console.error('🚨 피신자 목록 조회 실패:', e)
     return { data: [], totalPages: 1 }
   }
 }
+
 
 // 상세 API 호출
 async function openModal(row) {

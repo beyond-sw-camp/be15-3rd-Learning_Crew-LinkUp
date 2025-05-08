@@ -9,8 +9,8 @@ const pageTitle = '신고 대상별 목록 조회'
 
 const filters = reactive({
   isActive: '',
-  searchType: '',
-  searchKeyword: ''
+  targetType: '',
+  targetId: ''
 })
 
 const selectedRow = ref(null)
@@ -22,8 +22,8 @@ const fetchList = async ({ page }) => {
     const res = await fetchReportedTargetList({
       page,
       isActive: filters.isActive || null,
-      searchType: filters.searchType || undefined,
-      searchKeyword: filters.searchKeyword || undefined
+      targetType: filters.targetType || null,
+      targetId: filters.targetId?.trim() || null
     })
     return {
       data: res.data.targetList || [],
@@ -51,7 +51,7 @@ const columns = [
   {
     key: 'action',
     label: '신고 내역',
-    format: (_, row) => ({
+    format: (_, __, row) => ({
       type: 'button',
       label: '보기',
       onClick: () => openModal(row)
@@ -59,10 +59,13 @@ const columns = [
   }
 ]
 
+
 async function openModal(row) {
   try {
     const res = await fetchTargetDetailById(row.targetType, row.targetId)
     const reports = res.data.reportList || []
+    console.log('reports : ', res)
+    console.log('🔍 fetch 결과 rows:', res.data.targetList)
 
     selectedRow.value = row
     summaryInfo.value = [
@@ -103,34 +106,34 @@ function handleSanction() {
     :enableModal="true"
   >
     <!-- 필터 영역 -->
+    <!-- 필터 영역 -->
     <template #filters>
       <label class="filter-label" for="isActive">활성화 여부:</label>
-      <select
-        id="isActive"
-        v-model="filters.isActive"
-        class="select-box"
-      >
+      <select id="isActive" v-model="filters.isActive" class="select-box">
         <option value="">전체</option>
         <option value="Y">활성화</option>
         <option value="N">비활성화</option>
       </select>
 
-      <label class="filter-label" for="searchType">검색 기준:</label>
-      <select id="searchType" v-model="filters.searchType" class="select-box">
-        <option value="">선택</option>
-        <option value="targetId">대상 ID</option>
+      <label class="filter-label" for="targetType">대상 유형:</label>
+      <select id="targetType" v-model="filters.targetType" class="select-box">
+        <option value="">전체</option>
+        <option value="USER">회원</option>
+        <option value="POST">게시글</option>
+        <option value="COMMENT">댓글</option>
       </select>
 
-      <label class="filter-label" for="searchKeyword" class="sr-only">검색어</label>
+      <label class="filter-label sr-only" for="targetId">대상 ID</label>
       <input
-        id="searchKeyword"
-        v-model="filters.searchKeyword"
+        id="targetId"
+        v-model="filters.targetId"
         type="text"
-        inputmode="text"
+        inputmode="numeric"
         class="select-box id-input"
         placeholder="ID"
       />
     </template>
+
 
     <!-- 모달 영역 -->
     <template #modal>
