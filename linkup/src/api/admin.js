@@ -404,7 +404,7 @@ export function fetchReportedTargetList({ targetType = null, targetId = null, is
 /**
  * 특정 신고 대상 상세 조회
  * @param {'USER'|'POST'|'COMMENT'} targetType
- * @param {number|string} targetId
+ * @param {number} targetId
  * @returns {Promise<Object>} 상세 정보 + reportList
  */
 export function fetchTargetDetailById(targetType, targetId) {

@@ -15,6 +15,16 @@ const selectedRow = ref(null)
 const reportRows = ref([])
 const summaryInfo = ref([])
 
+// 테이블 헤더 (key-label 형식)
+const detailHeaders = [
+  { key: 'reportId', label: '신고 ID' },
+  { key: 'reporterMemberId', label: '신고자 ID' },
+  { key: 'reporterName', label: '신고자 이름' },
+  { key: 'reportType', label: '신고 유형' },
+  { key: 'createdAt', label: '신고 일시' },
+  { key: 'statusId', label: '처리 상태' }
+]
+
 // 목록 API 호출
 const fetchList = async ({ page }) => {
   try {
@@ -32,7 +42,6 @@ const fetchList = async ({ page }) => {
   }
 }
 
-
 // 상세 API 호출
 async function openModal(row) {
   try {
@@ -43,16 +52,22 @@ async function openModal(row) {
     summaryInfo.value = [
       { label: '피신고자 ID', value: row.memberId },
       { label: '피신고자 이름', value: row.memberName },
-      { label: '신고 점수', value: row.reportScore }
+      { label: '신고 점수', value: row.reportScore },
+      { label: '신고 횟수', value: row.reportCount }
     ]
+    const statusMap = {
+      1: '처리중',
+      2: '완료',
+      3: '기각'
+    }
 
     reportRows.value = reports.map(r => ({
-      신고ID: r.reportId,
-      신고자ID: r.reporterMemberId,
-      신고자이름: r.reporterName,
-      신고유형: r.reportType,
-      신고일시: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      처리상태: r.status
+      reportId: r.reportId,
+      reporterMemberId: r.reporterMemberId,
+      reporterName: r.reporterName,
+      reportType: r.reportType,
+      createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
+      statusId: statusMap[r.statusId] || '-'
     }))
   } catch (e) {
     console.error('🚨 상세 조회 실패:', e)
@@ -68,6 +83,7 @@ const columns = [
   { key: 'memberId', label: '피신고자 ID' },
   { key: 'memberName', label: '피신고자 이름' },
   { key: 'reportScore', label: '누적 신고 점수' },
+  { key: 'reportCount', label: '누적 신고 횟수' },
   {
     key: 'action',
     label: '신고 내역',
@@ -110,7 +126,7 @@ const columns = [
         title="피신고자 상세 정보"
         description="해당 피신고자에 대한 신고 이력을 확인할 수 있습니다."
         :summary="summaryInfo"
-        :headers="['신고 ID', '신고자 ID', '신고자 이름', '신고 유형', '신고 일시', '처리 상태']"
+        :headers="detailHeaders"
         :rows="reportRows"
         :showActionButton="true"
         action-label="제재 처리"

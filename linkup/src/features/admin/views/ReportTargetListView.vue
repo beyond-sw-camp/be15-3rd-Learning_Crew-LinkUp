@@ -17,23 +17,14 @@ const selectedRow = ref(null)
 const reportRows = ref([])
 const summaryInfo = ref([])
 
-const fetchList = async ({ page }) => {
-  try {
-    const res = await fetchReportedTargetList({
-      page,
-      isActive: filters.isActive || null,
-      targetType: filters.targetType || null,
-      targetId: filters.targetId?.trim() || null
-    })
-    return {
-      data: res.data.targetList || [],
-      totalPages: res.data.pagination?.totalPage || 1
-    }
-  } catch (e) {
-    console.error('🚨 신고 대상 목록 조회 실패:', e)
-    return { data: [], totalPages: 1 }
-  }
-}
+const detailHeaders = [
+  { key: 'reportId', label: '신고 ID' },
+  { key: 'reporterId', label: '신고자 ID' },
+  { key: 'reporterName', label: '신고자 이름' },
+  { key: 'reportType', label: '신고 유형' },
+  { key: 'createdAt', label: '신고 일시' },
+  { key: 'status', label: '처리 상태' }
+]
 
 const columns = [
   { key: 'targetType', label: '대상 유형' },
@@ -54,37 +45,70 @@ const columns = [
     format: (_, __, row) => ({
       type: 'button',
       label: '보기',
-      onClick: () => openModal(row)
+      onClick: (actualRow) => openModal(actualRow)
     })
   }
 ]
 
+async function fetchList({ page }) {
+  try {
+    const res = await fetchReportedTargetList({
+      page,
+      isActive: filters.isActive || null,
+      targetType: filters.targetType || null,
+      targetId: filters.targetId !== '' ? Number(filters.targetId) : null
+    })
+    return {
+      data: res.data.targetList || [],
+      totalPages: res.data.pagination?.totalPage || 1
+    }
+  } catch (e) {
+    console.error('🚨 신고 대상 목록 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
+}
 
 async function openModal(row) {
-  try {
-    const res = await fetchTargetDetailById(row.targetType, row.targetId)
-    const reports = res.data.reportList || []
-    console.log('reports : ', res)
-    console.log('🔍 fetch 결과 rows:', res.data.targetList)
+  const fixedRow = {
+    targetType: row?.targetType ?? null,
+    targetId: Number(row?.targetId),
+    reportCount: row?.reportCount ?? 0,
+    lastReportDate: row?.lastReportDate ?? '',
+    isActive: row?.isActive ?? 'N'
+  }
 
-    selectedRow.value = row
+  if (!fixedRow.targetType || isNaN(fixedRow.targetId)) {
+    console.warn('❌ targetType 또는 targetId가 잘못됨:', fixedRow)
+    return
+  }
+
+  try {
+    const res = await fetchTargetDetailById(fixedRow.targetType, fixedRow.targetId)
+    const reports = res.data.reportList || []
+
+    selectedRow.value = fixedRow
     summaryInfo.value = [
-      { label: '대상 유형', value: row.targetType },
-      { label: '대상 ID', value: row.targetId },
-      { label: '신고 횟수', value: row.reportCount },
-      { label: '최근 신고일', value: format(new Date(row.lastReportDate), 'yyyy-MM-dd HH:mm') },
-      { label: '활성화 여부', value: row.isActive }
+      { label: '대상 유형', value: fixedRow.targetType },
+      { label: '대상 ID', value: fixedRow.targetId },
+      { label: '신고 횟수', value: fixedRow.reportCount },
+      {
+        label: '최근 신고일',
+        value: fixedRow.lastReportDate
+          ? format(new Date(fixedRow.lastReportDate), 'yyyy-MM-dd HH:mm')
+          : '-'
+      },
+      { label: '활성화 여부', value: fixedRow.isActive }
     ]
 
     const statusMap = { 1: '처리중', 2: '완료', 3: '기각' }
 
     reportRows.value = reports.map(r => ({
-      신고ID: r.reportId,
-      신고자ID: r.reporterId,
-      신고자이름: r.reporterName,
-      신고유형: r.reportType,
-      신고일시: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      처리상태: statusMap[r.statusId] || '-'
+      reportId: r.reportId,
+      reporterId: r.reporterId,
+      reporterName: r.reporterName,
+      reportType: r.reportType,
+      createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
+      status: statusMap[r.statusId] || '-'
     }))
   } catch (e) {
     console.error('🚨 상세 정보 조회 실패:', e)
@@ -105,8 +129,6 @@ function handleSanction() {
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <!-- 필터 영역 -->
-    <!-- 필터 영역 -->
     <template #filters>
       <label class="filter-label" for="isActive">활성화 여부:</label>
       <select id="isActive" v-model="filters.isActive" class="select-box">
@@ -134,8 +156,6 @@ function handleSanction() {
       />
     </template>
 
-
-    <!-- 모달 영역 -->
     <template #modal>
       <ReportDetailModal
         v-if="selectedRow"
@@ -144,7 +164,7 @@ function handleSanction() {
         title="신고 대상 상세 정보"
         description="해당 신고 대상에 대한 상세 신고 이력을 확인할 수 있습니다."
         :summary="summaryInfo"
-        :headers="['신고 ID', '신고자 ID', '신고자 이름', '신고 유형', '신고 일시', '처리 상태']"
+        :headers="detailHeaders"
         :rows="reportRows"
         :showActionButton="true"
         action-label="제재 처리"
