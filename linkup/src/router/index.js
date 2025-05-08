@@ -7,6 +7,7 @@ import { communityRoute } from '@/features/community/router.js';
 import { authRoutes } from '@/features/auth/router.js';
 import { userRoutes } from '@/features/user/router.js';
 import { useAuthStore } from '@/stores/auth.js';
+import {tossRoutes} from "@/features/point/router.js";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,6 +19,7 @@ const router = createRouter({
     ...meetingRoutes,
     ...placeRoutes,
     ...communityRoute,
+    ...tossRoutes
   ],
 });
 

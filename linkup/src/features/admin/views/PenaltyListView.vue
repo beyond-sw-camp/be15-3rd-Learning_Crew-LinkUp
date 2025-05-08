@@ -27,7 +27,6 @@ const statusMap = {
   3: '거절'
 }
 
-// 목록 API
 const fetchList = async ({ page, userId, penaltyType, statusId }) => {
   try {
     const res = await fetchPenaltyList({ userId, penaltyType, statusId, page })
@@ -36,18 +35,15 @@ const fetchList = async ({ page, userId, penaltyType, statusId }) => {
       totalPages: res.data.pagination?.totalPage || 1
     }
   } catch (e) {
-    console.error('🚨 제재 목록 조회 실패:', e)
     return { data: [], totalPages: 1 }
   }
 }
 
-// 상세 API
 const openDetail = async (row) => {
   try {
     const res = await fetchPenaltyDetail(row.penaltyId)
     selected.value = res.data
   } catch (e) {
-    console.error('🚨 제재 상세 조회 실패:', e)
   }
 }
 
@@ -58,22 +54,16 @@ function close() {
 async function handleWithdraw() {
   try {
     await withdrawPenalty(selected.value.penaltyId)
-    alert('제재 철회 처리되었습니다.')
     close()
   } catch (e) {
-    console.error('🚨 제재 철회 실패:', e)
-    alert('제재 철회 실패')
   }
 }
 
 async function handleConfirmPenalty() {
   try {
     await confirmReviewPenalty(selected.value.reviewId)
-    alert('제재 확정 처리되었습니다.')
     close()
   } catch (e) {
-    console.error('🚨 제재 확정 실패:', e)
-    alert('제재 확정 실패')
   }
 }
 
@@ -112,30 +102,43 @@ const columns = [
     :initFilters="filters"
     :pageTitle="pageTitle"
     :enableModal="true"
+    @update:filters="v => (filters.value = v)"
   >
-    <template #filters>
-      <label class="filter-label">
-        사용자 ID:
-        <input v-model="filters.userId" class="select-box id-input" placeholder="ID" aria-label="사용자 ID 입력" />
-      </label>
-      <label class="filter-label">
-        제재 유형:
-        <select v-model="filters.penaltyType" class="select-box" aria-label="제재 유형 선택">
-          <option value="">전체</option>
-          <option value="POST">POST</option>
-          <option value="COMMENT">COMMENT</option>
-          <option value="REVIEW">REVIEW</option>
-        </select>
-      </label>
-      <label class="filter-label">
-        상태:
-        <select v-model="filters.statusId" class="select-box" aria-label="제재 상태 선택">
-          <option value="">전체</option>
-          <option value="1">대기</option>
-          <option value="2">승인</option>
-          <option value="3">거절</option>
-        </select>
-      </label>
+    <template #filters="{ filters }">
+      <label class="filter-label" for="user-id-input">사용자 ID:</label>
+      <input
+        id="user-id-input"
+        v-model="filters.userId"
+        class="select-box id-input"
+        placeholder="ID"
+        aria-label="사용자 ID 입력"
+      />
+
+      <label class="filter-label" for="penalty-type-select">제재 유형:</label>
+      <select
+        id="penalty-type-select"
+        v-model="filters.penaltyType"
+        class="select-box"
+        aria-label="제재 유형 선택"
+      >
+        <option value="">전체</option>
+        <option value="POST">POST</option>
+        <option value="COMMENT">COMMENT</option>
+        <option value="REVIEW">REVIEW</option>
+      </select>
+
+      <label class="filter-label" for="penalty-status-select">상태:</label>
+      <select
+        id="penalty-status-select"
+        v-model="filters.statusId"
+        class="select-box"
+        aria-label="제재 상태 선택"
+      >
+        <option value="">전체</option>
+        <option value="1">대기</option>
+        <option value="2">승인</option>
+        <option value="3">거절</option>
+      </select>
     </template>
 
     <template #modal>

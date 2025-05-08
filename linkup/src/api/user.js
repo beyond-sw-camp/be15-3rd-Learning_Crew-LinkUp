@@ -87,6 +87,11 @@ export function postRecoverAccount(data) {
   return api.post('/user-service/users/recover', data);
 }
 
+/* 13. 특정 회원 프로필 조회. */
+export function getUserProfile(params){
+  return api.get('/user-service/users/profile/other')
+}
+
 /**
  * [모임 이력 조회 API]
  * @param {Object} params - 조회 조건
@@ -100,3 +105,4 @@ export function getUserMeetingHistory({ status, page, size }) {
     params: { status, page, size },
   });
 }
+
