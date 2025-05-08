@@ -6,6 +6,7 @@ import MeetingParticipants from '@/features/meeting/components/MeetingParticipan
 import api from '@/api/axios.js';
 import { useAuthStore } from '@/stores/auth.js';
 import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
+import {startLoading} from "@/composables/useLoadingBar.js";
 
 const route = useRoute();
 const meeting = ref(null);
@@ -63,11 +64,13 @@ const closeModal = () => {
 const handleCreateParticipation = async () => {
   const meetingId = route.params.meetingId;
   try {
+    startLoading()
     const response = await api.post(`/common-service/meetings/${meetingId}/participation`,
       { memberId: userStore.userId }
     );
     if (response.data.success) {
-      alert('참가 신청에 성공하였습니다.');
+      // alert('참가 신청에 성공하였습니다.');
+      router.push('/meetings');  // 예: 마이페이지로 이동
     } else {
       console.log('참가 신청 실패');
     }

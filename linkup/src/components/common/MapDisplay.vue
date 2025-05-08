@@ -27,7 +27,7 @@ function getMarkerStyle(meeting) {
 <template>
   <div class="map-section">
     <img
-      src="https://cdn.pixabay.com/photo/2016/04/14/18/08/map-1326271_1280.png"
+      src="@/assets/images/Map.png"
       alt="지도"
       class="map-image"
     />
@@ -45,3 +45,38 @@ function getMarkerStyle(meeting) {
   </div>
 </template>
 
+<style scoped>
+.map-section {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.map-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비율 유지를 하면서 꽉 차게 */
+  display: block;
+}
+
+.map-marker {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.marker-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.map-marker.active {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+}
+</style>

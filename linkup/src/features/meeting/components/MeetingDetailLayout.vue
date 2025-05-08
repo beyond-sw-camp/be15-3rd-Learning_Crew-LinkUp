@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <img src="https://cdn.pixabay.com/photo/2021/06/04/06/54/racket-6308994_640.jpg" class="image"  alt="이미지"/>
+    <img src="https://cdn.pixabay.com/photo/2022/08/28/08/26/table-tennis-7415981_640.png" class="image"  alt="이미지"/>
     <main class="content">
       <header>
         <h1>{{ title }}</h1>

@@ -69,6 +69,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import api from '@/api/axios.js';
 import { useAuthStore } from '@/stores/auth.js';
+import {startLoading} from "@/composables/useLoadingBar.js";
 
 const auth = useAuthStore();
 
@@ -123,12 +124,14 @@ function closeModal() {
 
 async function acceptParticipation(applicant) {
   try {
+    startLoading()
     const memberId = applicant.memberId;
     const response = await api.put(`/common-service/meetings/${meetingId.value}/participation/${memberId}/accept`
     ,  { // 여기에 body 데이터 작성
         memberId: auth.userId  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
         // 필요한 다른 데이터들을 여기에 추가
       });
+
     console.log(response.data);
   } catch (error) {
     console.error('참가 수락 실패:', error);
@@ -138,6 +141,7 @@ async function acceptParticipation(applicant) {
 
 async function rejectParticipation(applicant) {
   try {
+    startLoading()
     const memberId = applicant.memberId;
     const response = await api.put(`/common-service/meetings/${meetingId.value}/participation/${memberId}/reject`,
       { // 여기에 body 데이터 작성

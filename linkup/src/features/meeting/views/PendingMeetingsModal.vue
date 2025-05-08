@@ -53,7 +53,7 @@ const statusName = (id) => {
              :key="meeting.meetingId"
              onclick="$emit('select', meeting)"
         >
-          <img src="../img/place_img1.png" alt="썸네일" class="assignment-thumb" />
+          <img src="https://media.istockphoto.com/id/1425158165/ko/%EC%82%AC%EC%A7%84/%ED%83%81%EA%B5%AC-%ED%83%81%EA%B5%AC-%EB%9D%BC%EC%BC%93%EA%B3%BC-%EB%B8%94%EB%A3%A8-%EB%B3%B4%EB%93%9C%EC%97%90-%ED%9D%B0%EC%83%89-%EA%B3%B5.jpg?s=612x612&w=is&k=20&c=ots0jCHMDfuDpVbFLj_wI38nsMmeyyG7ETY8R3ilA8w=" alt="썸네일" class="assignment-thumb" />
           <div class="assignment-content">
             <div class="assignment-title"> {{meeting.meetingTitle}} </div>
             <div class="assignment-address"> {{ meeting.placeName || meeting.customPlaceAddress }} </div>

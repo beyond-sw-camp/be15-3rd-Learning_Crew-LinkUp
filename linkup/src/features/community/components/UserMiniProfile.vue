@@ -49,7 +49,7 @@ const style = computed(() => ({
 
 const handleFriendRequest = async () => {
   const targetId = props.user?.user.userId;
-  
+
 
   if (!targetId || targetId <= 0) {
     alert('유효하지 않은 대상 유저입니다.');
