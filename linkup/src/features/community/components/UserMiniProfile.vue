@@ -46,33 +46,10 @@ const style = computed(() => ({
   zIndex: 999,
 }));
 
-/*const handleFriendRequest = async () => {
-  const targetMemberId = props.user.user?.userId;
-  console.log('user:', props.user);
-  console.log('user.userId:', props.user?.userId);
-  console.log('user.user?.userId:', props.user?.user?.userId);
-  console.log('user.id', props.user.id);
-
-  if (typeof targetMemberId !== 'number') {
-    alert('대상 유저 정보가 없습니다.');
-    return;
-  }
-  try {
-    await sendFriendRequest(targetMemberId);
-    alert('친구 요청이 전송되었습니다!');
-    emit('close');
-  } catch (e) {
-    console.error('친구 요청 실패', e);
-    alert('이미 친구 요청을 보냈거나, 오류가 발생했습니다.');
-  }
-};*/
-
 
 const handleFriendRequest = async () => {
-  const targetId = props.user?.userId;
-
-  console.log('targetId:', targetId);
-  console.log('props.user:', props.user);
+  const targetId = props.user?.user.userId;
+  
 
   if (!targetId || targetId <= 0) {
     alert('유효하지 않은 대상 유저입니다.');
@@ -81,10 +58,8 @@ const handleFriendRequest = async () => {
 
   try {
     await sendFriendRequest(targetId);
-    alert('친구 요청을 보냈습니다!');
   } catch (e) {
     console.error('친구 요청 실패', e);
-    alert(e.response?.data?.message || '요청 실패');
   }
 };
 

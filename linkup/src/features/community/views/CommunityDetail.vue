@@ -146,6 +146,10 @@ const openMiniProfile = async (event, targetId) => {
   }
 };
 
+const goBack = () => {
+  router.back() // 브라우저 히스토리 상 한 단계 뒤로 이동
+}
+
 
 
 const closeMiniProfile = () => {
