@@ -22,13 +22,8 @@
 5. [💻 백엔드 프로젝트](#5--백엔드-프로젝트)
 6. [📊 산출물](#6--산출물)  
    - [📊 WBS](#1--wbs-작업-분배-및-일정)  
-   - [📄 요구사항 정의서](#2--요구사항-정의)  
-   - [📌 ERD](#3--erd--테이블-정의서)  
-   - [⚙️ 시스템 아키텍쳐](#4--시스템-아키텍쳐)  
-   - [🧩 기능 정의서](#5--기능-정의서)  
-   - [📑 Swagger 문서](#6--Swagger-문서)
-   - [📒 테스트 케이스 정의서](#7--테스트-케이스-정의서)  
-   - [🧪 테스트 케이스 상세](#8--테스트-케이스-상세)  
+   - [🧩 기능 정의서](#2--기능-정의서)   
+   - [🧪 테스트 케이스 상세](#3--테스트-케이스-상세)  
 7. [🫂 팀원 회고](#7--팀원-회고)  
 
 <br>
@@ -41,6 +36,7 @@
 
 |                     곽진웅                     |                   김여진                   |                      박성용                      |                   박준서                   |                   장건희                   |                  최지혜                  |
 | :-----------------------------------------: | :-------------------------------------: | :-------------------------------------------: | :-------------------------------------: | :-------------------------------------: | :-----------------------------------: |
+| <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=%EA%B3%BD%EC%A7%84%EC%9B%85" width="100" height="100"> | <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=%EA%B9%80%EC%97%AC%EC%A7%84" width="100" height="100"> | <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=%EB%B0%95%EC%84%B1%EC%9A%A9" width="100" height="100"> | <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=%EB%B0%95%EC%A4%80%EC%84%9C" width="100" height="100"> | <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=%EC%9E%A5%EA%B1%B4%ED%9D%AC" width="100" height="100"> | <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=%EC%B5%9C%EC%A7%80%ED%98%9C" width="100" height="100"> |
 | [mijuckboon](https://github.com/mijuckboon) | [meowdule](https://github.com/meowdule) | [develop-psy](https://github.com/develup-psy) | [Joonspar](https://github.com/Joonspar) | [jang9465](https://github.com/jang9465) | [jihye25](https://github.com/jihye25) |
 
 
@@ -479,7 +475,7 @@ LinkUp은 모임이라는 소속에 구애받지 않고 언제든 원할 때 신
 
 ## 5. 💻 백엔드 프로젝트
 
-
+🔗 [LinkUp 백엔드 repository](https://github.com/LearningCrew-LinkUp/be15-2nd-LearningCrew-LinkUp)
 
 <br>
 
@@ -500,227 +496,21 @@ LinkUp은 모임이라는 소속에 구애받지 않고 언제든 원할 때 신
 
 <br>
 
-### 2. 📄 요구사항 정의서
 
-🔗 [요구사항 명세서 링크](https://docs.google.com/spreadsheets/d/e/2PACX-1vR5o5viDNitHaRwGwl4o1biS6vLC52SPAyREVK2vDS9y13eXPo8N7CumbLhWDeejayHAh0Ji5Cmf2tf/pubhtml?gid=1583571973&single=true)
+### 2. 🧩 기능 정의서
 
+🔗 [테스트 케이스 정의서 링크](https://docs.google.com/spreadsheets/d/e/2PACX-1vS5z7lnFVoKhrHU0zT55KpMlmla72tCCbzkwDi_7PyI23dByzC5GMS2v7jT-7YjDzr9LlZDPXG-xev4/pubhtml?gid=403982901&single=true)
 
-<details>
-<summary>요구사항 정의서 미리보기</summary>
-<img src="assets/images/requirement_statement.jpg" alt="requirement_statement" width="550"/>
-</details>
+🔗 [기능 정의서 링크](https://docs.google.com/spreadsheets/d/e/2PACX-1vS5z7lnFVoKhrHU0zT55KpMlmla72tCCbzkwDi_7PyI23dByzC5GMS2v7jT-7YjDzr9LlZDPXG-xev4/pubhtml?gid=403982901&single=true)
 
-<br>
-
-<br>
-
-
-### 3. 📌 ERD & 테이블 정의서
-
-<details>
-<summary>논리 ERD</summary>    
-<img src="assets/images/logical_ERD.png" alt="logical_ERD"/>
-</details>
-
-<br>
-
-
-<details>
-<summary>물리 ERD</summary>      
-<img src="assets/images/physical_ERD.png" alt="physical_ERD"/>
-</details>
-
-<br>
-
-
-<details>
-<summary>테이블 정의서</summary>    
-
-🔗 [테이블 정의서 링크](https://docs.google.com/spreadsheets/d/e/2PACX-1vS5z7lnFVoKhrHU0zT55KpMlmla72tCCbzkwDi_7PyI23dByzC5GMS2v7jT-7YjDzr9LlZDPXG-xev4/pubhtml?gid=1875790254&single=true)
-
-<details>
-<summary>🔹 기초 테이블 정의서 </summary>
-
-- 상태 테이블
-- 권한 테이블
-- 운동 종목 테이블
-
-<img src="assets/images/table_definition_init.jpg" alt="table_definition_init" width="700"/>
-
-<br>
-
-</details>
-
-<details>
-<summary>🔹 사용자 테이블 정의서 </summary>
-
-- 사용자 테이블
-- 회원 테이블
-- 친구 관계 테이블
-- 선호 운동 테이블
-
-<img src="assets/images/table_definition_user_1.jpg" alt="table_definition_user_1" width="700"/>
-<img src="assets/images/table_definition_user_2.jpg" alt="table_definition_user_2" width="700"/>
-
-<br>
-
-</details>
-
-<details>
-<summary>🔹 포인트 테이블 정의서 </summary>
-
-- 계좌 테이블
-- 포인트 거래 내역 테이블
-
-<img src="assets/images/table_definition_point.jpg" alt="table_definition_point" width="700"/>
-
-<br>
-
-</details>
-
-<details>
-<summary>🔹 장소 테이블 정의서 </summary>
-
-- 사업자 테이블
-- 장소 테이블
-- 장소 사진 테이블
-- 장소 즐겨찾기 테이블
-- 장소 예약 테이블
-- 장소 후기 테이블
-
-<img src="assets/images/table_definition_place_1.jpg" alt="table_definition_place_1" width="700"/>
-<img src="assets/images/table_definition_place_2.jpg" alt="table_definition_place_1" width="700"/>
-
-<br>
-
-</details>
-
-<details>
-<summary>🔹 모임 테이블 정의서 </summary>
-
-- 모임 테이블
-- 모임 참여이력 테이블
-- 참가자 평가 테이블
-- 베스트 플레이어 테이블
-- 모임 찜 테이블
-
-<img src="assets/images/table_definition_meeting_1.jpg" alt="table_definition_meeting_1" width="700"/>
-<img src="assets/images/table_definition_meeting_2.jpg" alt="table_definition_meeting_2" width="700"/>
-
-<br>
-
-</details>
-
-<details>
-<summary>🔹 커뮤니티 테이블 정의서 </summary>
-
-- 게시글 테이블
-- 게시글 좋아요 테이블
-- 게시글 사진 테이블
-- 댓글 테이블
-- 댓글 좋아요 테이블
-
-<img src="assets/images/table_definition_community_1.jpg" alt="table_definition_community_1" width="700"/>
-<img src="assets/images/table_definition_community_2.jpg" alt="table_definition_community_2" width="700"/>
-
-<br>
-
-</details>
-
-
-<details>
-<summary>🔹 알림 테이블 정의서 </summary>
-
-- 알림 유형 테이블
-- 알림 설정 테이블
-- 도메인 타입 테이블
-- 알림 테이블
-
-<img src="assets/images/table_definition_notification.jpg" alt="table_definition_notification" width="700"/>
-
-<br>
-
-</details>
-
-<details>
-<summary>🔹 신고 및 제재 테이블 정의서 </summary>
-
-- 신고 유형 테이블
-- 신고 이력 테이블
-- 사용자 제재 이력 테이블
-- 이의제기 테이블
-- 블랙리스트 테이블
-
-<img src="assets/images/table_definition_report.jpg" alt="table_definition_report" width="700"/>
-<img src="assets/images/table_definition_penalty.jpg" alt="table_definition_penalty" width="700"/>
-
-<br>
-
-</details>
-
-<details>
-<summary>🔹 토큰 테이블 정의서 </summary>
-
-- 인증 토큰 테이블
-- 리프레시 토큰 테이블
-
-<img src="assets/images/table_definition_token.jpg" alt="table_definition_token" width="700"/>
-
-<br>
-
-</details>
-
-</details>
-
-
+<img src="assets/images/functionalDefinition.jpg" alt="functionalDefinition" width="400"/>
 
 <br>
 
 <br>
 
 
-### 4. ⚙️ 시스템 아키텍쳐
-
-<img src="" alt="sysetem_architecture" width="700"/>
-
-<br>
-
-<img src="" alt="gateway" width="500"/>
-
-<br>
-
-
-### 5. 🧩 기능 정의서
-(주요 기능 목록 및 설명: 예. 회원가입, 모임개설, 포인트 결제 등)
-
-<br>
-
-<br>
-
-
-### 6. 📑 Swagger 문서
-
-[swagger_api.pdf](assets/api-docs/Swagger_API.pdf)
-
-<br>
-
-<img src="assets/api-docs/swagger_api.jpg" alt="rest_api" width="700"/>
-
-<br>
-
-<br>
-
-
-### 7. 📒 테스트 케이스 정의서
-
-> 테스트 케이스 정의서
-
-<br>
-
-<br>
-
-
-### 8. 🧪 테스트 케이스 상세
+### 3. 🧪 테스트 케이스 상세
 
 > 프론트엔드 테스트 케이스 상세
 
