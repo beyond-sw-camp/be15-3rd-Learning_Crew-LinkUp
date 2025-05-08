@@ -45,11 +45,10 @@ const columns = [
     format: (_, __, row) => ({
       type: 'button',
       label: '보기',
-      onClick: (r) => openModal(r)
+      onClick: (actualRow) => openModal(actualRow)
     })
   }
 ]
-
 
 async function fetchList({ page }) {
   try {
@@ -57,7 +56,7 @@ async function fetchList({ page }) {
       page,
       isActive: filters.isActive || null,
       targetType: filters.targetType || null,
-      targetId: filters.targetId?.trim() || null
+      targetId: filters.targetId !== '' ? Number(filters.targetId) : null
     })
     return {
       data: res.data.targetList || [],
@@ -70,17 +69,35 @@ async function fetchList({ page }) {
 }
 
 async function openModal(row) {
+  const fixedRow = {
+    targetType: row?.targetType ?? null,
+    targetId: Number(row?.targetId),
+    reportCount: row?.reportCount ?? 0,
+    lastReportDate: row?.lastReportDate ?? '',
+    isActive: row?.isActive ?? 'N'
+  }
+
+  if (!fixedRow.targetType || isNaN(fixedRow.targetId)) {
+    console.warn('❌ targetType 또는 targetId가 잘못됨:', fixedRow)
+    return
+  }
+
   try {
-    const res = await fetchTargetDetailById(row.targetType, row.targetId)
+    const res = await fetchTargetDetailById(fixedRow.targetType, fixedRow.targetId)
     const reports = res.data.reportList || []
 
-    selectedRow.value = row
+    selectedRow.value = fixedRow
     summaryInfo.value = [
-      { label: '대상 유형', value: row.targetType },
-      { label: '대상 ID', value: row.targetId },
-      { label: '신고 횟수', value: row.reportCount },
-      { label: '최근 신고일', value: format(new Date(row.lastReportDate), 'yyyy-MM-dd HH:mm') },
-      { label: '활성화 여부', value: row.isActive }
+      { label: '대상 유형', value: fixedRow.targetType },
+      { label: '대상 ID', value: fixedRow.targetId },
+      { label: '신고 횟수', value: fixedRow.reportCount },
+      {
+        label: '최근 신고일',
+        value: fixedRow.lastReportDate
+          ? format(new Date(fixedRow.lastReportDate), 'yyyy-MM-dd HH:mm')
+          : '-'
+      },
+      { label: '활성화 여부', value: fixedRow.isActive }
     ]
 
     const statusMap = { 1: '처리중', 2: '완료', 3: '기각' }
@@ -112,7 +129,6 @@ function handleSanction() {
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <!-- 필터 영역 -->
     <template #filters>
       <label class="filter-label" for="isActive">활성화 여부:</label>
       <select id="isActive" v-model="filters.isActive" class="select-box">
@@ -140,7 +156,6 @@ function handleSanction() {
       />
     </template>
 
-    <!-- 모달 영역 -->
     <template #modal>
       <ReportDetailModal
         v-if="selectedRow"
