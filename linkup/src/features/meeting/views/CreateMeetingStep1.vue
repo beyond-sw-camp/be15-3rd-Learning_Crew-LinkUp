@@ -1,51 +1,143 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref, onMounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import api from '@/api/axios';
+import { useAuthStore } from '@/stores/auth.js';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
 
-const MIN_USER = 2;
-const MAX_USER = 30;
-
 const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
 
-const placeName = '신촌 풋살 센터';
-const sportId = 1;
-const rentalCost = 130000;
-
-const selectedDate = ref('');
-const selectedTimeSlot = ref({startTime: null, endTime: null});
+const placeId = Number(route.query.placeId);
+const placeName = ref('');
+const rentalCost = ref(0);
+const sportId = ref(0);
+const operationTimes = ref([]);
+const placeMinUser = ref(0);
+const placeMaxUser = ref(0);
 const minUser = ref(0);
 const maxUser = ref(0);
 
-const timeSlots = [
-  { startTime: '11:00', endTime: '13:00'},
-  { startTime: '13:00', endTime: '15:00'},
-  { startTime: '15:00', endTime: '17:00'},
-  { startTime: '17:00', endTime: '19:00'},
-  { startTime: '19:00', endTime: '21:00'},
-  { startTime: '21:00', endTime: '23:00'},
-];
+const selectedDate = ref('');
+const selectedTimeSlot = ref({ startTime: null, endTime: null });
+const reservedSlots = ref([]);
+
+onMounted(async () => {
+  if (!authStore.isAuthenticated) {
+    alert('로그인이 필요합니다.');
+    router.push('/login');
+    return;
+  }
+
+  if (!placeId || isNaN(placeId)) {
+    alert('잘못된 장소 ID입니다.');
+    return;
+  }
+
+  try {
+    const res = await api.get(`/common-service/place/${placeId}`);
+    const place = res.data?.data;
+    if (!place) throw new Error('장소 데이터를 찾을 수 없습니다.');
+
+    placeName.value = place.placeName || '이름 없음';
+    rentalCost.value = place.rentalCost || 0;
+    sportId.value = place.sportId || 0;
+    operationTimes.value = Array.isArray(place.operationTimes) ? place.operationTimes : [];
+    placeMinUser.value = Number(place.minUser) || 2;
+    placeMaxUser.value = Number(place.maxUser) || 30;
+    minUser.value = placeMinUser.value;
+    maxUser.value = placeMaxUser.value;
+  } catch (error) {
+    console.error('🛑 장소 정보 로딩 실패:', error);
+    alert(`장소 정보를 불러오는 데 실패했습니다. (${error.response?.status || '서버 오류'})`);
+  }
+});
+
+watch(selectedDate, async (newDate) => {
+  if (!newDate || !placeId || isNaN(placeId)) return;
+  try {
+    const res = await api.get(`/common-service/reserved-times`, {
+      params: { placeId, date: newDate },
+    });
+    reservedSlots.value = res.data?.data || [];
+  } catch (e) {
+    console.error('❌ 예약된 시간 조회 실패', e);
+    reservedSlots.value = [];
+  }
+});
+
+const selectedTimeSlots = computed(() => {
+  if (!selectedDate.value) return [];
+  const dayMap = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  const selectedDay = dayMap[new Date(selectedDate.value).getDay()];
+  const dayOp = operationTimes.value.find(op => op.dayOfWeek === selectedDay);
+  if (!dayOp) return [];
+
+  const slots = [];
+  let start = parseTime(dayOp.startTime);
+  const end = parseTime(dayOp.endTime);
+  const unit = 120;
+  while (start + unit <= end) {
+    slots.push({ startTime: formatTime(start), endTime: formatTime(start + unit) });
+    start += unit;
+  }
+  return slots;
+});
+const isSlotReserved = (slot) => {
+  return reservedSlots.value.some(res => res.startTime.slice(0, 5) === slot.startTime);
+};
+
+
+function parseTime(str) {
+  const [h, m] = str.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function formatTime(minutes) {
+  const h = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const m = String(minutes % 60).padStart(2, '0');
+  return `${h}:${m}`;
+}
 
 const selectTimeSlot = (slot) => {
+  if (isSlotReserved(slot)) return;
   if (selectedTimeSlot.value.startTime !== slot.startTime) {
     selectedTimeSlot.value = slot;
   }
 };
 
+const selectDateContainer = () => {
+  const input = document.querySelector('#date-picker');
+  input?.showPicker?.();
+};
+
 const goToNextStep = () => {
-  // 유효성 검증
-  if (!selectedDate.value || !selectedTimeSlot) {
+  const dayMap = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  const selectedDay = dayMap[new Date(selectedDate.value).getDay()];
+  const availableDays = operationTimes.value.map(op => op.dayOfWeek);
+  if (!availableDays.includes(selectedDay)) {
+    alert('선택한 날짜는 장소의 운영일이 아닙니다.');
+    return;
+  }
+
+  if (!selectedDate.value || !selectedTimeSlot.value.startTime) {
     alert('날짜와 시간을 선택해주세요.');
     return;
   }
 
-  if (minUser.value < MIN_USER) {
-    alert(`최소 인원은 ${MIN_USER}명 이상이어야 합니다.`);
+  if (!sportId.value || sportId.value < 1) {
+    alert('운동 종목 정보가 유효하지 않습니다.');
     return;
   }
 
-  if (maxUser.value > MAX_USER) {
-    alert(`최대 인원은 ${MAX_USER}명 이하여야 합니다.`);
+  if (minUser.value < placeMinUser.value) {
+    alert(`최소 인원은 ${placeMinUser.value}명 이상이어야 합니다.`);
+    return;
+  }
+
+  if (maxUser.value > placeMaxUser.value) {
+    alert(`최대 인원은 ${placeMaxUser.value}명 이하여야 합니다.`);
     return;
   }
 
@@ -57,21 +149,22 @@ const goToNextStep = () => {
   router.push({
     name: 'CheckCreatorBalance',
     query: {
+      placeId,
+      placeName: placeName.value,
+      rentalCost: rentalCost.value,
+      sportId: sportId.value,
       date: selectedDate.value,
       startTime: selectedTimeSlot.value.startTime,
       endTime: selectedTimeSlot.value.endTime,
       minUser: minUser.value,
-      maxUser: maxUser.value,
-      sportId: sportId
+      maxUser: maxUser.value
     },
   });
 };
 
 const participationFee = computed(() => {
-  if (minUser.value === 0) {
-    return '모집 인원을 입력해주세요.';
-  }
-  return (rentalCost / minUser.value).toLocaleString();
+  if (minUser.value === 0) return '모집 인원을 입력해주세요.';
+  return Math.floor(rentalCost.value / minUser.value).toLocaleString();
 });
 </script>
 
@@ -85,37 +178,39 @@ const participationFee = computed(() => {
 
     <div class="form-group">
       <label class="group-label">날짜 선택</label>
-      <input type="date" class="calendar-input" v-model="selectedDate"/>
+      <div class="calendar-click-area" @click="selectDateContainer">
+        <input id="date-picker" type="date" class="calendar-input" v-model="selectedDate" :min="new Date().toISOString().split('T')[0]" />
+      </div>
     </div>
 
-    <!-- 시간 선택 -->
     <section class="time-select-section">
       <h2 class="section-title">예약 시간 선택</h2>
-      <div class="time-selection">
+      <div v-if="selectedDate" class="time-selection">
         <button
-          v-for="slot in timeSlots"
+          v-for="slot in selectedTimeSlots"
           :key="slot.startTime"
-          :class="['time-slot', { active: selectedTimeSlot?.startTime === slot.startTime }]"
+          :class="['time-slot', { active: selectedTimeSlot?.startTime === slot.startTime, disabled: isSlotReserved(slot) }]"
+          :disabled="isSlotReserved(slot)"
           @click="selectTimeSlot(slot)"
         >
           {{ slot.startTime }} ~ {{ slot.endTime }}
         </button>
       </div>
+      <div v-else class="text-gray-500">먼저 날짜를 선택해주세요.</div>
     </section>
 
     <div class="form-group-inline">
       <div>
         <label class="group-label">최소 인원</label>
-        <input type="number" class="input-box" v-model="minUser" />
+        <input type="number" class="input-box" v-model="minUser" :min="placeMinUser" :max="placeMaxUser" />
       </div>
       <div>
         <label class="group-label">최대 인원</label>
-        <input type="number" class="input-box" v-model="maxUser" />
+        <input type="number" class="input-box" v-model="maxUser" :min="placeMinUser" :max="placeMaxUser" />
       </div>
     </div>
 
     <div class="price-per-person">{{ participationFee }}<span class="per-person">/인당</span></div>
-
     <button class="next-btn" @click="goToNextStep">다음 단계로</button>
   </CreateMeetingLayout>
 </template>
@@ -162,6 +257,10 @@ body {
   font-size: 1rem;
 }
 
+.calendar-click-area {
+  cursor: pointer;
+}
+
 .time-select-section {
   margin-top: 40px;
 }
@@ -170,10 +269,8 @@ body {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 16px;
-  font-family: 'Pretendard', sans-serif;
 }
 
-/* 여기부터 수정된 예약 시간 스타일 */
 .time-selection {
   display: flex;
   flex-direction: column;
@@ -199,11 +296,13 @@ body {
   color: #ffffff;
 }
 
-.time-slot.active .price {
-  color: #ffffff;
+.time-slot.disabled {
+  background-color: #f0f0f0;
+  color: #aaa;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
-
-/* 여기까지 수정 */
 
 .form-group-inline {
   display: flex;
