@@ -89,8 +89,13 @@ export function postRecoverAccount(data) {
 
 /* 13. 특정 회원 프로필 조회. */
 export function getUserProfile(params){
-  return api.get('/user-service/users/profile/other')
+  return api.get('/user-service/users/me/profile/other', { params });
 }
+
+export const sendFriendRequest = (targetMemberId) => {
+  return api.post(`/user-service/friends/${targetMemberId}`)
+}
+
 
 /**
  * [모임 이력 조회 API]
