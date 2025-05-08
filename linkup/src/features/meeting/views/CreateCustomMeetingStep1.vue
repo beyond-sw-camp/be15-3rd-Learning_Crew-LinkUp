@@ -1,17 +1,27 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import CreateCustomMeetingLayout from '@/features/meeting/components/CreateCustomMeetingLayout.vue';
 import MeetingCalendar from '@/features/meeting/components/MeetingCalendar.vue';
 import TimeSelectionForm from '@/features/meeting/components/TimeSelectionForm.vue';
 
+import sport1 from "@/assets/icons/sports/etc.svg";
+import sport2 from "@/assets/icons/sports/football.svg";
+import sport3 from "@/assets/icons/sports/tennis.svg";
+import sport4 from "@/assets/icons/sports/bowling.svg";
+import sport5 from "@/assets/icons/sports/tableTennis.svg";
+import sport6 from "@/assets/icons/sports/basketball.svg";
+import sport7 from "@/assets/icons/sports/golf.svg";
+import sport8 from "@/assets/icons/sports/badminton.svg";
+
 const MIN_USER = 2;
 const MAX_USER = 30;
 
+const route = useRoute();
 const router = useRouter();
 
-const lattitude = 120.000000;
-const longitude = 37.000000;
+const latitude = route.query.latitude || 120.000000;
+const longitude = route.query.longitude || 37.000000;
 const rentalCost = 0;
 
 const selectedDate = ref(null);
@@ -26,14 +36,14 @@ const isLoading = ref(true);
 const fetchSports = async () => {
   try {
     sports.value = [
-      { sportId: 2, sportName: '풋살' },
-      { sportId: 3, sportName: '테니스' },
-      { sportId: 4, sportName: '볼링' },
-      { sportId: 5, sportName: '탁구' },
-      { sportId: 6, sportName: '농구' },
-      { sportId: 7, sportName: '골프' },
-      { sportId: 8, sportName: '배드민턴' },
-      { sportId: 1, sportName: '기타 운동' }
+      { sportId: 2, sportName: '풋살' , img: sport2},
+      { sportId: 3, sportName: '테니스', img: sport3},
+      { sportId: 4, sportName: '볼링', img: sport4 },
+      { sportId: 5, sportName: '탁구', img: sport5 },
+      { sportId: 6, sportName: '농구', img: sport6 },
+      { sportId: 7, sportName: '골프', img: sport7 },
+      { sportId: 8, sportName: '배드민턴', img: sport8 },
+      { sportId: 1, sportName: '기타 운동', img: sport1}
     ];
 
     //   const response = await axios.get();
@@ -87,13 +97,16 @@ const goToNextStep = () => {
   });
 };
 
+function getIcon(sport) {
+  return sport.img;
+}
 </script>
 
 <template>
   <CreateCustomMeetingLayout :step="1" title="장소, 종목, 인원 선택">
     <div class="form-group">
       <label class="group-label">선택된 장소</label>
-      <div class="selected-place">위도: {{lattitude}}, 경도: {{longitude}}</div>
+      <div class="selected-place">위도: {{latitude}}, 경도: {{longitude}}</div>
     </div>
 
     <MeetingCalendar v-model="selectedDate"/>
@@ -110,7 +123,7 @@ const goToNextStep = () => {
           :class="{active: selectedSportId === sport.sportId}"
           @click="selectedSportId = sport.sportId"
         >
-          <img src="" alt="sport.sportName"/>
+          <img :src="getIcon(sport)" alt="sport.sportName"/>
           {{ sport.sportName }}
         </button>
       </div>

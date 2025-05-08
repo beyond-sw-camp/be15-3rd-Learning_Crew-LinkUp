@@ -4,6 +4,9 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 import CreateCustomMeetingLayout from '@/features/meeting/components/CreateCustomMeetingLayout.vue';
+import lv1Icon from '@/assets/icons/meeting_and_place/lv1.svg';
+import lv2Icon from '@/assets/icons/meeting_and_place/lv2.svg';
+import lv3Icon from '@/assets/icons/meeting_and_place/lv3.svg';
 
 const route = useRoute();
 const router = useRouter();
@@ -91,6 +94,17 @@ const createMeeting = async () => {
     console.error(e);
   }
 };
+
+function getLevelIcon(level) {
+  switch(level) {
+    case "LV1":
+      return lv1Icon;
+    case "LV2":
+      return lv2Icon;
+    case "LV3":
+      return lv3Icon;
+  }
+}
 </script>
 
 <template>
@@ -151,7 +165,7 @@ const createMeeting = async () => {
           :class="{ active: selectedLevels.includes(key) }"
           @click="toggleSetItem(selectedLevels, key)"
         >
-          <img src="" alt="key" />
+          <img :src="getLevelIcon(key)" alt="key" />
           {{ key }}
         </button>
       </div>

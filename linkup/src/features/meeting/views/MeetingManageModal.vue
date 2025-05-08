@@ -7,7 +7,7 @@
         <button class="close-btn" @click="closeModal">&times;</button>
       </div>
       <hr class="divider" />
-s
+
       <div class="participant-modal-content">
         <h2>참가자 목록</h2>
         <div
@@ -15,13 +15,13 @@ s
           :key="'participant-' + index"
           class="participant-card"
         >
-          <img :src="participant.image" alt="프로필" class="participant-thumb" />
+          <img :src="participant.profileImageUrl" alt="프로필" class="participant-thumb" />
           <div class="participant-content">
             <div class="participant-nickname">{{ participant.nickname }}</div>
             <div class="participant-subinfo">매너온도: {{ participant.mannerTemperature }}°C</div>
           </div>
           <div class="participant-actions">
-            <template v-if="participant.nickname === creatorNickname">
+            <template v-if="participant.nickname === leaderNickname">
               <button class="participant-btn disabled" disabled>
                 <img src="@/assets/icons/meeting_and_place/crown.svg" alt="개설자" class="leader"/>
                 <span class="hidden-text">권한 위임</span>
@@ -43,64 +43,133 @@ s
           class="applicant-card"
         >
           <div class="applicant-profile">
-            <img :src="applicant.image" alt="프로필" />
+            <img :src="applicant.profileImageUrl" alt="프로필" />
           </div>
           <div class="applicant-info">
             <p><strong>{{ applicant.nickname }}</strong></p>
             <p><strong>{{ applicant.gender }}</strong> | <strong>{{ applicant.age }}세</strong> | <strong>{{ applicant.mannerTemperature
               }}°C</strong></p>
-            <p>{{ applicant.comment }}</p>
+            <p>{{ applicant.introduction }}</p>
           </div>
           <div class="applicant-actions">
-            <button class="btn accept">수락</button>
-            <button class="btn reject">거절</button>
+            <button class="btn accept" @click="acceptParticipation(applicant)">수락</button>
+            <button class="btn reject" @click="rejectParticipation(applicant)">거절</button>
           </div>
         </div>
       </div>
 
       <div class="participant-modal-button">
         <button class="btn accept">모임 바로가기</button>
-        <button class="btn cancel">모임 취소</button>
+        <button class="btn cancel" @click="cancelMeeting">모임 취소</button>
       </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue';
+import api from '@/api/axios.js';
+import { useAuthStore } from '@/stores/auth.js';
 
-const creatorNickname = '방구석메시';
+const auth = useAuthStore();
 
-const participants = ref([
-  {
-    nickname: '방구석메시',
-    mannerTemperature: 38,
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup',
-  },
-  {
-    nickname: '운동광인생',
-    mannerTemperature: 40,
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup2',
-  },
-])
+const leaderNickname = ref([]);
 
-const applicants = ref([
-  {
-    nickname: '열정파워',
-    gender: '남자',
-    age: 30,
-    mannerTemperature: 38,
-    comment: '승부욕 강한 타입입니다.',
-    image: 'https://api.dicebear.com/7.x/thumbs/svg?seed=linkup3',
-  },
-])
+const participants = ref([]);
+const applicants = ref([]);
 
-defineProps({
-  visible: Boolean
+const props = defineProps({
+  visible: Boolean,
+  meeting: Object
 });
+
+const meetingId = computed(() => props.meeting?.meetingId);
+
+const fetchParticipants = async () => {
+  try {
+    const response = await api.get(`common-service/my/meetings/${meetingId.value}/participation`, {
+      params: { memberId: auth.userId, requesterId: auth.userId }
+    });
+    participants.value = response.data.data.participants;
+    const meetingResponse = await api.get(`common-service/meetings/${meetingId.value}`);
+    leaderNickname.value = meetingResponse.data.data.meeting.leaderNickname;
+  } catch (error) {
+    console.error('참가자 목록을 불러오는 중 오류 발생:', error);
+  }
+};
+
+const fetchApplicants = async () => {
+  try {
+    const response = await api.get(`common-service/meetings/${meetingId.value}/participation_request`, {
+      params: { requesterId: auth.userId }
+    });
+    applicants.value = response.data.data.participants; // API 응답에 맞게 수정
+  } catch (error) {
+    console.error('참가 신청자 목록을 불러오는 중 오류 발생:', error);
+  }
+};
+
+// watch로 meetingId가 변경될 때마다 데이터 로드
+watch(meetingId, (newMeetingId) => {
+  if (newMeetingId) {
+    fetchParticipants();
+    fetchApplicants();
+  }
+});
+
 const emit = defineEmits(['close']);
 function closeModal() {
   emit('close');
 }
+
+async function acceptParticipation(applicant) {
+  try {
+    const memberId = applicant.memberId;
+    const response = await api.put(`/common-service/meetings/${meetingId.value}/participation/${memberId}/accept`
+    ,  { // 여기에 body 데이터 작성
+        memberId: auth.userId  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        // 필요한 다른 데이터들을 여기에 추가
+      });
+    console.log(response.data);
+  } catch (error) {
+    console.error('참가 수락 실패:', error);
+    alert('참가 수락에 실패했습니다.');
+  }
+}
+
+async function rejectParticipation(applicant) {
+  try {
+    const memberId = applicant.memberId;
+    const response = await api.put(`/common-service/meetings/${meetingId.value}/participation/${memberId}/reject`,
+      { // 여기에 body 데이터 작성
+        memberId: auth.userId  // 예시: 요청자 ID (혹은 다른 필요한 데이터)
+        // 필요한 다른 데이터들을 여기에 추가
+      });
+    console.log(response.data);
+  } catch (error) {
+    console.error('참가 거절 실패:', error);
+    alert('참가 거절에 실패했습니다.');
+  }
+}
+
+const cancelMeeting = async () => {
+  try {
+    const result = confirm('정말 모집을 취소하시겠습니까?');
+    if (result) {
+      api.delete(`common-service/meetings/${meetingId.value}/cancel`, {
+          params: {
+            memberId: auth.userId,  // 요청자 ID 등 필요한 파라미터
+            // 다른 필요한 파라미터들 추가
+          }
+        }
+      );
+      alert('모집 취소에 성공했습니다.');
+      return;
+    }
+  } catch (e) {
+    console.error('모임 취소 실패', e);
+    alert('모임 취소에 실패했습니다.');
+  }
+};
 </script>
 
 <style scoped>

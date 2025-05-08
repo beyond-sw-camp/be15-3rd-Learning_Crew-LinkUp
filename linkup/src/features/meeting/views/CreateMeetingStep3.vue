@@ -4,6 +4,10 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
+import lv1Icon from '@/assets/icons/meeting_and_place/lv1.svg';
+import lv2Icon from '@/assets/icons/meeting_and_place/lv2.svg';
+import lv3Icon from '@/assets/icons/meeting_and_place/lv3.svg';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -12,38 +16,6 @@ const selectedSport = ref('');
 const selectedGender = ref('BOTH');
 const selectedAgeGroups = reactive([]);
 const selectedLevels = reactive([]);
-
-const sports = ref([]);
-const isLoading = ref(true);
-
-const fetchSports = async () => {
-  try {
-    sports.value = [
-      { sportId: 2, sportName: '풋살' },
-      { sportId: 3, sportName: '테니스' },
-      { sportId: 4, sportName: '볼링' },
-      { sportId: 5, sportName: '탁구' },
-      { sportId: 6, sportName: '농구' },
-      { sportId: 7, sportName: '골프' },
-      { sportId: 8, sportName: '배드민턴' },
-      { sportId: 1, sportName: '기타 운동' }
-    ];
-
-    //   const response = await axios.get();
-    //   sports.value = response.data.map(sport => ({
-    //     id: sport.sportId,
-    //     name: sport.sportName
-    // }));
-  } catch (e) {
-    console.error('운동 종목 로드 실패', e);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchSports();
-});
 
 const toggleSetItem = (setRef, value) => {
   const index = setRef.indexOf(value);
@@ -91,9 +63,21 @@ const createMeeting = async () => {
     console.error(e);
   }
 };
+
+function getLevelIcon(level) {
+  switch(level) {
+    case "LV1":
+      return lv1Icon;
+    case "LV2":
+      return lv2Icon;
+    case "LV3":
+      return lv3Icon;
+  }
+}
 </script>
 
 <template>
+  <DefaultMainLayout>
   <template v-if="isLoading">
     <p>로딩 중...</p>
   </template>
@@ -151,7 +135,7 @@ const createMeeting = async () => {
           :class="{ active: selectedLevels.includes(key) }"
           @click="toggleSetItem(selectedLevels, key)"
         >
-          <img src="" alt="key" />
+          <img :src="getLevelIcon(key)" alt="key" />
           {{ key }}
         </button>
       </div>
@@ -160,6 +144,7 @@ const createMeeting = async () => {
     <button class="submit-btn" @click="createMeeting">모임 개설 완료</button>
   </CreateMeetingLayout>
   </template>
+  </DefaultMainLayout>
 </template>
 
 <style scoped>

@@ -1,12 +1,30 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import CreateMeetingLayout from '@/features/meeting/components/CreateMeetingLayout.vue';
+import DefaultMainLayout from '@/components/layout/DefaultMainLayout.vue';
+import api from '@/api/axios.js';
 
 const MIN_USER = 2;
 const MAX_USER = 30;
 
+const route = useRoute();
 const router = useRouter();
+
+const placeId = route.query.placeId;
+
+// const isLoading = ref(true);
+// const place = ref(null);
+// onMounted(async() => {
+//   try {
+//     const response = await axios.get(`/place/${placeId}`)
+//     place.value = response.data.data.place
+//   } catch (e) {
+//     console.error('장소 조회 실패', e);
+//   } finally {
+//      isLoading.value = false;
+//   }
+// })
 
 const placeName = '신촌 풋살 센터';
 const sportId = 1;
@@ -57,6 +75,8 @@ const goToNextStep = () => {
   router.push({
     name: 'CheckCreatorBalance',
     query: {
+      placeId: placeId,
+      // participationFee: participationFee.value,
       date: selectedDate.value,
       startTime: selectedTimeSlot.value.startTime,
       endTime: selectedTimeSlot.value.endTime,
@@ -71,11 +91,12 @@ const participationFee = computed(() => {
   if (minUser.value === 0) {
     return '모집 인원을 입력해주세요.';
   }
-  return (rentalCost / minUser.value).toLocaleString();
+  return Math.floor(rentalCost / minUser.value);
 });
 </script>
 
 <template>
+  <DefaultMainLayout>
   <CreateMeetingLayout :step="1" title="장소 및 인원 선택">
     <div class="form-group">
       <label class="group-label">선택된 장소</label>
@@ -114,10 +135,11 @@ const participationFee = computed(() => {
       </div>
     </div>
 
-    <div class="price-per-person">{{ participationFee }}<span class="per-person">/인당</span></div>
+    <div class="price-per-person">{{ participationFee.toLocaleString() }}<span class="per-person">/인당</span></div>
 
     <button class="next-btn" @click="goToNextStep">다음 단계로</button>
   </CreateMeetingLayout>
+  </DefaultMainLayout>
 </template>
 
 <style scoped>
