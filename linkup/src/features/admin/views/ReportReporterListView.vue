@@ -14,6 +14,15 @@ const selectedReporter = ref(null)
 const summaryInfo = ref([])
 const reportRows = ref([])
 
+const detailHeaders = [
+  { key: 'reportId', label: '신고 ID' },
+  { key: 'targetMemberId', label: '피신고자 ID' },
+  { key: 'targetName', label: '피신고자 이름' },
+  { key: 'reportType', label: '신고 유형' },
+  { key: 'createdAt', label: '신고 일시' },
+  { key: 'status', label: '상태' }
+]
+
 const columns = [
   { key: 'memberId', label: '신고자 ID' },
   { key: 'memberName', label: '신고자 이름' },
@@ -51,7 +60,6 @@ async function fetchReporterList({ page }) {
   }
 }
 
-
 // 상세 조회
 async function openModal(row) {
   try {
@@ -73,12 +81,12 @@ async function openModal(row) {
     }
 
     reportRows.value = reports.map(r => ({
-      신고ID: r.reportId,
-      피신고자ID: r.targetMemberId,
-      피신고자이름: r.targetName,
-      신고유형: r.reportType,
-      신고일시: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      상태: statusMap[r.statusId] || '-'
+      reportId: r.reportId,
+      targetMemberId: r.targetMemberId,
+      targetName: r.targetName,
+      reportType: r.reportType,
+      createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
+      status: statusMap[r.statusId] || '-'
     }))
   } catch (e) {
     console.error('🚨 신고자 상세 조회 실패:', e)
@@ -116,7 +124,7 @@ async function openModal(row) {
         title="신고자 신고 내역"
         description="신고자의 상세 신고 기록을 확인할 수 있습니다."
         :summary="summaryInfo"
-        :headers="['신고 ID', '피신고자 ID', '피신고자 이름', '신고 유형', '신고 일시', '상태']"
+        :headers="detailHeaders"
         :rows="reportRows"
       />
     </template>

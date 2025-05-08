@@ -5,8 +5,8 @@ const props = defineProps({
   modelValue: Boolean,
   title: { type: String, default: '상세 정보' },
   description: { type: String, default: '' },
-  summary: { type: Array, default: () => [] }, // label/value 쌍 배열로 가정
-  headers: { type: Array, required: true },
+  summary: { type: Array, default: () => [] }, // [{ label, value }]
+  headers: { type: Array, required: true },    // [{ key, label }]
   rows: { type: Array, default: () => [] },
   showActionButton: { type: Boolean, default: false },
   actionLabel: { type: String, default: '처리' }
@@ -47,21 +47,21 @@ const close = () => emit('update:modelValue', false)
         </div>
       </section>
 
-      <!-- 테이블 -->
+      <!-- 신고 목록 테이블 -->
       <section class="modal-section" aria-labelledby="report-table-title">
         <h3 id="report-table-title" class="report-title">신고 목록</h3>
         <table class="table" role="table">
           <thead>
           <tr>
-            <th v-for="header in headers" :key="header" scope="col">
-              {{ header }}
+            <th v-for="header in headers" :key="header.key" scope="col">
+              {{ header.label }}
             </th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="(row, idx) in rows" :key="idx">
-            <td v-for="header in headers" :key="header">
-              {{ row[header] ?? '-' }}
+            <td v-for="header in headers" :key="header.key">
+              {{ row[header.key] ?? '-' }}
             </td>
           </tr>
           </tbody>
@@ -84,5 +84,5 @@ const close = () => emit('update:modelValue', false)
 </template>
 
 <style scoped>
-
+/* 스타일은 필요 시 작성하세요 */
 </style>

@@ -17,23 +17,14 @@ const selectedRow = ref(null)
 const reportRows = ref([])
 const summaryInfo = ref([])
 
-const fetchList = async ({ page }) => {
-  try {
-    const res = await fetchReportedTargetList({
-      page,
-      isActive: filters.isActive || null,
-      targetType: filters.targetType || null,
-      targetId: filters.targetId?.trim() || null
-    })
-    return {
-      data: res.data.targetList || [],
-      totalPages: res.data.pagination?.totalPage || 1
-    }
-  } catch (e) {
-    console.error('🚨 신고 대상 목록 조회 실패:', e)
-    return { data: [], totalPages: 1 }
-  }
-}
+const detailHeaders = [
+  { key: 'reportId', label: '신고 ID' },
+  { key: 'reporterId', label: '신고자 ID' },
+  { key: 'reporterName', label: '신고자 이름' },
+  { key: 'reportType', label: '신고 유형' },
+  { key: 'createdAt', label: '신고 일시' },
+  { key: 'status', label: '처리 상태' }
+]
 
 const columns = [
   { key: 'targetType', label: '대상 유형' },
@@ -54,18 +45,34 @@ const columns = [
     format: (_, __, row) => ({
       type: 'button',
       label: '보기',
-      onClick: () => openModal(row)
+      onClick: (r) => openModal(r)
     })
   }
 ]
 
 
+async function fetchList({ page }) {
+  try {
+    const res = await fetchReportedTargetList({
+      page,
+      isActive: filters.isActive || null,
+      targetType: filters.targetType || null,
+      targetId: filters.targetId?.trim() || null
+    })
+    return {
+      data: res.data.targetList || [],
+      totalPages: res.data.pagination?.totalPage || 1
+    }
+  } catch (e) {
+    console.error('🚨 신고 대상 목록 조회 실패:', e)
+    return { data: [], totalPages: 1 }
+  }
+}
+
 async function openModal(row) {
   try {
     const res = await fetchTargetDetailById(row.targetType, row.targetId)
     const reports = res.data.reportList || []
-    console.log('reports : ', res)
-    console.log('🔍 fetch 결과 rows:', res.data.targetList)
 
     selectedRow.value = row
     summaryInfo.value = [
@@ -79,12 +86,12 @@ async function openModal(row) {
     const statusMap = { 1: '처리중', 2: '완료', 3: '기각' }
 
     reportRows.value = reports.map(r => ({
-      신고ID: r.reportId,
-      신고자ID: r.reporterId,
-      신고자이름: r.reporterName,
-      신고유형: r.reportType,
-      신고일시: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
-      처리상태: statusMap[r.statusId] || '-'
+      reportId: r.reportId,
+      reporterId: r.reporterId,
+      reporterName: r.reporterName,
+      reportType: r.reportType,
+      createdAt: format(new Date(r.createdAt), 'yyyy-MM-dd HH:mm'),
+      status: statusMap[r.statusId] || '-'
     }))
   } catch (e) {
     console.error('🚨 상세 정보 조회 실패:', e)
@@ -105,7 +112,6 @@ function handleSanction() {
     :pageTitle="pageTitle"
     :enableModal="true"
   >
-    <!-- 필터 영역 -->
     <!-- 필터 영역 -->
     <template #filters>
       <label class="filter-label" for="isActive">활성화 여부:</label>
@@ -134,7 +140,6 @@ function handleSanction() {
       />
     </template>
 
-
     <!-- 모달 영역 -->
     <template #modal>
       <ReportDetailModal
@@ -144,7 +149,7 @@ function handleSanction() {
         title="신고 대상 상세 정보"
         description="해당 신고 대상에 대한 상세 신고 이력을 확인할 수 있습니다."
         :summary="summaryInfo"
-        :headers="['신고 ID', '신고자 ID', '신고자 이름', '신고 유형', '신고 일시', '처리 상태']"
+        :headers="detailHeaders"
         :rows="reportRows"
         :showActionButton="true"
         action-label="제재 처리"
